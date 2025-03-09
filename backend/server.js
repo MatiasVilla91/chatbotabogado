@@ -9,11 +9,16 @@ const authRoutes = require('./routes/auth');
 const legalRoutes = require('./routes/legal');
 const { checkAuth } = require('./middleware/auth');
 
+// Cargar variables de entorno según el entorno
+dotenv.config({
+  path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env',
+});
+
+
 // Configuración inicial
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 
 // Middleware
 app.use(cors());

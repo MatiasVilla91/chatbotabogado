@@ -3,6 +3,7 @@ import { Container, TextField, Button, Typography, Paper, Box } from "@mui/mater
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext"; // Importar el contexto de autenticación
 
+
 function Consultas() {
   const { token } = useContext(AuthContext);
   const [pregunta, setPregunta] = useState("");
