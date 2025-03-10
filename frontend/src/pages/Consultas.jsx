@@ -18,7 +18,7 @@ function Consultas() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/legal/consulta",
+        "${backendUrl}/api/legal/consulta",
         { pregunta },
         {
           headers: { Authorization: `Bearer ${token}` },
