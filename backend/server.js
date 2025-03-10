@@ -39,3 +39,8 @@ app.use('/api/legal', checkAuth, legalRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
+
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
+
