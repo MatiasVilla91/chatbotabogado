@@ -17,17 +17,25 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
       const response = await axios.post(`${backendUrl}/api/auth/login`, {
         email,
         password,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+  
       login(response.data.token);
       navigate("/consultas");
     } catch (error) {
+      console.error("❌ Error:", error.response?.data || error.message);
       alert("Error al iniciar sesión");
     }
   };
+  
 
   return (
     <Container>
