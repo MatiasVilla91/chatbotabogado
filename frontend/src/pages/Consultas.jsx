@@ -3,11 +3,13 @@ import { Container, TextField, Button, Typography, Paper, Box } from "@mui/mater
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext"; // Importar el contexto de autenticación
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Consultas() {
   const { token } = useContext(AuthContext);
   const [pregunta, setPregunta] = useState("");
   const [respuesta, setRespuesta] = useState("");
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +20,7 @@ function Consultas() {
 
     try {
       const response = await axios.post(
-        "${backendUrl}/api/legal/consulta",
+        `${backendUrl}/api/legal/consulta`,
         { pregunta },
         {
           headers: { Authorization: `Bearer ${token}` },
