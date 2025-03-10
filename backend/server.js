@@ -22,15 +22,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || 'localhost';
 
-// Middleware
-app.use(cors(corsOptions));
-app.use(express.json());
-
 const corsOptions = {
   origin: ['https://drleyes.netlify.app'], // Tu dominio de Netlify
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
+// Middleware
+app.use(cors(corsOptions));
+app.use(express.json());
+
 
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
