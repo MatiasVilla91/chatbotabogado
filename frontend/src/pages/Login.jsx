@@ -4,6 +4,9 @@ import { AuthContext } from "../context/AuthContext";
 import { Container, TextField, Button, Typography } from "@mui/material";
 import axios from "axios";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+console.log("✅ Backend URL:", backendUrl);
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +18,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("${backendUrl}/api/auth/login", {
+      const response = await axios.post(`${backendUrl}/api/auth/login`, {
         email,
         password,
       });
