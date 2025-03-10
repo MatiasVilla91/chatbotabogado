@@ -6,4 +6,5 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', UserSchema);
+// Especificamos explícitamente la colección 'usuarios'
+module.exports = mongoose.model('User', UserSchema, 'usuarios');
