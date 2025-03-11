@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Consultas from "./pages/Consultas";
 import Login from "./pages/Login";
-
+import Register from "./pages/Register";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/consultas" element={<Consultas />} />
       </Routes>
 
