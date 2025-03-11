@@ -1,70 +1,67 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { Container, TextField, Button, Typography, Paper, Box } from "@mui/material";
 import axios from "axios";
-import { AuthContext } from "../context/AuthContext"; // Importar el contexto de autenticación
+import { AuthContext } from "../context/AuthContext";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Consultas() {
   const { token } = useContext(AuthContext);
   const [pregunta, setPregunta] = useState("");
-  const [respuesta, setRespuesta] = useState("");
- 
+  const [mensajes, setMensajes] = useState([]);
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [mensajes]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) {
-      setRespuesta("No tienes un token válido. Inicia sesión.");
+      setMensajes((prev) => [...prev, { tipo: "received", texto: "No tienes un token válido. Inicia sesión." }]);
       return;
     }
+
+    setMensajes((prev) => [...prev, { tipo: "sent", texto: pregunta }]);
+    setPregunta("");
 
     try {
       const response = await axios.post(
         `${backendUrl}/api/legal/consulta`,
         { pregunta },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setRespuesta(response.data.respuesta);
+
+      setMensajes((prev) => [...prev, { tipo: "received", texto: response.data.respuesta }]);
     } catch (error) {
-      setRespuesta("Error al obtener respuesta de la IA.");
+      setMensajes((prev) => [...prev, { tipo: "received", texto: "Error al obtener respuesta de la IA." }]);
     }
   };
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
-      {/* Tarjeta del formulario */}
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          🏛️ Consultas Legales IA
-        </Typography>
-        <Typography variant="body1" align="center" color="text.secondary">
-          Ingresa tu consulta legal y recibe asesoramiento inmediato.
-        </Typography>
+      <Typography variant="h4" align="center" gutterBottom>
+        🏛️ Consultas Legales IA
+      </Typography>
+      <Box sx={{ height: "60vh", overflowY: "auto", mb: 2, p: 2, backgroundColor: '#f8f9fa', borderRadius: 2 }}>
+        {mensajes.map((msg, index) => (
+          <Typography key={index} variant="body1" className={msg.tipo}>
+            {msg.texto}
+          </Typography>
+        ))}
+        <div ref={chatEndRef} />
+      </Box>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <TextField
-            fullWidth
-            label="Escribe tu consulta legal"
-            multiline
-            rows={4}
-            value={pregunta}
-            onChange={(e) => setPregunta(e.target.value)}
-            sx={{ mb: 3 }}
-          />
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ p: 1.5 }}>
-            Enviar Consulta
-          </Button>
-        </Box>
-
-        {/* Mostrar respuesta */}
-        {respuesta && (
-          <Paper elevation={1} sx={{ p: 3, mt: 3, backgroundColor: "#f4f6f8" }}>
-            <Typography variant="h6">Respuesta de la IA:</Typography>
-            <Typography variant="body1" sx={{ mt: 1 }}>{respuesta}</Typography>
-          </Paper>
-        )}
+      <Paper component="form" onSubmit={handleSubmit} elevation={2} sx={{ p: 2, display: "flex", gap: 2 }}>
+        <TextField
+          fullWidth
+          placeholder="Escribe tu consulta legal..."
+          value={pregunta}
+          onChange={(e) => setPregunta(e.target.value)}
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Enviar
+        </Button>
       </Paper>
     </Container>
   );

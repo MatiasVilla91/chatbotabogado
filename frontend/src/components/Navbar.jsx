@@ -7,7 +7,7 @@ function Navbar() {
   const { token, logout } = useContext(AuthContext);
 
   return (
-    <AppBar position="static">
+    <AppBar position="static"   >
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           IA Abogados
