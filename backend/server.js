@@ -22,6 +22,14 @@ const corsOptions = {
   credentials: true,
 };
 
+const User = require('./models/User');
+
+mongoose.connection.once('open', async () => {
+    const user = await User.findOne({ email: "tuemail@example.com" });
+    console.log("🔍 Usuario encontrado:", user);
+});
+
+
 // ✅ Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
