@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -20,4 +21,6 @@
     "openai": "^4.86.2",
     "pdfkit": "^0.16.0"
   }
+
+  
 }

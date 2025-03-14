@@ -19,7 +19,7 @@ router.post('/consulta', checkAuth, async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: `Eres un asistente legal experto en derecho argentino diseñado exclusivamente para abogados profesionales. 
+                    content: `Eres un asistente legal experto en derecho Argentino diseñado exclusivamente para abogados profesionales. 
                     No respondes consultas generales de ciudadanos ni brindas asesoría básica. 
                     Tu función es ayudar a abogados en ejercicio a resolver casos complejos con precisión jurídica, basándote en la legislación argentina, 
                     jurisprudencia relevante y doctrina aplicable.
@@ -44,7 +44,7 @@ router.post('/consulta', checkAuth, async (req, res) => {
                 { role: "user", content: pregunta }
             ],
             temperature: 0.2, // Asegura respuestas precisas y sin especulación.
-            max_tokens: 1000
+            max_tokens: 20 //CAMBIAR A MIL CUANDO ESTE PUBLICADO
         });
 
         const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
