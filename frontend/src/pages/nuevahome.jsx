@@ -17,14 +17,14 @@ function NuevaHome() {
     <Container maxWidth="lg" sx={{ mt: 6, textAlign: "center" }}>   
       <Paper elevation={10} sx={{ padding: 5, borderRadius: 4, backgroundImage: 'url(/justice-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'multiply', backgroundColor: '#1a1a1a' }}>
         <Typography variant="h3" sx={{ mb: 3, fontWeight: "bold", color: "#42a5f5" }}>
-        La IA que potencia tu Éxito.
+        DICTUM es la IA que potencia tu Éxito.
         </Typography>
 
         <Typography variant="h5" sx={{ mb: 4, color: '#fff' }}>
-          Respuestas rápidas, precisas y actualizadas con <strong>DICTUM IA</strong>. Accede a un asistente 24/7 y toma decisiones legales seguras en cuestión de minutos.
+          Respuestas rápidas, precisas y actualizadas con <strong>DICTUM IA</strong>. Accede a un asistente 24/7 y toma decisiones legales en cuestión de minutos.
         </Typography>
 
-        <Button variant="contained" size="large" sx={{ mb: 4, padding: '16px 32px', fontWeight: 'bold', background: 'linear-gradient(45deg, #42a5f5 30%, #1976d2 90%)', borderRadius: '20px', boxShadow: '0 4px 15px rgba(66, 165, 245, 0.6)' }}>
+        <Button component={Link} to="/register" variant="contained" size="large" sx={{ mb: 4, padding: '16px 32px', fontWeight: 'bold', background: 'linear-gradient(45deg, #42a5f5 30%, #1976d2 90%)', borderRadius: '20px', boxShadow: '0 4px 15px rgba(66, 165, 245, 0.6)' }}>
           🚀 Comienza tu Prueba Gratis
         </Button>
 
@@ -67,7 +67,7 @@ function NuevaHome() {
 
         <Divider sx={{ my: 4, backgroundColor: '#616161' }} />
 
-        <Button variant="outlined" size="large" sx={{ padding: '16px 32px', fontWeight: 'bold', borderColor: '#ff5252', color: '#ff5252', borderRadius: '20px', '&:hover': { backgroundColor: '#ff5252', color: '#fff' } }}>
+        <Button component={Link} to="/register" variant="outlined" size="large" sx={{ padding: '16px 32px', fontWeight: 'bold', borderColor: '#ff5252', color: '#ff5252', borderRadius: '20px', '&:hover': { backgroundColor: '#ff5252', color: '#fff' } }}>
           ⚡ Suscribirse Ahora ⚡
         </Button>
       </Paper>
