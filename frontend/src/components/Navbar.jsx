@@ -12,35 +12,45 @@ function Navbar() {
   const { token, logout } = useContext(AuthContext);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'rgba(26, 26, 26, 0.8)', backdropFilter: 'blur(10px)', borderRadius: '12px, 12px, 0, 0', mb: 0}}>
-      <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-          DICTUM IA
-        </Typography>
-        <IconButton color="inherit" component={Link} to="/nuevahome">
-          <HomeIcon />
+    <AppBar 
+  position="fixed" 
+  sx={{
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    backdropFilter: 'blur(10px)',
+    padding: '10px 20px',
+    zIndex: 10
+  }}
+>
+  <Toolbar>
+    <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold', color: '#fff' }}>
+      DICTUM IA
+    </Typography>
+    <IconButton color="inherit" component={Link} to="/">
+      <HomeIcon sx={{ color: '#fff' }} />
+    </IconButton>
+    {token ? (
+      <>
+        <IconButton color="inherit" component={Link} to="/consultas">
+          <GavelIcon sx={{ color: '#fff' }} />
         </IconButton>
-        {token ? (
-          <>
-            <IconButton color="inherit" component={Link} to="/consultas">
-              <GavelIcon />
-            </IconButton>
-            <IconButton color="inherit" onClick={logout}>
-              <FlashOnIcon />
-            </IconButton>
-          </>
-        ) : (
-          <>
-            <IconButton color="inherit" component={Link} to="/login">
-              <LoginIcon />
-            </IconButton>
-            <IconButton color="inherit" component={Link} to="/register">
-              <PersonAddIcon />
-            </IconButton>
-          </>
-        )}
-      </Toolbar>
-    </AppBar>
+        <IconButton color="inherit" onClick={logout}>
+          <FlashOnIcon sx={{ color: '#fff' }} />
+        </IconButton>
+      </>
+    ) : (
+      <>
+        <IconButton color="inherit" component={Link} to="/login">
+          <LoginIcon sx={{ color: '#fff' }} />
+        </IconButton>
+        <IconButton color="inherit" component={Link} to="/register">
+          <PersonAddIcon sx={{ color: '#fff' }} />
+        </IconButton>
+      </>
+    )}
+  </Toolbar>
+</AppBar>
+
   );
 }
 
