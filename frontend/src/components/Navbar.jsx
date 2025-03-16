@@ -24,7 +24,7 @@ function Navbar() {
 >
   <Toolbar>
     <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold', color: '#fff' }}>
-      DICTUM IA
+     
     </Typography>
     <IconButton color="inherit" component={Link} to="/">
       <HomeIcon sx={{ color: '#fff' }} />

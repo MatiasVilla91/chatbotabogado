@@ -44,7 +44,7 @@ router.post('/consulta', checkAuth, async (req, res) => {
                 { role: "user", content: pregunta }
             ],
             temperature: 0.2, // Asegura respuestas precisas y sin especulación.
-            max_tokens: 20 //CAMBIAR A MIL CUANDO ESTE PUBLICADO
+            max_tokens: 1000 //CAMBIAR A MIL CUANDO ESTE PUBLICADO
         });
 
         const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
