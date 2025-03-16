@@ -8,13 +8,13 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 
+
+
 function NuevaHome() {
   
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 6, textAlign: "center" }}>
-     
-
+    <Container maxWidth="lg" sx={{ mt: 6, textAlign: "center" }}>   
       <Paper elevation={10} sx={{ padding: 5, borderRadius: 4, backgroundImage: 'url(/justice-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'multiply', backgroundColor: '#1a1a1a' }}>
         <Typography variant="h3" sx={{ mb: 3, fontWeight: "bold", color: "#42a5f5" }}>
           Transforma tu Práctica Legal

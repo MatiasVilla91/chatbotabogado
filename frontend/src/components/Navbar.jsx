@@ -12,7 +12,7 @@ function Navbar() {
   const { token, logout } = useContext(AuthContext);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'rgba(26, 26, 26, 0.8)', backdropFilter: 'blur(10px)', borderRadius: '12px', mb: 4 }}>
+    <AppBar position="static" sx={{ backgroundColor: 'rgba(26, 26, 26, 0.8)', backdropFilter: 'blur(10px)', borderRadius: '12px, 12px, 0, 0', mb: 0}}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
           DICTUM IA
