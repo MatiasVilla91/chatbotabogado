@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Consultas from "./pages/Consultas";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import NuevaHome from "./pages/nuevahome"
 
 function App() {
   //const [count, setCount] = useState(0)
@@ -20,8 +21,11 @@ function App() {
 
       <Navbar />
       <Routes>
+     
+
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/nuevahome" element={<NuevaHome />} /> {/* Nueva ruta */}
         <Route path="/register" element={<Register />} />
         <Route path="/consultas" element={<Consultas />} />
       </Routes>
