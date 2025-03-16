@@ -17,11 +17,11 @@ function NuevaHome() {
     <Container maxWidth="lg" sx={{ mt: 6, textAlign: "center" }}>   
       <Paper elevation={10} sx={{ padding: 5, borderRadius: 4, backgroundImage: 'url(/justice-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'multiply', backgroundColor: '#1a1a1a' }}>
         <Typography variant="h3" sx={{ mb: 3, fontWeight: "bold", color: "#42a5f5" }}>
-          Transforma tu Práctica Legal
+        La IA que potencia tu Éxito.
         </Typography>
 
         <Typography variant="h5" sx={{ mb: 4, color: '#fff' }}>
-          Respuestas rápidas, precisas y seguras con <strong>DICTUM IA</strong>.
+          Respuestas rápidas, precisas y actualizadas con <strong>DICTUM IA</strong>. Accede a un asistente 24/7 y toma decisiones legales seguras en cuestión de minutos.
         </Typography>
 
         <Button variant="contained" size="large" sx={{ mb: 4, padding: '16px 32px', fontWeight: 'bold', background: 'linear-gradient(45deg, #42a5f5 30%, #1976d2 90%)', borderRadius: '20px', boxShadow: '0 4px 15px rgba(66, 165, 245, 0.6)' }}>
@@ -35,7 +35,7 @@ function NuevaHome() {
             <Paper elevation={4} sx={{ padding: 3, borderRadius: 3, backgroundColor: '#212121', '&:hover': { backgroundColor: '#2e2e2e' } }}>
               <CheckCircleIcon color="success" sx={{ fontSize: 50 }} />
               <Typography variant="body1" sx={{ mt: 1, color: '#fff' }}>
-                Asistencia Legal 24/7
+              Respuestas inmediatas a tus consultas legales
               </Typography>
             </Paper>
           </Grid>
@@ -43,7 +43,7 @@ function NuevaHome() {
             <Paper elevation={4} sx={{ padding: 3, borderRadius: 3, backgroundColor: '#212121', '&:hover': { backgroundColor: '#2e2e2e' } }}>
               <VerifiedUserIcon color="success" sx={{ fontSize: 50 }} />
               <Typography variant="body1" sx={{ mt: 1, color: '#fff' }}>
-                Respuestas Precisas y Seguras
+                Respuestas  Accede a un asistente IA especializado en leyes Argentinas disponible 24/7
               </Typography>
             </Paper>
           </Grid>
@@ -51,7 +51,7 @@ function NuevaHome() {
             <Paper elevation={4} sx={{ padding: 3, borderRadius: 3, backgroundColor: '#212121', '&:hover': { backgroundColor: '#2e2e2e' } }}>
               <AccessTimeIcon color="success" sx={{ fontSize: 50 }} />
               <Typography variant="body1" sx={{ mt: 1, color: '#fff' }}>
-                Ahorra Tiempo en Consultas
+              Optimiza tu tiempo y aumenta tu productividad
               </Typography>
             </Paper>
           </Grid>
@@ -59,7 +59,7 @@ function NuevaHome() {
             <Paper elevation={4} sx={{ padding: 3, borderRadius: 3, backgroundColor: '#212121', '&:hover': { backgroundColor: '#2e2e2e' } }}>
               <GavelIcon color="success" sx={{ fontSize: 50 }} />
               <Typography variant="body1" sx={{ mt: 1, color: '#fff' }}>
-                Cumple con Normativas Actualizadas
+              Información precisa y respaldada por las últimas normativas
               </Typography>
             </Paper>
           </Grid>
