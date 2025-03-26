@@ -33,30 +33,61 @@ function Consultas() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensajes]);
 
+  //enviar y guardar en bd
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) {
       setMensajes((prev) => [...prev, { tipo: "received", texto: "No tienes un token válido. Inicia sesión." }]);
       return;
     }
+  
+    const horaEnvio = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const nuevaEntrada = { tipo: "sent", texto: pregunta, hora: horaEnvio };
 
-    setMensajes((prev) => [...prev, { tipo: "sent", texto: pregunta }]);
+    const historialParaEnviar = [
+      ...mensajes
+        .filter(m => m.tipo === "sent" || m.tipo === "received")
+        .map(m => ({
+          role: m.tipo === "sent" ? "user" : "assistant",
+          content: m.texto
+        })),
+      { role: "user", content: pregunta }
+    ];
+  
+    setMensajes((prev) => [...prev, nuevaEntrada]);
     setPregunta("");
     setIsLoading(true);
-
+  
     try {
       const response = await axios.post(
         `${backendUrl}/api/legal/consulta`,
-        { pregunta },
+        { pregunta, historial: historialParaEnviar },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMensajes((prev) => [...prev, { tipo: "received", texto: response.data.respuesta }]);
+  
+      const horaRespuesta = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setMensajes((prev) => [...prev, { tipo: "received", texto: response.data.respuesta, hora: horaRespuesta }]);
+
     } catch (error) {
       setMensajes((prev) => [...prev, { tipo: "received", texto: "Error al obtener respuesta de la IA." }]);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Cargar historial desde localStorage al iniciar
+useEffect(() => {
+  const saved = localStorage.getItem('chatLegal');
+  if (saved) setMensajes(JSON.parse(saved));
+}, []);
+
+// Guardar historial cada vez que cambia
+useEffect(() => {
+  localStorage.setItem('chatLegal', JSON.stringify(mensajes));
+}, [mensajes]);
+
+  
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
@@ -65,8 +96,16 @@ function Consultas() {
       </Typography>
       <Box sx={{ height: "60vh", overflowY: "auto", mb: 2, p: 2, backgroundColor: '#1e1e1e', borderRadius: 2, boxShadow: '0 4px 10px rgba(0,0,0,0.4)' }}>
         {mensajes.map((msg, index) => (
+          <Box key={index} sx={{ mb: 1 }}>
           <Typography
-            key={index}
+            variant="caption"
+            align={msg.tipo === "sent" ? "right" : "left"}
+            display="block"
+            sx={{ color: "#aaa", fontSize: "0.75rem", mb: 0.5 }}
+          >
+            {msg.tipo === "sent" ? "👤 Usuario" : "⚖️ Dictum IA"} – {msg.hora}
+          </Typography>
+          <Typography
             variant="body1"
             sx={{
               padding: '0.8em 1em',
@@ -75,12 +114,14 @@ function Consultas() {
               wordBreak: 'break-word',
               textAlign: msg.tipo === "sent" ? "right" : "left",
               backgroundColor: msg.tipo === "sent" ? '#2e2e2e' : '#0d6efd',
-              color: msg.tipo === "sent" ? '#fff' : '#fff',
+              color: '#fff',
               transition: 'background-color 0.3s ease'
             }}
           >
             {msg.texto}
           </Typography>
+        </Box>
+        
         ))}
 
         {isLoading && (

@@ -6,6 +6,7 @@ const authRoutes = require('./routes/auth');
 const legalRoutes = require('./routes/legal');
 const { checkAuth } = require('./middleware/auth');
 const { MercadoPagoConfig, Preference } = require("mercadopago");
+const contratosRoutes = require('./routes/contratos'); // Nueva ruta
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // ✅ Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/legal', checkAuth, legalRoutes);
+app.use('/api/contratos', checkAuth, contratosRoutes); // Nueva ruta
 
 // ✅ Ruta para crear la preferencia de pago
 app.post('/api/payment', async (req, res) => {
