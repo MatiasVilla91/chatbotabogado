@@ -23,7 +23,7 @@ const generarContratoIA = async (req, res) => {
         console.log("📂 PDF generado en:", rutaPDF);
 
         // 3️⃣ Subir PDF a Cloudinary
-        const urlPDF = await uploadToCloudinary(rutaPDF);
+        const urlPDF = await uploadToCloudinary(rutaPDF, userId);
         console.log("☁️ URL del PDF en Cloudinary:", urlPDF);
 
         // 4️⃣ Guardar en MongoDB solo la URL del PDF

@@ -12,18 +12,21 @@ cloudinary.config({
  * @param {string} filePath - Ruta del archivo local
  * @returns {Promise<string>} - URL pública del archivo subido
  */
-const uploadToCloudinary = async (filePath) => {
+const uploadToCloudinary = async (filePath, userId = '') => {
     try {
-        const result = await cloudinary.uploader.upload(filePath, { resource_type: "raw" });
+        const result = await cloudinary.uploader.upload(filePath, {
+            resource_type: "raw",
+            folder: "drleyes/contratos",
+            public_id: `contrato_${userId}_${Date.now()}`
+        });
 
-        // Borrar el archivo local después de subirlo
-        fs.unlinkSync(filePath);
-
-        return result.secure_url;
+        fs.unlinkSync(filePath); // Borrar archivo local
+        return result.secure_url; // URL pública segura del PDF
     } catch (error) {
         console.error("❌ Error al subir a Cloudinary:", error);
         throw new Error("No se pudo subir el archivo.");
     }
 };
+
 
 module.exports = { uploadToCloudinary };

@@ -10,11 +10,39 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const Contrato = require('../models/Contrato');
 
+const ChatLegal = require('../models/ChatLegal');
+
+const { verificarLimite } = require('../middleware/limites');
+
+
+
 
 // Ruta para hacer preguntas legales a la IA
-router.post('/consulta', checkAuth, async (req, res) => {
+router.post('/consulta', checkAuth, verificarLimite('consulta'), async (req, res) => {
     try {
-        const { pregunta, historial = [] } = req.body;
+        //const { pregunta, historial = [] } = req.body;
+        const { pregunta } = req.body;
+
+if (!pregunta) {
+  return res.status(400).json({ message: "Debes proporcionar una pregunta válida." });
+}
+
+// 🔍 Buscar historial del usuario
+const chatsAnteriores = await ChatLegal.find({ usuario: req.user.id }).sort({ creado: 1 });
+
+
+// 🧠 Construir historial compatible con OpenAI
+let historial = [];
+chatsAnteriores.forEach(chat => {
+  chat.mensajes.forEach(m => {
+    historial.push({
+      role: m.tipo === 'sent' ? 'user' : 'assistant',
+      content: m.texto
+    });
+  });
+});
+// Solo tomamos los últimos 10 mensajes para contexto
+historial = historial.slice(-10);
 
         if (!pregunta) {
             return res.status(400).json({ message: "Debes proporcionar una pregunta válida." });
@@ -26,7 +54,7 @@ router.post('/consulta', checkAuth, async (req, res) => {
                 {
                     role: "system",
                     content: `Eres un asistente legal experto en derecho Argentino diseñado exclusivamente para abogados profesionales. 
-                    No respondes consultas generales de ciudadanos ni brindas asesoría básica. 
+                    📌 Puedes usar los mensajes anteriores proporcionados como contexto para entender mejor la consulta actual y mantener coherencia.
                     Tu función es ayudar a abogados en ejercicio a resolver casos complejos con precisión jurídica, basándote en la legislación argentina, 
                     jurisprudencia relevante y doctrina aplicable.
 
@@ -55,17 +83,50 @@ router.post('/consulta', checkAuth, async (req, res) => {
         });
 
         const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
-
-        res.json({ respuesta });
-
+         // 2. Obtener hora actual
+         const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        // 3. Guardar en MongoDB
+    const nuevoChat = new ChatLegal({
+        usuario: req.user.id,
+        mensajes: [
+          { tipo: "sent", texto: pregunta, hora },
+          { tipo: "received", texto: respuesta, hora }
+        ]
+      });
+  
+      await nuevoChat.save()
+      .then(() => console.log("✅ Chat guardado en MongoDB"))
+      .catch(err => console.error("❌ Error al guardar el chat:", err));
+  
+      // 4. Devolver la respuesta al frontend
+      res.json({ respuesta });
+  
     } catch (error) {
-        console.error("❌ Error en la consulta a OpenAI:", error);
-        res.status(500).json({ message: "Error al consultar la IA", error: error.message });
+      console.error("❌ Error en la consulta a OpenAI:", error);
+      res.status(500).json({ message: "Error al consultar la IA", error: error.message });
     }
+  });
+       
 
+//GUARDAR CONVERSACION EN BD
+router.post('/guardar-chat', checkAuth, async (req, res) => {
+  try {
+    const { mensajes } = req.body;
 
-    
+    const nuevoChat = new ChatLegal({
+      usuario: req.user.id,
+      mensajes  
+    });
+
+    await nuevoChat.save();
+
+    res.status(201).json({ message: "Chat guardado correctamente." });
+  } catch (error) {
+   console.error("❌ Error al guardar el chat:", error.message);
+    res.status(500).json({ message: "Error al guardar el chat." });
+}
 });
+
 
 //SUBIR PDF
     // ✅ Ruta para subir y procesar un PDF
@@ -147,33 +208,16 @@ const path = require('path');
 // ✅ Ruta para descargar contrato PDF por ID
 router.get('/descargar/:id', checkAuth, async (req, res) => {
     try {
-        const userId = req.user.id;
-        const contratoId = req.params.id;
+        const contrato = await Contrato.findById(req.params.id);
+        if (!contrato) return res.status(404).json({ message: "Contrato no encontrado." });
+        if (contrato.usuario.toString() !== req.user.id) return res.status(403).json({ message: "No autorizado." });
 
-        const contrato = await Contrato.findById(contratoId);
-
-        if (!contrato) {
-            return res.status(404).json({ message: "Contrato no encontrado." });
-        }
-
-        if (contrato.usuario.toString() !== userId) {
-            return res.status(403).json({ message: "No tienes permiso para descargar este contrato." });
-        }
-
-        const rutaAbsoluta = path.resolve(contrato.ruta_pdf);
-
-        res.download(rutaAbsoluta, err => {
-            if (err) {
-                console.error("❌ Error al enviar el archivo:", err);
-                res.status(500).json({ message: "Error al descargar el contrato." });
-            }
-        });
+        return res.redirect(contrato.ruta_pdf); // 👈 redirige al enlace Cloudinary
 
     } catch (error) {
-        console.error("❌ Error en la descarga del contrato:", error);
-        res.status(500).json({ message: "Error al procesar la descarga.", error: error.message });
+        console.error("❌ Error al descargar:", error);
+        res.status(500).json({ message: "Error al procesar descarga." });
     }
 });
-
 
 module.exports = router;

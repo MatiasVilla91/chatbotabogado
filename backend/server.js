@@ -11,6 +11,11 @@ const contratosRoutes = require('./routes/contratos'); // Nueva ruta
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const upgradeRoutes = require('./routes/upgrade');
+const usuarioRoutes = require('./routes/usuario');
+
+
+
 // ✅ Configuración de MercadoPago con el Access Token
 const mercadopago = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
@@ -41,6 +46,8 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/auth', authRoutes);
 app.use('/api/legal', checkAuth, legalRoutes);
 app.use('/api/contratos', checkAuth, contratosRoutes); // Nueva ruta
+app.use('/api/upgrade', upgradeRoutes);//para controlar si el usuario abono
+app.use('/api/usuario', usuarioRoutes);
 
 // ✅ Ruta para crear la preferencia de pago
 app.post('/api/payment', async (req, res) => {

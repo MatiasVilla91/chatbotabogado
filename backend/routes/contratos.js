@@ -1,6 +1,8 @@
 const express = require('express');
 const { checkAuth } = require('../middleware/auth');
 const { generarContratoIA } = require('../controllers/contratoController'); // 👈 Importar correctamente
+const { verificarLimite } = require('../middleware/limites');
+
 
 const router = express.Router();
 
@@ -8,9 +10,9 @@ const router = express.Router();
 console.log("📌 Funciones disponibles en contratoController:", { generarContratoIA });
 
 // ⛔ SI TIENES ESTO (MAL), CAMBIA `get` POR `post`
-router.get('/generar', checkAuth, generarContratoIA);  // ❌ ERROR porque `generarContratoIA` es POST
+//router.get('/generar', checkAuth, generarContratoIA);  // ❌ ERROR porque `generarContratoIA` es POST
 
 // ✅ SOLUCIÓN: Usa `post`, no `get`
-router.post('/generar', checkAuth, generarContratoIA);
+router.post('/generar', checkAuth, verificarLimite('contrato'), generarContratoIA);
 
 module.exports = router;

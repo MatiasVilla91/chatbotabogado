@@ -23,6 +23,7 @@ const handlePayment = async () => {
 };
 
 function Consultas() {
+  const [plan, setPlan] = useState(null); // 👈 para guardar esPremium y los créditos restantes
   const { token } = useContext(AuthContext);
   const [pregunta, setPregunta] = useState("");
   const [mensajes, setMensajes] = useState([]);
@@ -44,7 +45,7 @@ function Consultas() {
   
     const horaEnvio = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const nuevaEntrada = { tipo: "sent", texto: pregunta, hora: horaEnvio };
-
+  
     const historialParaEnviar = [
       ...mensajes
         .filter(m => m.tipo === "sent" || m.tipo === "received")
@@ -67,14 +68,34 @@ function Consultas() {
       );
   
       const horaRespuesta = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      setMensajes((prev) => [...prev, { tipo: "received", texto: response.data.respuesta, hora: horaRespuesta }]);
-
+      const mensajeIA = response.data.respuesta;
+  
+      setMensajes((prev) => [...prev, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }]);
+  
+      // 💾 Guardar chat solo si hay respuesta válida
+      await axios.post(`${backendUrl}/api/legal/guardar-chat`, 
+        { mensajes: [...mensajes, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }] },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
     } catch (error) {
-      setMensajes((prev) => [...prev, { tipo: "received", texto: "Error al obtener respuesta de la IA." }]);
+      setMensajes((prev) => [
+        ...prev,
+        {
+          tipo: "received",
+          texto:
+            error?.response?.status === 403
+              ? error.response.data.message || "Tu plan gratuito ha terminado. Actualizá a Premium para continuar."
+              : "Error al obtener respuesta de la IA."
+        }
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
+  
+
+  
 
   // Cargar historial desde localStorage al iniciar
 useEffect(() => {
@@ -87,11 +108,37 @@ useEffect(() => {
   localStorage.setItem('chatLegal', JSON.stringify(mensajes));
 }, [mensajes]);
 
+
+//MOSTRAR CANTIDAD DE PREGUNTAS FREE
+useEffect(() => {
+  const fetchEstado = async () => {
+    const response = await axios.get(`${backendUrl}/api/usuario/estado-plan`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setPlan(response.data);
+  };
+  fetchEstado();
+}, []);
+
   
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
+      {plan && !plan.esPremium && (
+  <Typography variant="body2" align="center" sx={{ mb: 2, color: '#ccc' }}>
+    💬 Consultas restantes: <strong>{plan.consultasRestantes}</strong> &nbsp;&nbsp;|&nbsp;&nbsp; 
+    📄 Contratos restantes: <strong>{plan.contratosRestantes}</strong>
+  </Typography>
+)}
+
+{plan && plan.esPremium && (
+  <Typography variant="body2" align="center" sx={{ mb: 2, color: '#81c784' }}>
+    🌟 Estás usando una cuenta Premium sin límites.
+  </Typography>
+)}
+
       <Typography variant="h4" align="center" gutterBottom sx={{ color: '#42a5f5', fontWeight: 'bold' }}>
+
         DICTUM IA
       </Typography>
       <Box sx={{ height: "60vh", overflowY: "auto", mb: 2, p: 2, backgroundColor: '#1e1e1e', borderRadius: 2, boxShadow: '0 4px 10px rgba(0,0,0,0.4)' }}>
