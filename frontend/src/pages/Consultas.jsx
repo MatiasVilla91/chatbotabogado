@@ -5,25 +5,31 @@ import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { SyncLoader } from "react-spinners";
+import { Modal } from "@mui/material";
+
+
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const handlePayment = async () => {
-  try {
-    const response = await axios.post(`${backendUrl}/api/payment`, {
-      description: "Asesoría Legal IA",
-      price: 1000,
-      quantity: 1,
-    });
-    window.location.href = response.data.init_point;
-  } catch (error) {
-    console.error("❌ Error al iniciar el pago:", error.response ? error.response.data : error.message);
-    alert("Error al iniciar el pago, revisa la consola para más detalles.");
-  }
-};
 
-function Consultas() {
+
+function Consultas() {  
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post(`${backendUrl}/api/payment`, {
+        description: "Asesoría Legal IA",
+        price: 1000,
+        quantity: 1,
+      });
+      window.location.href = response.data.init_point;
+    } catch (error) {
+      console.error("❌ Error al iniciar el pago:", error.response ? error.response.data : error.message);
+      alert("Error al iniciar el pago, revisa la consola para más detalles.");
+    }
+  };
+
   const [plan, setPlan] = useState(null); // 👈 para guardar esPremium y los créditos restantes
+  const [mostrarModal, setMostrarModal] = useState(false);
   const { token } = useContext(AuthContext);
   const [pregunta, setPregunta] = useState("");
   const [mensajes, setMensajes] = useState([]);
@@ -79,21 +85,19 @@ function Consultas() {
       );
   
     } catch (error) {
-      setMensajes((prev) => [
-        ...prev,
-        {
-          tipo: "received",
-          texto:
-            error?.response?.status === 403
-              ? error.response.data.message || "Tu plan gratuito ha terminado. Actualizá a Premium para continuar."
-              : "Error al obtener respuesta de la IA."
-        }
-      ]);
-    } finally {
-      setIsLoading(false);
+      const is403 = error?.response?.status === 403;
+  setMensajes((prev) => [
+    ...prev,
+    {
+      tipo: "received",
+      texto: is403
+        ? error.response.data.message || "Tu plan gratuito ha terminado. Actualizá a Premium para continuar."
+        : "Error al obtener respuesta de la IA."
     }
-  };
-  
+  ]);
+
+  if (is403) setMostrarModal(true);
+}
 
   
 
@@ -118,7 +122,7 @@ useEffect(() => {
     setPlan(response.data);
   };
   fetchEstado();
-}, []);
+}, []); } 
 
   
 
@@ -203,7 +207,49 @@ useEffect(() => {
       >
         Pagar con MercadoPago
       </Button>
+
+        {/*MODAL PARA PAGO*/}
+      <Modal open={mostrarModal} onClose={() => setMostrarModal(false)}>
+  <Box sx={{
+    width: 400,
+    mx: 'auto',
+    mt: '20vh',
+    p: 4,
+    bgcolor: '#1e1e1e',
+    color: '#fff',
+    borderRadius: 2,
+    boxShadow: 24,
+    textAlign: 'center'
+  }}>
+    <Typography variant="h6" gutterBottom>
+      ⚖️ ¡Tu plan gratuito ha terminado!
+    </Typography>
+    <Typography variant="body2" sx={{ mb: 3 }}>
+      Para seguir usando la IA legal, actualizá a una cuenta Premium y obtené acceso ilimitado a consultas y contratos.
+    </Typography>
+    <Button
+      variant="contained"
+      fullWidth
+      onClick={handlePayment}
+      sx={{ backgroundColor: '#0d6efd', '&:hover': { backgroundColor: '#0b5ed7' } }}
+    >
+      Actualizar a Premium
+    </Button>
+    <Button
+      variant="text"
+      fullWidth
+      onClick={() => setMostrarModal(false)}
+      sx={{ mt: 1, color: '#ccc' }}
+    >
+      Cancelar
+    </Button>
+  </Box>
+</Modal>
+
+
     </Container>
+    
+    
   );
 }
 
