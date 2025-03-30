@@ -31,22 +31,41 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Validación de campos vacíos
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email y contraseña son requeridos" });
+        }
+
+        // Verificar si el usuario existe
         const user = await User.findOne({ email });
         if (!user) {
+            console.error(`❌ Usuario no encontrado: ${email}`);
             return res.status(400).json({ message: "Usuario no encontrado" });
         }
 
+        // Verificar contraseña
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            console.error("❌ Contraseña incorrecta");
             return res.status(400).json({ message: "Contraseña incorrecta" });
+        }
+
+        // Generar el token JWT
+        if (!process.env.JWT_SECRET) {
+            console.error("❌ Clave JWT_SECRET no definida en el entorno");
+            return res.status(500).json({ message: "Configuración del servidor incorrecta" });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
 
-        res.json({ token });
+        console.log(`✅ Usuario autenticado: ${email}`);
+        res.json({ token, message: "Inicio de sesión exitoso" });
+
     } catch (error) {
-        res.status(500).json({ message: "Error en el servidor" });
+        console.error("❌ Error en el servidor al iniciar sesión:", error.message);
+        res.status(500).json({ message: "Error en el servidor", error: error.message });
     }
 });
+
 
 module.exports = router;
