@@ -17,9 +17,17 @@ const usuarioRoutes = require('./routes/usuario');
 
 
 // ✅ Configuración de MercadoPago con el Access Token
-const mercadopago = new MercadoPagoConfig({
-  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+//const mercadopago = new MercadoPagoConfig({
+//  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+//});
+const mercadopago = require("mercadopago");
+
+// Configuración de MercadoPago con el Access Token
+mercadopago.configure({
+  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN,
 });
+
+
 
 // ✅ CORS para local y producción
 const corsOptions = {
