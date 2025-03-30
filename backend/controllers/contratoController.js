@@ -1,4 +1,4 @@
-const { generarContratoDesdeMensaje } = require("../services/openaiService");
+const { generarContratoDesdeMensaje } = require("../services/openAIService");
 const { generarPDFContrato } = require("../utils/pdfGenerator");
 const { uploadToCloudinary } = require("../utils/uploadToCloudinary");
 const Contrato = require("../models/Contrato");
