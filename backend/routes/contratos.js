@@ -12,7 +12,11 @@ console.log("📌 Funciones disponibles en contratoController:", { generarContra
 // ⛔ SI TIENES ESTO (MAL), CAMBIA `get` POR `post`
 //router.get('/generar', checkAuth, generarContratoIA);  // ❌ ERROR porque `generarContratoIA` es POST
 
+
+
 // ✅ SOLUCIÓN: Usa `post`, no `get`
 router.post('/generar', checkAuth, verificarLimite('contrato'), generarContratoIA);
+
+
 
 module.exports = router;

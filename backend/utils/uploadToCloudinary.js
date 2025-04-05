@@ -8,32 +8,55 @@ cloudinary.config({
 });
 
 /**
- * Sube un archivo a Cloudinary y devuelve la URL pública
+ * Sube un archivo a Cloudinary y devuelve el public_id
  * @param {string} filePath - Ruta del archivo local
  * @param {string} userId - ID del usuario (opcional)
- * @returns {Promise<string>} - URL pública del archivo subido
+ * @returns {Promise<string>} - ID público del archivo subido
  */
 const uploadToCloudinary = async (filePath, userId = '') => {
     try {
-        // Configuración para subir como archivo accesible públicamente
         const result = await cloudinary.uploader.upload(filePath, {
-            resource_type: "raw", // Garantiza que el archivo PDF sea tratado correctamente
+            resource_type: "raw",
             folder: "drleyes/contratos",
             public_id: `contrato_${userId}_${Date.now()}`,
-            format: "pdf", // Asegura que el archivo tenga extensión PDF
-            use_filename: true, // Mantener el nombre del archivo
-            unique_filename: false, // No generar un nombre aleatorio
-            access_mode: "public" // Asegura que el archivo tenga acceso público
+            format: "pdf",
+            use_filename: true,
+            unique_filename: false,
+            type: "private", // Archivos privados
+            access_mode: "authenticated" // Solo accesible con token
         });
-
-        // Borrar el archivo local después de subir
-        fs.unlinkSync(filePath); 
-        console.log("☁️ URL del PDF en Cloudinary:", result.secure_url);
-        return result.secure_url;
+        fs.unlinkSync(filePath);
+        console.log("☁️ PDF subido de manera privada a Cloudinary:", result.public_id);
+        return result.public_id;
     } catch (error) {
         console.error("❌ Error al subir a Cloudinary:", error);
         throw new Error("No se pudo subir el archivo.");
     }
 };
 
-module.exports = { uploadToCloudinary };
+/**
+ * Genera una URL segura y temporal para descargar el archivo desde Cloudinary
+ * @param {string} publicId - ID público del archivo en Cloudinary
+ * @returns {string} - URL segura y temporal
+ */
+const getSecureUrl = (publicId) => {
+    try {
+        const secureUrl = cloudinary.url(publicId, {
+            resource_type: "raw",
+            type: "private", // Asegura que el acceso sea restringido
+            sign_url: true,  // Firma la URL para evitar acceso público
+            secure: true,    // URL segura (https)
+            transformation: [
+                { flags: "attachment" } // Forzar la descarga en lugar de abrir en el navegador
+            ],
+            expires_at: Math.floor(Date.now() / 1000) + 3600 // Expira en una hora
+        });
+        console.log("🔑 URL segura generada:", secureUrl);
+        return secureUrl;
+    } catch (error) {
+        console.error("❌ Error al generar la URL segura:", error);
+        throw new Error("No se pudo generar la URL segura.");
+    }
+};
+
+module.exports = { uploadToCloudinary, getSecureUrl };
