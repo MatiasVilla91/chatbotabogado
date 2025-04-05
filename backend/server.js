@@ -7,6 +7,7 @@ const legalRoutes = require('./routes/legal');
 const { checkAuth } = require('./middleware/auth');
 const { MercadoPagoConfig, Preference } = require("mercadopago");
 const contratosRoutes = require('./routes/contratos'); // Nueva ruta
+const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +17,9 @@ const usuarioRoutes = require('./routes/usuario');
 
 
 const whatsappRoutes = require('./routes/whatsapp');
+// Middleware para procesar form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // ✅ Configuración de MercadoPago con el Access Token
 //const mercadopago = new MercadoPagoConfig({
