@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const twilio = require('twilio');
+const { generarRespuestaLegal, generarContratoDesdeMensaje } = require('../services/openAIService');
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -8,14 +9,26 @@ const client = twilio(accountSid, authToken);
 
 router.post('/webhook', async (req, res) => {
     try {
-        console.log("📝 Request Body:", req.body);  // Log para ver el contenido del body
-
         const { Body, From } = req.body;
 
         console.log(`📩 Mensaje recibido de ${From}: ${Body}`);
 
-        // Ejemplo de respuesta simple
-        const respuesta = `Hola, recibí tu mensaje: ${Body}`;
+        let respuesta;
+
+        // Decidir si es una consulta legal o un contrato
+        if (Body.toLowerCase().includes("contrato")) {
+            respuesta = await generarContratoDesdeMensaje(Body);
+        } else {
+            try {
+                respuesta = await generarRespuestaLegal(Body);
+                if (!respuesta || respuesta.trim() === "") {
+                    respuesta = "No se pudo generar una respuesta adecuada. Por favor, intenta reformular tu consulta.";
+                }
+            } catch (error) {
+                console.error("❌ Error en generarRespuestaLegal:", error);
+                respuesta = "Ocurrió un error al procesar tu solicitud. Inténtalo de nuevo más tarde.";
+            }
+        }
 
         await client.messages.create({
             body: respuesta,
@@ -23,7 +36,7 @@ router.post('/webhook', async (req, res) => {
             to: From
         });
 
-        console.log(`✅ Mensaje enviado a ${From}`);
+        console.log(`✅ Mensaje enviado a ${From}: ${respuesta}`);
         res.status(200).send('Mensaje recibido');
     } catch (error) {
         console.error('❌ Error en el webhook:', error);
