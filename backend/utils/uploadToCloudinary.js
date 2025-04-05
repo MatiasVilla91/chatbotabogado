@@ -15,7 +15,7 @@ cloudinary.config({
 const uploadToCloudinary = async (filePath, userId = '') => {
     try {
         const result = await cloudinary.uploader.upload(filePath, {
-            resource_type: "raw",  // Asegura que se suba como archivo
+            resource_type: "auto",  // Asegura que se suba como archivo "raw"
             folder: "drleyes/contratos",
             public_id: `contrato_${userId}_${Date.now()}`,
             format: "pdf",  // Especifica que el archivo es un PDF
