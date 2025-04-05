@@ -10,24 +10,13 @@ const client = twilio(accountSid, authToken);
 router.post('/webhook', async (req, res) => {
     try {
         const { Body, From } = req.body;
-
         console.log(`📩 Mensaje recibido de ${From}: ${Body}`);
 
         let respuesta;
-
-        // Decidir si es una consulta legal o un contrato
         if (Body.toLowerCase().includes("contrato")) {
             respuesta = await generarContratoDesdeMensaje(Body);
         } else {
-            try {
-                respuesta = await generarRespuestaLegal(Body);
-                if (!respuesta || respuesta.trim() === "") {
-                    respuesta = "No se pudo generar una respuesta adecuada. Por favor, intenta reformular tu consulta.";
-                }
-            } catch (error) {
-                console.error("❌ Error en generarRespuestaLegal:", error);
-                respuesta = "Ocurrió un error al procesar tu solicitud. Inténtalo de nuevo más tarde.";
-            }
+            respuesta = await generarRespuestaLegal(Body);
         }
 
         await client.messages.create({
