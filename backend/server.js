@@ -15,6 +15,7 @@ const upgradeRoutes = require('./routes/upgrade');
 const usuarioRoutes = require('./routes/usuario');
 
 
+const whatsappRoutes = require('./routes/whatsapp');
 
 // ✅ Configuración de MercadoPago con el Access Token
 //const mercadopago = new MercadoPagoConfig({
@@ -95,6 +96,12 @@ app.post('/api/payment', async (req, res) => {
 app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
+
+//whp
+
+
+app.use('/api/whatsapp', whatsappRoutes);
+
 
 // ✅ Levantar el servidor
 app.listen(PORT, '0.0.0.0', () => {
