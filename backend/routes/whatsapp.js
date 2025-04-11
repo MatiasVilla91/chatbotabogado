@@ -28,6 +28,7 @@ router.post('/webhook', async (req, res) => {
         nombre: 'Invitado',
         email: `auto+${Date.now()}@dictum.com`,
         telefono: From,
+        password: 'temporal', // 👈 solución express
         esPremium: false,
         consultasRestantes: 5,
         contratosRestantes: 2
