@@ -6,6 +6,7 @@ const { generarRespuestaLegal, generarContratoDesdeMensaje } = require('../servi
 const { generarPDFContrato } = require('../utils/pdfGenerator');
 const { uploadToCloudinary } = require('../utils/uploadToCloudinary');
 const ChatLegal = require('../models/ChatLegal');
+const User = require('../models/User');
 const promptLegal = require('../utils/promptLegal');
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -18,8 +19,9 @@ router.post('/webhook', async (req, res) => {
     console.log(`📩 Mensaje recibido de ${From}: ${Body}`);
 
     let respuesta = '';
+    const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // 1️⃣ Recuperar historial anterior
+    // 1️⃣ Cargar historial anterior del usuario
     const historialDB = await ChatLegal.find({ usuario: From }).sort({ creado: 1 });
     let historial = [];
     historialDB.forEach(chat => {
@@ -32,10 +34,25 @@ router.post('/webhook', async (req, res) => {
     });
     historial = historial.slice(-10);
 
-    const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // 2️⃣ Comando /ayuda
+    if (Body.toLowerCase().includes("/ayuda")) {
+      respuesta = `📌 Comandos disponibles:\n- contrato: genera un contrato personalizado\n- /ultimo: muestra tu último contrato\n- /contratos: muestra los últimos contratos\n- /plan: consulta tu estado de cuenta\n- /ayuda: muestra este menú`;
+    }
 
-    // 2️⃣ Comando especial: /ultimo
-    if (Body.toLowerCase().includes("/ultimo")) {
+    // 3️⃣ Comando /plan
+    else if (Body.toLowerCase().includes("/plan")) {
+      const user = await User.findOne({ email: From });
+      if (!user) {
+        respuesta = "No encontré tu cuenta registrada. Usás el bot como visitante.";
+      } else if (user.esPremium) {
+        respuesta = "🌟 Tu cuenta es Premium. Tenés acceso ilimitado a consultas y contratos.";
+      } else {
+        respuesta = `🧾 Tu plan actual es Gratuito.\nConsultas restantes: ${user.consultasRestantes}\nContratos restantes: ${user.contratosRestantes}`;
+      }
+    }
+
+    // 4️⃣ Comando /ultimo
+    else if (Body.toLowerCase().includes("/ultimo")) {
       const ultimo = historialDB.reverse().find(c => c.url);
       if (ultimo) {
         respuesta = `📄 Aquí tienes tu último contrato: ${ultimo.url}`;
@@ -44,7 +61,17 @@ router.post('/webhook', async (req, res) => {
       }
     }
 
-    // 3️⃣ Generar contrato si detecta palabra "contrato"
+    // 5️⃣ Comando /contratos
+    else if (Body.toLowerCase().includes("/contratos")) {
+      const ultimos = historialDB.filter(c => c.url).slice(-3);
+      if (ultimos.length === 0) {
+        respuesta = "❗ No encontré contratos anteriores.";
+      } else {
+        respuesta = ultimos.map((c, i) => `📄 Contrato ${i + 1}: ${c.url}`).join("\n");
+      }
+    }
+
+    // 6️⃣ Generar contrato
     else if (Body.toLowerCase().includes("contrato")) {
       try {
         const contratoTexto = await generarContratoDesdeMensaje(Body);
@@ -69,7 +96,7 @@ router.post('/webhook', async (req, res) => {
       }
     }
 
-    // 4️⃣ Consulta legal normal con contexto y prompt especializado
+    // 7️⃣ Consulta legal normal con IA
     else {
       const openai = require("openai");
       const ia = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -96,7 +123,7 @@ router.post('/webhook', async (req, res) => {
       });
     }
 
-    // 5️⃣ Enviar la respuesta por WhatsApp
+    // 8️⃣ Enviar la respuesta al usuario
     await client.messages.create({
       body: respuesta,
       from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
