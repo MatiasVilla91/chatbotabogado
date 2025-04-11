@@ -25,7 +25,7 @@ router.post('/webhook', async (req, res) => {
     let user = await User.findOne({ telefono: From });
     if (!user) {
       user = await User.create({
-        nombre: 'Invitado',
+        name: 'Invitado',
         email: `auto+${Date.now()}@dictum.com`,
         telefono: From,
         password: 'temporal123', // 👈 solución express
