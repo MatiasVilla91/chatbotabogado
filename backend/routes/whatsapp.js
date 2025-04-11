@@ -21,8 +21,8 @@ router.post('/webhook', async (req, res) => {
     let respuesta = '';
     const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // 1️⃣ Cargar historial anterior del usuario
-    const historialDB = await ChatLegal.find({ usuario: From }).sort({ creado: 1 });
+    // 1️⃣ Cargar historial anterior del número de teléfono
+    const historialDB = await ChatLegal.find({ telefono: From }).sort({ creado: 1 });
     let historial = [];
     historialDB.forEach(chat => {
       chat.mensajes.forEach(m => {
@@ -41,7 +41,7 @@ router.post('/webhook', async (req, res) => {
 
     // 3️⃣ Comando /plan
     else if (Body.toLowerCase().includes("/plan")) {
-      const user = await User.findOne({ email: From });
+      const user = await User.findOne({ telefono: From });
       if (!user) {
         respuesta = "No encontré tu cuenta registrada. Usás el bot como visitante.";
       } else if (user.esPremium) {
@@ -81,7 +81,7 @@ router.post('/webhook', async (req, res) => {
         const urlPDF = await uploadToCloudinary(rutaPDF);
 
         await ChatLegal.create({
-          usuario: From,
+          telefono: From,
           mensajes: [
             { tipo: "sent", texto: Body, hora },
             { tipo: "received", texto: `✅ ¡Tu contrato está listo! Puedes descargarlo aquí: ${urlPDF}`, hora }
@@ -115,7 +115,7 @@ router.post('/webhook', async (req, res) => {
       respuesta = completion.choices?.[0]?.message?.content || "❗ No se pudo generar una respuesta válida.";
 
       await ChatLegal.create({
-        usuario: From,
+        telefono: From,
         mensajes: [
           { tipo: "sent", texto: Body, hora },
           { tipo: "received", texto: respuesta, hora }
