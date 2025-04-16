@@ -15,52 +15,69 @@ const promptLegal = require('../utils/promptLegal');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const router = express.Router();
 
-// 📌 Consulta legal con IA y guardado en MongoDB
-router.post('/consulta', checkAuth, verificarLimite('consulta'), async (req, res) => {
-  try {
-    const { pregunta } = req.body;
-    if (!pregunta) return res.status(400).json({ message: "Debes proporcionar una pregunta válida." });
+// Validaciones y manejo de tokens
+const { body, validationResult } = require('express-validator');
+const { truncarHistorialPorTokens } = require('../utils/tokenUtils');
 
-    const chatsAnteriores = await ChatLegal.find({ usuario: req.user.id }).sort({ creado: 1 });
-    let historial = [];
-    chatsAnteriores.forEach(chat => {
-      chat.mensajes.forEach(m => {
-        historial.push({
-          role: m.tipo === 'sent' ? 'user' : 'assistant',
-          content: m.texto
+
+// 📌 Consulta legal con IA y guardado en MongoDB
+router.post(
+  '/consulta',
+  checkAuth,
+  verificarLimite('consulta'),
+  body('pregunta').trim().notEmpty().withMessage("Debes proporcionar una pregunta válida."),
+  async (req, res) => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({ errores: errores.array() });
+    }
+
+    try {
+      const { pregunta } = req.body;
+
+      const chatsAnteriores = await ChatLegal.find({ usuario: req.user.id }).sort({ creado: 1 });
+
+      let historial = [];
+      chatsAnteriores.forEach(chat => {
+        chat.mensajes.forEach(m => {
+          historial.push({
+            role: m.tipo === 'sent' ? 'user' : 'assistant',
+            content: m.texto
+          });
         });
       });
-    });
-    historial = historial.slice(-10);
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: promptLegal },
-        ...historial,
-        { role: "user", content: pregunta }
-      ],
-      temperature: 0.2,
-      max_tokens: 1000
-    });
+      const historialReducido = truncarHistorialPorTokens(historial, 8192 - 1000);
 
-    const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
-    const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: promptLegal },
+          ...historialReducido,
+          { role: "user", content: pregunta }
+        ],
+        temperature: 0.2,
+        max_tokens: 1000
+      });
 
-    await ChatLegal.create({
-      usuario: req.user.id,
-      mensajes: [
-        { tipo: "sent", texto: pregunta, hora },
-        { tipo: "received", texto: respuesta, hora }
-      ]
-    });
+      const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
+      const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    res.json({ respuesta });
-  } catch (error) {
-    console.error("❌ Error en la consulta legal:", error);
-    res.status(500).json({ message: "Error al consultar la IA", error: error.message });
-  }
+      await ChatLegal.create({
+        usuario: req.user.id,
+        mensajes: [
+          { tipo: "sent", texto: pregunta, hora },
+          { tipo: "received", texto: respuesta, hora }
+        ]
+      });
+
+      res.json({ respuesta });
+    } catch (error) {
+      console.error("❌ Error en la consulta legal:", error);
+      res.status(500).json({ message: "Error al consultar la IA", error: error.message });
+    }
 });
+
 
 // 🧾 Subida de PDF y extracción de texto
 router.post('/subir-pdf', checkAuth, upload.single('archivo'), async (req, res) => {
@@ -78,29 +95,48 @@ router.post('/subir-pdf', checkAuth, upload.single('archivo'), async (req, res) 
   }
 });
 
+
 // ❓ Preguntas sobre contenido de PDF
-router.post('/consulta-pdf', checkAuth, async (req, res) => {
-  try {
-    const { pregunta, contenidoPDF } = req.body;
-    if (!pregunta || !contenidoPDF) return res.status(400).json({ message: "Debes proporcionar una pregunta y el contenido del PDF." });
+router.post(
+  '/consulta-pdf',
+  checkAuth,
+  [
+    body('pregunta').trim().notEmpty().withMessage("Debes proporcionar una pregunta."),
+    body('contenidoPDF').trim().notEmpty().withMessage("Debes proporcionar el contenido del PDF.")
+  ],
+  async (req, res) => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({ errores: errores.array() });
+    }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: "Eres un asistente legal experto en derecho Argentino que responde preguntas sobre documentos legales." },
-        { role: "user", content: `Aquí tienes el contenido del documento:\n"${contenidoPDF}"\n\nPregunta: ${pregunta}` }
-      ],
-      temperature: 0.2,
-      max_tokens: 1000
-    });
+    try {
+      const { pregunta, contenidoPDF } = req.body;
 
-    const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
-    res.json({ respuesta });
-  } catch (error) {
-    console.error("❌ Error en la consulta a OpenAI:", error);
-    res.status(500).json({ message: "Error al consultar la IA", error: error.message });
-  }
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: "Eres un asistente legal experto en derecho Argentino que responde preguntas sobre documentos legales."
+          },
+          {
+            role: "user",
+            content: `Aquí tienes el contenido del documento:\n"${contenidoPDF}"\n\nPregunta: ${pregunta}`
+          }
+        ],
+        temperature: 0.2,
+        max_tokens: 1000
+      });
+
+      const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
+      res.json({ respuesta });
+    } catch (error) {
+      console.error("❌ Error en la consulta a OpenAI:", error);
+      res.status(500).json({ message: "Error al consultar la IA", error: error.message });
+    }
 });
+
 
 // 📁 Historial de contratos
 router.get('/historial', checkAuth, async (req, res) => {
@@ -115,6 +151,7 @@ router.get('/historial', checkAuth, async (req, res) => {
     res.status(500).json({ message: "Error al obtener historial", error: error.message });
   }
 });
+
 
 // 📎 Descargar contrato desde Cloudinary
 router.get('/descargar/:id', checkAuth, async (req, res) => {

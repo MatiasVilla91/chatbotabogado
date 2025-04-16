@@ -16,6 +16,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "gpt-3-encoder": "^1.1.4",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^1.5.17",
     "mongoose": "^8.12.1",
@@ -23,6 +25,7 @@
     "openai": "^4.86.2",
     "pdf-parse": "^1.1.1",
     "pdfkit": "^0.16.0",
-    "twilio": "^5.5.1"
+    "twilio": "^5.5.1",
+    "winston": "^3.17.0"
   }
 }

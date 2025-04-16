@@ -26,3 +26,6 @@ dist-ssr
 .env.produccion
 contrato.pdf
 contrato.json
+
+# Panel de administración local
+admin-panel.html

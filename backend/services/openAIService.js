@@ -1,6 +1,8 @@
 const { OpenAI } = require("openai");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const { encode } = require('gpt-3-encoder');
+
 
 // Función genérica para hacer una consulta a OpenAI
 const generarRespuesta = async (modelo, mensajes, temperatura, maxTokens) => {
