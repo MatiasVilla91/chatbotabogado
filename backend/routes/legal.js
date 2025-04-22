@@ -14,6 +14,8 @@ const promptLegal = require('../utils/promptLegal');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const router = express.Router();
+const logger = require('../utils/logger'); // ✅ al principio, limpio y global
+
 
 // Validaciones y manejo de tokens
 const { body, validationResult } = require('express-validator');
@@ -31,6 +33,8 @@ router.post(
     if (!errores.isEmpty()) {
       return res.status(400).json({ errores: errores.array() });
     }
+
+
 
     try {
       const { pregunta } = req.body;
@@ -70,6 +74,9 @@ router.post(
           { tipo: "received", texto: respuesta, hora }
         ]
       });
+
+      logger.info(`📚 Consulta legal registrada para usuario ${req.user.id}`);
+
 
       res.json({ respuesta });
     } catch (error) {
@@ -130,6 +137,8 @@ router.post(
       });
 
       const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
+      logger.info(`📑 Consulta sobre PDF respondida para usuario ${req.user.id}`);
+
       res.json({ respuesta });
     } catch (error) {
       console.error("❌ Error en la consulta a OpenAI:", error);
@@ -159,6 +168,8 @@ router.get('/descargar/:id', checkAuth, async (req, res) => {
     const contrato = await Contrato.findById(req.params.id);
     if (!contrato) return res.status(404).json({ message: "Contrato no encontrado." });
     if (contrato.usuario.toString() !== req.user.id) return res.status(403).json({ message: "No autorizado." });
+
+  logger.info(`📥 Descarga de contrato: ${contrato._id} por usuario ${req.user.id}`);
 
     return res.redirect(contrato.ruta_pdf);
   } catch (error) {

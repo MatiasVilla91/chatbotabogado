@@ -13,6 +13,8 @@ const usuarioRoutes = require('./routes/usuario');
 const whatsappRoutes = require('./routes/whatsapp');
 const adminRoutes = require('./routes/admin');
 const { checkAuth } = require('./middleware/auth');
+const logger = require('./utils/logger');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -96,5 +98,6 @@ app.get('/', (req, res) => {
 
 // ✅ Levantar el servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
+  logger.info(`🚀 Servidor corriendo en el puerto ${PORT}`);
+
 });

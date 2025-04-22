@@ -11,7 +11,7 @@ const logger = createLogger({
   transports: [
     new transports.Console(),
     // Descomenta para guardar en archivo:
-    // new transports.File({ filename: 'logs/app.log' })
+     new transports.File({ filename: 'logs/app.log' })
   ]
 });
 

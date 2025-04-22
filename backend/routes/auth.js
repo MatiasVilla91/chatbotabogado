@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require('../models/User'); // Modelo de usuario
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const logger = require('../utils/logger'); // al inicio del archivo si no está
+
 
 // Ruta para registro
 router.post('/register', async (req, res) => {
@@ -19,6 +21,8 @@ router.post('/register', async (req, res) => {
 
         user = new User({ name, email, password: hashedPassword });
         await user.save();
+        logger.info(`🆕 Nuevo registro: ${email}`);
+
 
         res.status(201).json({ message: "Usuario creado correctamente" });
     } catch (error) {
@@ -31,41 +35,36 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validación de campos vacíos
         if (!email || !password) {
             return res.status(400).json({ message: "Email y contraseña son requeridos" });
         }
 
-        // Verificar si el usuario existe
         const user = await User.findOne({ email });
         if (!user) {
-            console.error(`❌ Usuario no encontrado: ${email}`);
+            logger.warn(`❌ Intento de login con email inexistente: ${email}`);
             return res.status(400).json({ message: "Usuario no encontrado" });
         }
 
-        // Verificar contraseña
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            console.error("❌ Contraseña incorrecta");
+            logger.warn(`❌ Contraseña incorrecta para: ${email}`);
             return res.status(400).json({ message: "Contraseña incorrecta" });
         }
 
-        // Generar el token JWT
         if (!process.env.JWT_SECRET) {
-            console.error("❌ Clave JWT_SECRET no definida en el entorno");
+            logger.error("❌ JWT_SECRET no definida en el entorno");
             return res.status(500).json({ message: "Configuración del servidor incorrecta" });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
 
-        console.log(`✅ Usuario autenticado: ${email}`);
+        logger.info(`🔓 Inicio de sesión: ${email}`);
         res.json({ token, message: "Inicio de sesión exitoso" });
 
     } catch (error) {
-        console.error("❌ Error en el servidor al iniciar sesión:", error.message);
+        logger.error(`❌ Error al iniciar sesión: ${error.message}`);
         res.status(500).json({ message: "Error en el servidor", error: error.message });
     }
 });
-
 
 module.exports = router;
