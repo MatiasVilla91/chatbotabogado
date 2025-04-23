@@ -14,6 +14,9 @@ const whatsappRoutes = require('./routes/whatsapp');
 const adminRoutes = require('./routes/admin');
 const { checkAuth } = require('./middleware/auth');
 const logger = require('./utils/logger');
+//sanitize
+const mongoSanitize = require('express-mongo-sanitize');
+
 
 
 const app = express();
@@ -23,6 +26,7 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(mongoSanitize()); // sanitize
 
 // ✅ CORS para local y producción
 const corsOptions = {

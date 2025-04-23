@@ -1,56 +1,71 @@
-import { Container, Typography, Button, Box, Divider, Paper } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  useMediaQuery
+} from "@mui/material";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ShieldIcon from "@mui/icons-material/Shield";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Link } from "react-router-dom";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
 
 function Home() {
+  const isMobile = useMediaQuery('(max-width:600px)');
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 6, textAlign: "center" }}>
-      <Paper elevation={3} sx={{ padding: 5, borderRadius: 3 }}>
-        <Typography variant="h3" sx={{ mb: 3, fontWeight: "bold", color: "#eeee" }}>
-          Transforma tu práctica legal hoy
-        </Typography>
-        <Typography variant="h5" sx={{ mb: 4 }}>
-          La inteligencia artificial que potencia tu éxito.
-        </Typography>
-        <Typography variant="body1" sx={{ mb: 4 }}>
-          ¿Te sientes abrumado por la complejidad legal? <strong>DICTUM IA</strong> te ofrece respuestas rápidas, precisas y actualizadas. Accede a un asistente 24/7 y toma decisiones legales seguras en cuestión de minutos.
-        </Typography>
-        <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Beneficios exclusivos para ti:
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-          <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CheckCircleIcon color="success" /> Respuestas inmediatas a tus consultas legales.
-          </Typography>
-          <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CheckCircleIcon color="success" /> Optimiza tu tiempo y aumenta tu productividad.
-          </Typography>
-          <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CheckCircleIcon color="success" /> Accede a un asistente disponible 24/7.
-          </Typography>
-          <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CheckCircleIcon color="success" /> Información precisa y respaldada por las últimas normativas.
-          </Typography>
-        </Box>
-        <Divider sx={{ my: 3 }} />
-        <Typography variant="body2" sx={{ mb: 3 }}>
-          Comienza sin riesgos y descubre cómo <strong>DICTUM IA</strong> puede transformar tu manera de trabajar.
-        </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-          <Button variant="contained" color="primary" size="large" component={Link} to="/login" sx={{ padding: '12px 24px', fontWeight: 'bold' }}>
-            Accede Ahora
-          </Button>
-          <Button variant="outlined" color="secondary" size="large" component={Link} to="/register" sx={{ padding: '12px 24px', fontWeight: 'bold' }}>
-            Empieza Gratis
-          </Button>
-        </Box>
-        <Typography variant="caption" display="block" sx={{ mt: 4, color: "gray" }}>
-          *Oferta válida hasta el 31 de marzo. ¡No dejes pasar la oportunidad de revolucionar tu práctica legal!
-        </Typography>
-      </Paper>
-    </Container>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundColor: "#111",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        textAlign: "center",
+        px: 2,
+        pt: isMobile ? 10 : 14,
+      }}
+    >
+      <Typography
+        variant={isMobile ? "h4" : "h3"}
+        sx={{
+          fontWeight: "bold",
+          color: "#fff",
+          mb: 2,
+          whiteSpace: "nowrap",
+        }}
+      >
+        Dictum IA
+      </Typography>
+
+      <Typography variant="h6" color="#ccc" sx={{ mb: 4, maxWidth: 500 }}>
+        La inteligencia artificial legal a tu servicio.
+      </Typography>
+
+      <Button
+        component={Link}
+        to="/login"
+        variant="contained"
+        sx={{
+          backgroundColor: "#0a84ff",
+          color: "#fff",
+          borderRadius: "12px",
+          px: 4,
+          py: 1.5,
+          fontWeight: "bold",
+          mb: 6,
+          "&:hover": {
+            backgroundColor: "#006fdd",
+          },
+        }}
+      >
+        Accedé Ahora
+      </Button>
+
+      
+    </Box>
   );
 }
 
