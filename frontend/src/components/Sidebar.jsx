@@ -85,7 +85,7 @@ function Sidebar() {
     <>
       {isMobile ? (
         <>
-          {/* Botón hamburguesa visible solo en mobile */}
+          {/* Botón hamburguesa visible solo en mobile  todo esta ok*/}
           <IconButton
             onClick={() => setOpen(true)}
             sx={{
