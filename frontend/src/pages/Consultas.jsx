@@ -1,4 +1,4 @@
-// Consultas.jsx - Con animación GPT-like y typing effect
+// Consultas.jsx - Estilo refinado estilo GPT con globos suaves y animación fade
 import { useState, useContext, useEffect, useRef } from "react";
 import {
   Box,
@@ -11,7 +11,6 @@ import {
   InputAdornment
 } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import { SyncLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
@@ -24,13 +23,14 @@ function Consultas() {
   const { token } = useContext(AuthContext);
   const [pregunta, setPregunta] = useState("");
   const [mensajes, setMensajes] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [typedRespuesta, setTypedRespuesta] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef(null);
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [mensajes]);
+  }, [mensajes, typedRespuesta]);
 
   useEffect(() => {
     const saved = localStorage.getItem('chatLegal');
@@ -83,7 +83,8 @@ function Consultas() {
 
     setMensajes((prev) => [...prev, nuevaEntrada]);
     setPregunta("");
-    setIsLoading(true);
+    setTypedRespuesta("");
+    setIsTyping(true);
 
     try {
       const response = await axios.post(
@@ -95,22 +96,22 @@ function Consultas() {
       const horaRespuesta = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const mensajeIA = response.data.respuesta;
 
-      setMensajes((prev) => [...prev, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }]);
+      setIsTyping(false);
+      setMensajes(prev => [...prev, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }]);
 
-      await axios.post(`${backendUrl}/api/legal/guardar-chat`, 
+      axios.post(`${backendUrl}/api/legal/guardar-chat`,
         { mensajes: [...mensajes, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
     } catch (error) {
       const is403 = error?.response?.status === 403;
+      setIsTyping(false);
       setMensajes((prev) => [...prev, {
         tipo: "received",
         texto: is403 ? (error.response.data.message || "Tu plan gratuito ha terminado. Actualizá a Premium para continuar.") : "Error al obtener respuesta de la IA."
       }]);
       if (is403) setMostrarModal(true);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -132,8 +133,8 @@ function Consultas() {
           {mensajes.map((msg, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
@@ -143,12 +144,14 @@ function Consultas() {
                 </Typography>
                 <Box
                   sx={{
-                    backgroundColor: msg.tipo === "sent" ? '#2e2e2e' : '#0a84ff',
+                    backgroundColor: msg.tipo === "sent" ? '#2e2e2e' : '#1e1e1e',
                     color: '#fff',
                     p: 2,
                     borderRadius: 2,
                     textAlign: msg.tipo === "sent" ? "right" : "left",
                     maxWidth: "100%",
+                    whiteSpace: 'pre-wrap',
+                    border: msg.tipo === "received" ? '1px solid #444' : 'none'
                   }}
                 >
                   <Typography variant="body1">{msg.texto}</Typography>
@@ -158,28 +161,44 @@ function Consultas() {
           ))}
         </AnimatePresence>
 
-        {isLoading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <Typography variant="body2" color="#ccc">Dictum IA está escribiendo...</Typography>
-          </Box>
+        {isTyping && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" sx={{ color: "#999", mb: 0.5 }}>
+                ⚖️ Dictum IA – escribiendo...
+              </Typography>
+              <Box
+                sx={{
+                  backgroundColor: '#1e1e1e',
+                  color: '#fff',
+                  p: 2,
+                  borderRadius: 2,
+                  textAlign: "left",
+                  maxWidth: "100%",
+                  whiteSpace: 'pre-wrap',
+                  fontSize: '1rem',
+                  border: '1px solid #444'
+                }}
+              >
+                <Typography variant="body1">...</Typography>
+              </Box>
+            </Box>
+          </motion.div>
         )}
+
         <div ref={chatEndRef} />
       </Box>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          px: isMobile ? 2 : 6,
-          py: 2,
-          backgroundColor: '#111',
-          borderTop: '1px solid #222'
-        }}
-      >
+      <Box component="form" onSubmit={handleSubmit} sx={{ px: isMobile ? 2 : 6, py: 2, backgroundColor: '#111', borderTop: '1px solid #222' }}>
         <TextField
           fullWidth
           placeholder="Escribí tu consulta legal..."
           value={pregunta}
+          autoComplete="off"
           onChange={(e) => setPregunta(e.target.value)}
           sx={{ input: { color: '#fff' }, backgroundColor: '#1a1a1a', borderRadius: 2 }}
           InputProps={{
