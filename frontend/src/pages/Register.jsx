@@ -1,6 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import { Container, TextField, Button, Typography } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography
+} from "@mui/material";
+import AuthCard from "../components/AuthCard"; // ✅ importamos el nuevo layout
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -12,29 +18,29 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${backendUrl}/api/auth/register`, {
+      await axios.post(`${backendUrl}/api/auth/register`, {
         name,
         email,
         password,
       });
       alert("✅ Registro exitoso");
     } catch (error) {
-      console.error("❌ Error en el registro:", error.response?.data || error.message);
+      console.error("❌ Error:", error.response?.data || error.message);
       alert(error.response?.data?.message || "Error al registrar usuario");
     }
   };
 
   return (
-    <Container>
-      <Typography variant="h4" sx={{ mt: 4 }}>
-        Registrarse
+    <AuthCard>
+      <Typography variant="h4" align="center" sx={{ color: '#ffff', fontWeight: 'bold', mb: 3 }}>
+        Crear Cuenta
       </Typography>
-      <form onSubmit={handleRegister} style={{ marginTop: "20px" }}>
+      <form onSubmit={handleRegister}>
         <TextField
           fullWidth
           label="Nombre"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(ea) => setName(e.target.value)}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -52,11 +58,22 @@ function Register() {
           onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 1 }}
+        >
           Registrarse
         </Button>
+        <Typography align="center" variant="body2" sx={{ mt: 2, color: '#ccc' }}>
+          ¿Ya tenés cuenta?{" "}
+          <Link to="/login" style={{ color: "#0a84ff", textDecoration: "none" }}>
+            Iniciá sesión
+          </Link>
+        </Typography>
       </form>
-    </Container>
+    </AuthCard>
   );
 }
 

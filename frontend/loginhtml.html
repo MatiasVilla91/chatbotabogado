@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login - DrLeyes</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input { padding: 5px; width: 250px; }
+    button { padding: 7px 15px; margin-top: 10px; }
+    pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>Iniciar sesión como admin</h2>
+  <form id="loginForm">
+    <label>Email:</label><br>
+    <!-- 🔁 Cambiado a type="text" -->
+    <input type="text" id="email" value="mati" required><br><br>
+
+    <label>Contraseña:</label><br>
+    <input type="password" id="password" required><br><br>
+
+    <button type="submit">Iniciar sesión</button>
+  </form>
+
+  <hr>
+
+  <h3>Respuesta:</h3>
+  <pre id="output">...</pre>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const output = document.getElementById('output');
+
+    let token = '';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        output.textContent = "🔐 Iniciando sesión...";
+
+        const res = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Login fallido");
+
+        token = data.token;
+        output.textContent = `✅ Login exitoso. Token:\n\n${token}\n\nConsultando /admin/usuarios...`;
+
+        // Consultar admin
+        const adminRes = await fetch('http://localhost:5000/admin/usuarios', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const adminData = await adminRes.json();
+
+        output.textContent += `\n\n📋 Resultado:\n\n${JSON.stringify(adminData, null, 2)}`;
+
+      } catch (err) {
+        output.textContent = `❌ Error:\n${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Admin - DrLeyes</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f0f0f0; }
+    .token-input { width: 80%; padding: 5px; }
+    .btn { padding: 5px 10px; cursor: pointer; }
+    .output { white-space: pre-wrap; background: #f7f7f7; padding: 10px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>👨‍⚖️ Panel de Administración - DrLeyes</h2>
+
+  <label>🔐 JWT Token:</label><br>
+  <input type="text" id="token" class="token-input" placeholder="Pegá tu token aquí"><br><br>
+  <button onclick="cargarUsuarios()">📋 Cargar usuarios</button>
+
+  <table id="usuariosTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Premium</th>
+        <th>Consultas</th>
+        <th>Contratos</th>
+        <th>📄 Ver contratos</th>
+        <th>💬 Ver chats</th>
+      </tr>
+    </thead>
+    <tbody id="usuariosBody"></tbody>
+  </table>
+
+  <div id="resultado" class="output"></div>
+
+  <script>
+    async function cargarUsuarios() {
+      const token = document.getElementById('token').value;
+      const tabla = document.getElementById('usuariosTable');
+      const cuerpo = document.getElementById('usuariosBody');
+      const resultado = document.getElementById('resultado');
+      resultado.innerHTML = '⏳ Cargando usuarios...';
+
+      try {
+        const res = await fetch('http://localhost:5000/admin/usuarios', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Error al obtener usuarios");
+
+        cuerpo.innerHTML = '';
+        data.forEach(usuario => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${usuario.name || '-'}</td>
+            <td>${usuario.email}</td>
+            <td>${usuario.esPremium ? '✅' : '❌'}</td>
+            <td>${usuario.consultasRestantes}</td>
+            <td>${usuario.contratosRestantes}</td>
+            <td><button class="btn" onclick="verContratos('${usuario._id}', '${token}')">📄</button></td>
+            <td><button class="btn" onclick="verConsultas('${usuario._id}', '${token}')">💬</button></td>
+          `;
+          cuerpo.appendChild(tr);
+        });
+
+        tabla.style.display = 'table';
+        resultado.innerHTML = `✅ ${data.length} usuarios cargados.`;
+      } catch (error) {
+        resultado.innerHTML = `❌ Error: ${error.message}`;
+      }
+    }
+
+    async function verContratos(userId, token) {
+      const res = await fetch(`http://localhost:5000/admin/contratos/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      document.getElementById('resultado').innerText = `📄 Contratos:\n${JSON.stringify(data, null, 2)}`;
+    }
+
+    async function verConsultas(userId, token) {
+      const res = await fetch(`http://localhost:5000/admin/consultas/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      document.getElementById('resultado').innerText = `💬 Consultas:\n${JSON.stringify(data, null, 2)}`;
+    }
+  </script>
+</body>
+</html>

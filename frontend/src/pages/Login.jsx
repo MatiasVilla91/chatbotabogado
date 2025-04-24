@@ -1,11 +1,11 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { Container, TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Typography } from "@mui/material";
 import axios from "axios";
+import AuthCard from "../components/AuthCard"; // ✅ Usamos el mismo layout
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-console.log("✅ Backend URL:", backendUrl);
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -13,21 +13,13 @@ function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     try {
       const response = await axios.post(`${backendUrl}/api/auth/login`, {
         email,
         password,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
-  
       login(response.data.token);
       navigate("/consultas");
     } catch (error) {
@@ -35,14 +27,17 @@ function Login() {
       alert("Error al iniciar sesión");
     }
   };
-  
 
   return (
-    <Container>
-      <Typography variant="h4" sx={{ mt: 4 }}>
+    <AuthCard>
+      <Typography
+        variant="h4"
+        align="center"
+        sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}
+      >
         Iniciar Sesión
       </Typography>
-      <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
+      <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
           label="Correo Electrónico"
@@ -58,11 +53,22 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 1 }}
+        >
           Iniciar Sesión
         </Button>
+        <Typography align="center" variant="body2" sx={{ mt: 2, color: "#ccc" }}>
+          ¿No tenés cuenta?{" "}
+          <Link to="/register" style={{ color: "#0a84ff", textDecoration: "none" }}>
+            Registrate
+          </Link>
+        </Typography>
       </form>
-    </Container>
+    </AuthCard>
   );
 }
 
