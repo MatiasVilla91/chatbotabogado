@@ -20,13 +20,20 @@ function Login() {
         email,
         password,
       });
-      login(response.data.token);
+      console.log("🧠 Datos que llegan del backend:", response.data);
+
+      login(response.data.token, response.data.user);
+      
+
       navigate("/consultas");
     } catch (error) {
       console.error("❌ Error:", error.response?.data || error.message);
       alert("Error al iniciar sesión");
     }
   };
+
+  
+
 
   return (
     <AuthCard>

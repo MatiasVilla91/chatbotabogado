@@ -6,6 +6,11 @@ import Register from "./pages/Register";
 import Caracteristicas from "./pages/Caracteristicas"; // ✅ Ruta correcta
 import FloatingHelpButton from "./components/FloatingHelpButton";
 import MainLayout from "./layouts/MainLayout";
+import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
+import TerminosCondiciones from "./pages/TerminosCondiciones";
+import Planes from "./pages/Planes";
+import Historial from "./pages/Historial";
+
 
 function App() {
   return (
@@ -37,6 +42,11 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/privacidad" element={<PoliticaPrivacidad />} />
+        <Route path="/terminos" element={<TerminosCondiciones />} />
+        <Route path="/planes" element={<Planes />} />
+        <Route path="/historial" element={<Historial />} />
+
       </Routes>
 
       <FloatingHelpButton />

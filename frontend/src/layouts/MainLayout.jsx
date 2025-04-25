@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext"; // ✅ Importamos el contexto
 import Sidebar from "../components/Sidebar";
+import UserMenu from "../components/UserMenu"; // ajustá ruta si es necesario
+
 
 const MainLayout = ({ children }) => {
   const { token, logout } = useContext(AuthContext); // ✅ Accedemos al token
@@ -74,6 +76,19 @@ const MainLayout = ({ children }) => {
               Cerrar sesión
             </Button>
           )}
+
+<Box
+  sx={{
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    px: 4,
+    py: 2,
+  }}
+>
+  <UserMenu />
+</Box>
+
         </Box>
 
         {children}

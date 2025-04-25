@@ -40,7 +40,7 @@ function Register() {
           fullWidth
           label="Nombre"
           value={name}
-          onChange={(ea) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           sx={{ mb: 2 }}
         />
         <TextField
