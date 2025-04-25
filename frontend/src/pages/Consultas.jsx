@@ -1,4 +1,5 @@
 // Consultas.jsx - Estilo refinado estilo GPT con globos suaves y animación fade
+import { useSearchParams } from "react-router-dom";
 import { useState, useContext, useEffect, useRef } from "react";
 import {
   Box,
@@ -27,15 +28,28 @@ function Consultas() {
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef(null);
   const isMobile = useMediaQuery('(max-width:600px)');
+  const [searchParams] = useSearchParams();
+  const chatId = searchParams.get("id");
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensajes, typedRespuesta]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('chatLegal');
-    if (saved) setMensajes(JSON.parse(saved));
-  }, []);
+    if (chatId && token) {
+      const fetchConversacion = async () => {
+        try {
+          const res = await axios.get(`${backendUrl}/api/legal/chat/${chatId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setMensajes(res.data.mensajes || []);
+        } catch (error) {
+          console.error("❌ Error al cargar la conversación:", error);
+        }
+      };
+      fetchConversacion();
+    }
+  }, [chatId, token]);
 
   useEffect(() => {
     localStorage.setItem('chatLegal', JSON.stringify(mensajes));
@@ -69,6 +83,17 @@ function Consultas() {
     e.preventDefault();
     if (!token) {
       setMensajes((prev) => [...prev, { tipo: "received", texto: "No tienes un token válido. Inicia sesión." }]);
+      // ✅ GUARDAR EN BD para que aparezca en el Sidebar
+await axios.post(`${backendUrl}/api/legal/guardar-chat`, 
+  {
+    mensajes: [
+      { tipo: "sent", texto: pregunta, hora: horaEnvio },
+      { tipo: "received", texto: mensajeIA, hora: horaRespuesta }
+    ]
+  },
+  { headers: { Authorization: `Bearer ${token}` } }
+);
+
       return;
     }
 
@@ -98,12 +123,7 @@ function Consultas() {
 
       setIsTyping(false);
       setMensajes(prev => [...prev, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }]);
-
-      axios.post(`${backendUrl}/api/legal/guardar-chat`,
-        { mensajes: [...mensajes, { tipo: "received", texto: mensajeIA, hora: horaRespuesta }] },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
+      localStorage.setItem("refreshSidebar", Date.now());
     } catch (error) {
       const is403 = error?.response?.status === 403;
       setIsTyping(false);

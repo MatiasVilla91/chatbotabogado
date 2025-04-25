@@ -13,12 +13,45 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HistoryIcon from "@mui/icons-material/History";
 import GavelIcon from "@mui/icons-material/Gavel";
 import LockIcon from "@mui/icons-material/Lock";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import api from "../api";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 function Sidebar() {
   const isMobile = useMediaQuery("(max-width:768px)");
   const [open, setOpen] = useState(false);
+  const [conversaciones, setConversaciones] = useState([]);
+  const { token } = useContext(AuthContext);
+
+  const fetchConversaciones = async () => {
+    try {
+      const response = await api.get("/legal/conversaciones");
+
+      const lista = response.data?.conversaciones ?? [];
+      setConversaciones(lista);
+    } catch (error) {
+      console.error("Error al obtener conversaciones:", error);
+      setConversaciones([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchConversaciones();
+  }, [token]);
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      const refresh = localStorage.getItem("refreshSidebar");
+      if (refresh) {
+        fetchConversaciones();
+        localStorage.removeItem("refreshSidebar");
+      }
+    }, 1500);
+    return () => clearInterval(intervalo);
+  }, []);
 
   const navItems = [
     { text: "Inicio", icon: <HomeIcon />, to: "/" },
@@ -55,20 +88,63 @@ function Sidebar() {
               }}
             >
               {item.icon}
-              <Typography variant="body2"
-              sx={{
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-              >{item.text}
-
+              <Typography
+                variant="body2"
+                sx={{
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {item.text}
               </Typography>
             </Box>
           </Link>
         </Tooltip>
       ))}
     </>
+  );
+
+  const renderHistorial = () => (
+    <Box sx={{ mt: 3 }}>
+      <Typography
+        variant="body2"
+        sx={{ color: "#888", mb: 1, fontSize: "0.75rem", textTransform: "uppercase" }}
+      >
+        Conversaciones
+      </Typography>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        {conversaciones.length === 0 ? (
+          <Typography variant="body2" sx={{ color: "#666", fontSize: "0.8rem" }}>
+            Sin conversaciones aún.
+          </Typography>
+        ) : (
+          conversaciones.map((c) => (
+            <Link
+              key={c._id}
+              to={`/consultas?id=${c._id}`}
+              onClick={() => setOpen(false)}
+              style={{ textDecoration: "none", color: "#ccc" }}
+            >
+              <Box
+                sx={{
+                  px: 1,
+                  py: 0.5,
+                  borderRadius: 1,
+                  fontSize: "0.875rem",
+                  "&:hover": {
+                    backgroundColor: "#2c2c2c",
+                    color: "#fff",
+                  },
+                }}
+              >
+                {c.titulo || "Sin título"}
+              </Box>
+            </Link>
+          ))
+        )}
+      </Box>
+    </Box>
   );
 
   const sidebarContent = (
@@ -94,39 +170,35 @@ function Sidebar() {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {renderNavLinks(navItems)}
         </Box>
+        {renderHistorial()}
       </Box>
 
-      {/* ⚖️ Links legales abajo del todo */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {renderNavLinks(navLegalItems)}
       </Box>
 
       <Box sx={{ mt: 3 }}>
-  <Link to="/planes" style={{ textDecoration: "none" }}>
-    <Box
-      sx={{
-        textAlign: "center",
-        py: 1,
-        backgroundColor: "#0a84ff",
-        borderRadius: 2,
-        color: "#fff",
-        fontWeight: "bold",
-        fontSize: "0.875rem",
-        "&:hover": {
-          backgroundColor: "#0077e6",
-        },
-      }}
-    >
-      🌟 Mejorar plan
+        <Link to="/planes" style={{ textDecoration: "none" }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 1,
+              backgroundColor: "#0a84ff",
+              borderRadius: 2,
+              color: "#fff",
+              fontWeight: "bold",
+              fontSize: "0.875rem",
+              "&:hover": {
+                backgroundColor: "#0077e6",
+              },
+            }}
+          >
+            🌟 Mejorar plan
+          </Box>
+        </Link>
+      </Box>
     </Box>
-  </Link>
-</Box>
-
-    </Box>
-
-    
   );
-  
 
   return (
     <>

@@ -1,13 +1,12 @@
 import { Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext"; // ✅ Importamos el contexto
+import { AuthContext } from "../context/AuthContext";
 import Sidebar from "../components/Sidebar";
-import UserMenu from "../components/UserMenu"; // ajustá ruta si es necesario
-
+import UserMenu from "../components/UserMenu";
 
 const MainLayout = ({ children }) => {
-  const { token, logout } = useContext(AuthContext); // ✅ Accedemos al token
+  const { token } = useContext(AuthContext);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#111" }}>
@@ -19,6 +18,7 @@ const MainLayout = ({ children }) => {
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            alignItems: "center",
             gap: 2,
             mb: 4,
           }}
@@ -59,36 +59,8 @@ const MainLayout = ({ children }) => {
               </Button>
             </>
           ) : (
-            <Button
-              onClick={logout}
-              variant="outlined"
-              sx={{
-                color: "#ccc",
-                borderColor: "#444",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "#222",
-                  borderColor: "#0a84ff",
-                  color: "#0a84ff",
-                },
-              }}
-            >
-              Cerrar sesión
-            </Button>
+            <UserMenu /> // ✅ Solo se muestra si hay sesión iniciada
           )}
-
-<Box
-  sx={{
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    px: 4,
-    py: 2,
-  }}
->
-  <UserMenu />
-</Box>
-
         </Box>
 
         {children}

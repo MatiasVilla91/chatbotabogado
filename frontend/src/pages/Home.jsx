@@ -3,16 +3,27 @@ import {
   Typography,
   Button,
   Grid,
-  useMediaQuery
+  useMediaQuery,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ShieldIcon from "@mui/icons-material/Shield";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Home() {
   const isMobile = useMediaQuery('(max-width:600px)');
+  const location = useLocation();
+  const [showMessage, setShowMessage] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setShowMessage(true);
+    }
+  }, [location]);
 
   return (
     <Box
@@ -64,7 +75,22 @@ function Home() {
         Accedé Ahora
       </Button>
 
-      
+      {/* ✅ Snackbar */}
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={3000}
+        onClose={() => setShowMessage(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setShowMessage(false)}
+          severity="info"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {location.state?.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
