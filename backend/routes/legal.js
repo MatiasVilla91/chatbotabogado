@@ -125,7 +125,7 @@ router.post(
         messages: [
           {
             role: "system",
-            content: "Eres un asistente legal experto en derecho Argentino que responde preguntas sobre documentos legales."
+            content: promptLegal
           },
           {
             role: "user",
