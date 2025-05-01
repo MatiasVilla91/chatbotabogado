@@ -11,11 +11,14 @@ import TerminosCondiciones from "./pages/TerminosCondiciones";
 import Planes from "./pages/Planes";
 import Historial from "./pages/Historial";
 import { RutaProtegida, RutaPublica } from "./components/RutasProtegidas";
+import GoogleSuccess from "./pages/GoogleSuccess";
+import GoogleCallback from "./pages/GoogleCallback"; // ✅ Agregá este import
 
 function App() {
   return (
     <>
       <Routes>
+        {/* Página principal */}
         <Route
           path="/"
           element={
@@ -25,7 +28,7 @@ function App() {
           }
         />
 
-        {/* 🔒 Ruta protegida: solo logueados */}
+        {/* 🔒 Rutas protegidas */}
         <Route
           path="/consultas"
           element={
@@ -47,7 +50,7 @@ function App() {
           }
         />
 
-        {/* 🌐 Rutas públicas: solo si NO está logueado */}
+        {/* 🌐 Rutas públicas */}
         <Route
           path="/login"
           element={
@@ -98,6 +101,10 @@ function App() {
             </MainLayout>
           }
         />
+
+        {/* Google OAuth */}
+        <Route path="/google-success" element={<GoogleSuccess />} />
+        <Route path="/login/callback" element={<GoogleCallback />} />
       </Routes>
 
       <FloatingHelpButton />

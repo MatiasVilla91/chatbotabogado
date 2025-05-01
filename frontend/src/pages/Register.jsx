@@ -17,6 +17,12 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+  
+    if (!validateEmail(email)) {
+      alert("Por favor, ingresa un correo electrónico válido.");
+      return;
+    }
+  
     try {
       await axios.post(`${backendUrl}/api/auth/register`, {
         name,
@@ -29,6 +35,13 @@ function Register() {
       alert(error.response?.data?.message || "Error al registrar usuario");
     }
   };
+  
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+  
+  
 
   return (
     <AuthCard>

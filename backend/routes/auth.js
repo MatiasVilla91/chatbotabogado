@@ -1,73 +1,95 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); // Modelo de usuario
+const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const logger = require('../utils/logger'); // al inicio del archivo si no está
+const logger = require('../utils/logger');
+const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 
 
-// Ruta para registro
-router.post('/register', async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ message: "El usuario ya existe" });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        user = new User({ name, email, password: hashedPassword });
-        await user.save();
-        logger.info(`🆕 Nuevo registro: ${email}`);
+const { body, validationResult } = require('express-validator');
 
 
-        res.status(201).json({ message: "Usuario creado correctamente" });
-    } catch (error) {
-        res.status(500).json({ message: "Error en el servidor" });
-    }
+// ❗ Limitador de intentos de login
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 10, // máximo 10 intentos por IP
+  message: "Demasiados intentos. Esperá un rato e intentá de nuevo.",
 });
 
-// Ruta para login
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ message: "Email y contraseña son requeridos" });
-        }
-
-        const user = await User.findOne({ email });
-        if (!user) {
-            logger.warn(`❌ Intento de login con email inexistente: ${email}`);
-            return res.status(400).json({ message: "Usuario no encontrado" });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            logger.warn(`❌ Contraseña incorrecta para: ${email}`);
-            return res.status(400).json({ message: "Contraseña incorrecta" });
-        }
-
-        if (!process.env.JWT_SECRET) {
-            logger.error("❌ JWT_SECRET no definida en el entorno");
-            return res.status(500).json({ message: "Configuración del servidor incorrecta" });
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-
-        logger.info(`🔓 Inicio de sesión: ${email}`);
-        res.json({ token,user: {
-            name: user.name,
-            email: user.email,
-          },message: "Inicio de sesión exitoso" });
-
-    } catch (error) {
-        logger.error(`❌ Error al iniciar sesión: ${error.message}`);
-        res.status(500).json({ message: "Error en el servidor", error: error.message });
+// ❗ Validador para registro (email válido y contraseña de mínimo 6 caracteres)
+const validateRegister = [
+  body('email').isEmail().withMessage('Email inválido'),
+  body('password').isLength({ min: 6 }).withMessage('Contraseña demasiado corta'),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: "Datos inválidos", errors: errors.array() });
     }
+    next();
+  }
+];
+
+
+  
+
+// 🔐 Registro con email
+router.post('/register', validateRegister, async (req, res) => {
+
+  try {
+    const { name, email, password } = req.body;
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ message: "El usuario ya existe" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user = new User({ name, email, password: hashedPassword });
+    await user.save();
+    logger.info(`🆕 Nuevo registro: ${email}`);
+    res.status(201).json({ message: "Usuario creado correctamente" });
+  } catch (error) {
+    logger.error(`❌ Registro fallido: ${error.message}`);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+// 🔐 Login con email
+router.post('/login', loginLimiter, async (req, res) => {
+
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: "Email y contraseña requeridos" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Usuario no encontrado" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Contraseña incorrecta" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+    logger.info(`🔓 Inicio de sesión: ${email}`);
+    res.json({ token, user: { name: user.name, email: user.email }, message: "Inicio de sesión exitoso" });
+  } catch (error) {
+    logger.error(`❌ Error al iniciar sesión: ${error.message}`);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+// 🌐 INICIAR login con Google
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email'],
+  session: false, // 👈 sin sesiones
+}));
+
+// 🔁 CALLBACK de Google
+router.get('/google/callback', passport.authenticate('google', {
+  session: false,
+  failureRedirect: '/login',
+}), (req, res) => {
+  const user = req.user;
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+  res.redirect(`${process.env.FRONTEND_URL}/google-success?token=${token}`);
 });
 
 module.exports = router;
+    

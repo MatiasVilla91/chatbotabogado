@@ -37,6 +37,16 @@ function Login() {
 
   return (
     <AuthCard>
+
+<Button
+  variant="outlined"
+  fullWidth
+  sx={{ mt: 2 }}
+  onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`}
+>
+  Iniciar sesión con Google
+</Button>
+
       <Typography
         variant="h4"
         align="center"
@@ -74,6 +84,7 @@ function Login() {
             Registrate
           </Link>
         </Typography>
+        
       </form>
     </AuthCard>
   );
