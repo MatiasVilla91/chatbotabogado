@@ -9,6 +9,7 @@ import MainLayout from "./layouts/MainLayout";
 import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 import TerminosCondiciones from "./pages/TerminosCondiciones";
 import Planes from "./pages/Planes";
+import Precios from "./pages/Precios";
 import Historial from "./pages/Historial";
 import { RutaProtegida, RutaPublica } from "./components/RutasProtegidas";
 import GoogleSuccess from "./pages/GoogleSuccess";
@@ -101,6 +102,15 @@ function App() {
             </MainLayout>
           }
         />
+
+<Route
+  path="/precios"
+  element={
+    <MainLayout>
+      <Precios />
+    </MainLayout>
+  }
+/>
 
         {/* Google OAuth */}
         <Route path="/google-success" element={<GoogleSuccess />} />

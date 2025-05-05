@@ -12,7 +12,22 @@ const MainLayout = ({ children }) => {
     <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#111" }}>
       <Sidebar />
 
-      <Box component="main" sx={{ flex: 1, p: 4 }}>
+      <Box
+  component="main"
+  sx={{
+    flex: 1,
+    pt: 4,
+    px: { xs: 2, md: 6 },
+    pb: 0,
+    width: "100%",
+    maxWidth: "100%",
+    //centrado
+    //maxWidth: "1200px",
+    mx: "auto", // centra horizontalmente
+  }}
+>
+
+
         {/* TOP RIGHT ACTIONS */}
         <Box
           sx={{

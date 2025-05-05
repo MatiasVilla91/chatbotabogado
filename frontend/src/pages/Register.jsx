@@ -4,7 +4,8 @@ import axios from "axios";
 import {
   TextField,
   Button,
-  Typography
+  Typography,
+  CircularProgress // ⬅️ spinner
 } from "@mui/material";
 import AuthCard from "../components/AuthCard"; // ✅ importamos el nuevo layout
 
@@ -14,15 +15,17 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ acá debe ir el useState
 
   const handleRegister = async (e) => {
     e.preventDefault();
-  
+
     if (!validateEmail(email)) {
       alert("Por favor, ingresa un correo electrónico válido.");
       return;
     }
-  
+
+    setLoading(true);
     try {
       await axios.post(`${backendUrl}/api/auth/register`, {
         name,
@@ -33,15 +36,15 @@ function Register() {
     } catch (error) {
       console.error("❌ Error:", error.response?.data || error.message);
       alert(error.response?.data?.message || "Error al registrar usuario");
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
-  
-  
 
   return (
     <AuthCard>
@@ -75,9 +78,10 @@ function Register() {
           type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 1 }}
+          sx={{ mt: 1, height:50 }}
+          disabled={loading}
         >
-          Registrarse
+          {loading ? <CircularProgress size={28} color="inherit" /> : "Registrarse"}
         </Button>
         <Typography align="center" variant="body2" sx={{ mt: 2, color: '#ccc' }}>
           ¿Ya tenés cuenta?{" "}

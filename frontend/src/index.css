@@ -29,6 +29,7 @@ body {
   min-width: 320px;
   background-color: #1a1a1a; /* Fondo oscuro */
   min-height: 100vh;
+  overflow: hidden;
 }
 
 h1 {
