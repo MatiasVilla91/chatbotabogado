@@ -158,13 +158,13 @@ function Sidebar() {
     <Box
     sx={{
       width: 240,
-      height: "120vh",
+      height: "100vh",
       backgroundColor: "#1a1a1a",
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
       overflow: "hidden",
-      minHeight: "100vh",
+      minHeight: "0vh",
     }}
   >
       {/* Parte superior */}

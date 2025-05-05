@@ -132,7 +132,7 @@ function Consultas() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "90vh", overflow: "hidden" }}>
 
       {/* CONTENIDO PRINCIPAL - RESPETA ESPACIO DE SIDEBAR */}
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "#111" }}>
