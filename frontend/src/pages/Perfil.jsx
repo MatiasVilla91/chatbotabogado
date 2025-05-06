@@ -1,5 +1,7 @@
 // src/pages/Perfil.jsx
 import { useState, useEffect, useContext } from "react";
+import { Button } from "@mui/material";
+
 import {
   Box,
   Typography,
@@ -66,63 +68,70 @@ const Perfil = () => {
       </Typography>
 
       <Paper
-        elevation={3}
-        sx={{
-          p: 4,
-          borderRadius: 3,
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          alignItems: "center",
-          gap: 4,
-        }}
-      >
-        {/* Avatar a la izquierda (o arriba en mobile) */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: { xs: 120, md: 200 },
-            height: { xs: 120, md: 200 },
-            flexShrink: 0,
-          }}
-        >
-          <Avatar
-            sx={{
-              width: "100%",
-              height: "100%",
-              fontSize: { xs: 40, md: 80 },
-              bgcolor: "#0a84ff",
-            }}
-          >
-            {perfil.name?.charAt(0).toUpperCase()}
-          </Avatar>
-        </Box>
+  elevation={0}
+  sx={{
+    p: 4,
+    borderRadius: "20px",
+    background: "rgba(255, 255, 255, 0.05)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    display: "flex",
+    flexDirection: { xs: "column", md: "row" },
+    alignItems: "center",
+    gap: 4,
+    maxWidth: "600px",
+    mx: "auto",
+  }}
+  
+>
+  
+  <Avatar
+    sx={{
+      width: 100,
+      height: 100,
+      fontSize: 40,
+      bgcolor: "#0a84ff",
+      boxShadow: "0 0 20px rgba(10,132,255,0.4)",
+    }}
+  >
+    {perfil.name?.charAt(0).toUpperCase()}
+  </Avatar>
+  
 
-        {/* Info del usuario */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            {perfil.name}
-          </Typography>
-          <Typography variant="body1" sx={{ color: "gray", mb: 1 }}>
-            {perfil.email}
-          </Typography>
-          <Typography variant="body1">
-            Estado del plan:{" "}
-            <strong>{perfil.esPremium ? "Premium" : "Gratuito"}</strong>
-          </Typography>
-          <Typography variant="body1">
-            Consultas restantes: <strong>{perfil.consultasRestantes}</strong>
-          </Typography>
-          <Typography variant="body1">
-            Contratos restantes: <strong>{perfil.contratosRestantes}</strong>
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 2, color: "gray" }}>
-            Registrado el:{" "}
-            {new Date(perfil.createdAt).toLocaleDateString("es-AR")}
-          </Typography>
-        </Box>
-      </Paper>
+
+
+
+  <Box>
+    <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
+      {perfil.name}
+    </Typography>
+    <Typography variant="body2" sx={{ color: "#ccc", mb: 2 }}>
+      {perfil.email}
+    </Typography>
+    <Typography variant="body2" sx={{ mb: 1 }}>
+      Estado del plan:{" "}
+      <strong style={{ color: "#fff" }}>
+        {perfil.esPremium ? "Premium" : "Gratuito"}
+      </strong>
+    </Typography>
+    <Typography variant="body2" sx={{ mb: 1 }}>
+      Consultas restantes:{" "}
+      <strong style={{ color: "#fff" }}>{perfil.consultasRestantes}</strong>
+    </Typography>
+    <Typography variant="body2" sx={{ mb: 1 }}>
+      Contratos restantes:{" "}
+      <strong style={{ color: "#fff" }}>{perfil.contratosRestantes}</strong>
+    </Typography>
+    <Typography variant="body2" sx={{ mt: 2, color: "#aaa" }}>
+      Registrado el:{" "}
+      {new Date(perfil.createdAt).toLocaleDateString("es-AR")}
+    </Typography>
+    
+  </Box>
+ 
+</Paper>
+
+    
     </Box>
   );
 };
