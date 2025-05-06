@@ -14,6 +14,9 @@ import Historial from "./pages/Historial";
 import { RutaProtegida, RutaPublica } from "./components/RutasProtegidas";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import GoogleCallback from "./pages/GoogleCallback"; // ✅ Agregá este import
+import Perfil from "./pages/Perfil";
+
+
 
 function App() {
   return (
@@ -111,6 +114,18 @@ function App() {
     </MainLayout>
   }
 />
+
+<Route
+  path="/perfil"
+  element={
+    <RutaProtegida>
+      <MainLayout>
+        <Perfil />
+      </MainLayout>
+    </RutaProtegida>
+  }
+/>
+
 
         {/* Google OAuth */}
         <Route path="/google-success" element={<GoogleSuccess />} />

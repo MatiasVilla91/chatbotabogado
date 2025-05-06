@@ -9,4 +9,15 @@ router.get('/estado-plan', checkAuth, async (req, res) => {
   res.json(user);
 });
 
+router.get('/perfil', checkAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener el perfil del usuario' });
+  }
+});
+
+
 module.exports = router;
