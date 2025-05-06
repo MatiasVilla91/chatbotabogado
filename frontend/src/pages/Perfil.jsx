@@ -6,10 +6,11 @@ import {
   Paper,
   CircularProgress,
   Avatar,
-  Grid,
 } from "@mui/material";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+
+console.log("👀 Perfil renderizado correctamente");
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -54,50 +55,73 @@ const Perfil = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+      }}
+    >
+      
       <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
         Mi Perfil
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
-            <Avatar
-              sx={{
-                width: 100,
-                height: 100,
-                fontSize: 36,
-                bgcolor: "#0a84ff",
-              }}
-            >
-              {perfil.name?.charAt(0).toUpperCase()}
-            </Avatar>
-          </Grid>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          borderRadius: 3,
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          gap: 4,
+        }}
+      >
+        {/* Avatar a la izquierda (o arriba en mobile) */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: { xs: 120, md: 200 },
+            height: { xs: 120, md: 200 },
+            flexShrink: 0,
+          }}
+        >
+          <Avatar
+            sx={{
+              width: "100%",
+              height: "100%",
+              fontSize: { xs: 40, md: 80 },
+              bgcolor: "#0a84ff",
+            }}
+          >
+            {perfil.name?.charAt(0).toUpperCase()}
+          </Avatar>
+        </Box>
 
-          <Grid item xs={12} md={9}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              {perfil.name}
-            </Typography>
-            <Typography variant="body1" sx={{ color: "gray", mb: 1 }}>
-              {perfil.email}
-            </Typography>
-            <Typography variant="body1">
-              Estado del plan:{" "}
-              <strong>{perfil.esPremium ? "Premium" : "Gratuito"}</strong>
-            </Typography>
-            <Typography variant="body1">
-              Consultas restantes: <strong>{perfil.consultasRestantes}</strong>
-            </Typography>
-            <Typography variant="body1">
-              Contratos restantes:{" "}
-              <strong>{perfil.contratosRestantes}</strong>
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 2, color: "gray" }}>
-              Registrado el:{" "}
-              {new Date(perfil.createdAt).toLocaleDateString("es-AR")}
-            </Typography>
-          </Grid>
-        </Grid>
+        {/* Info del usuario */}
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            {perfil.name}
+          </Typography>
+          <Typography variant="body1" sx={{ color: "gray", mb: 1 }}>
+            {perfil.email}
+          </Typography>
+          <Typography variant="body1">
+            Estado del plan:{" "}
+            <strong>{perfil.esPremium ? "Premium" : "Gratuito"}</strong>
+          </Typography>
+          <Typography variant="body1">
+            Consultas restantes: <strong>{perfil.consultasRestantes}</strong>
+          </Typography>
+          <Typography variant="body1">
+            Contratos restantes: <strong>{perfil.contratosRestantes}</strong>
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 2, color: "gray" }}>
+            Registrado el:{" "}
+            {new Date(perfil.createdAt).toLocaleDateString("es-AR")}
+          </Typography>
+        </Box>
       </Paper>
     </Box>
   );

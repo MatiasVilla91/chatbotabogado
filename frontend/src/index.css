@@ -29,7 +29,7 @@ body {
   min-width: 320px;
   background-color: #1a1a1a; /* Fondo oscuro */
   min-height: 100vh;
-  overflow: hidden;
+  overflow: auto; /* 🔄 cambiado de hidden a auto para permitir scroll */
 }
 
 h1 {
@@ -68,7 +68,6 @@ button:focus-visible {
     background-color: #0a0a0a;
   }
 }
-
 
 .typing-dots span {
   animation: jump 1s infinite;

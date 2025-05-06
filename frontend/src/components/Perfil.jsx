@@ -1,15 +1,14 @@
-// src/pages/Perfil.jsx
 import { useState, useEffect, useContext } from "react";
 import {
   Box,
   Typography,
-  Paper,
   CircularProgress,
   Avatar,
-  Grid,
+  Divider,
 } from "@mui/material";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import PerfilCardWrapper from "../components/PerfilCardWrapper"; // 👈 nuevo contenedor exclusivo
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -54,51 +53,93 @@ const Perfil = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        px: 2,
+        py: 6,
+        backgroundColor: "#0d0d0d",
+        minHeight: "100vh",
+      }}
+    >
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: "bold",
+          mb: 4,
+          color: "#fff",
+        }}
+      >
         Mi Perfil
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
-            <Avatar
-              sx={{
-                width: 100,
-                height: 100,
-                fontSize: 36,
-                bgcolor: "#0a84ff",
-              }}
-            >
-              {perfil.name?.charAt(0).toUpperCase()}
-            </Avatar>
-          </Grid>
+      <PerfilCardWrapper>
+        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+          {/* Avatar a la izquierda */}
+          <Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: { xs: 120, md: 200 },
+    height: { xs: 120, md: 200 },
+    pr: { xs: 0, md: 4 },
+    mb: { xs: 3, md: 0 },
+  }}
+>
+  <Avatar
+    sx={{
+      width: "100%",
+      height: "100%",
+      fontSize: { xs: 40, md: 80 },
+      bgcolor: "#0a84ff",
+      boxShadow: "0 0 20px rgba(10,132,255,0.4)",
+    }}
+  >
+    {perfil.name?.charAt(0).toUpperCase()}
+  </Avatar>
+</Box>
 
-          <Grid item xs={12} md={9}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
+
+
+          {/* Información del usuario */}
+          <Box sx={{ minWidth: 250 }}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
               {perfil.name}
             </Typography>
-            <Typography variant="body1" sx={{ color: "gray", mb: 1 }}>
+
+            <Typography variant="body2" sx={{ color: "gray", mb: 2 }}>
               {perfil.email}
             </Typography>
-            <Typography variant="body1">
-              Estado del plan:{" "}
-              <strong>{perfil.esPremium ? "Premium" : "Gratuito"}</strong>
+
+            <Divider sx={{ my: 1.5, backgroundColor: "#333" }} />
+
+            <Typography variant="body1" sx={{ mb: 1 }}>
+              <strong>Estado del plan:</strong>{" "}
+              {perfil.esPremium ? "✨ Premium" : "Gratuito"}
             </Typography>
-            <Typography variant="body1">
-              Consultas restantes: <strong>{perfil.consultasRestantes}</strong>
+            <Typography
+              variant="body1"
+              sx={{
+                mb: 1,
+                color: perfil.consultasRestantes < 0 ? "#f44336" : "#fff",
+              }}
+            >
+              <strong>Consultas restantes:</strong> {perfil.consultasRestantes}
             </Typography>
-            <Typography variant="body1">
-              Contratos restantes:{" "}
-              <strong>{perfil.contratosRestantes}</strong>
+            <Typography variant="body1" sx={{ mb: 1 }}>
+              <strong>Contratos restantes:</strong> {perfil.contratosRestantes}
             </Typography>
-            <Typography variant="body2" sx={{ mt: 2, color: "gray" }}>
+
+            <Typography variant="body2" sx={{ color: "gray", mt: 2 }}>
               Registrado el:{" "}
               {new Date(perfil.createdAt).toLocaleDateString("es-AR")}
             </Typography>
-          </Grid>
-        </Grid>
-      </Paper>
+          </Box>
+        </Box>
+      </PerfilCardWrapper>
     </Box>
   );
 };
