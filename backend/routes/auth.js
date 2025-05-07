@@ -80,24 +80,40 @@ router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
 }));
 
-// 🔁 CALLBACK de Google
+// 🔁 CALLBACK de Google (Mejorado)
 router.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/login',
-}), (req, res) => {
-  const user = req.user;
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+}), async (req, res) => {
+  try {
+    console.log("✅ Callback de Google - Usuario recibido:", req.user);
+    
+    const user = req.user;
+    if (!user) {
+      console.error("❌ Error: Usuario de Google no encontrado.");
+      return res.status(500).send("Error al autenticar con Google");
+    }
 
-  // Verificamos que la URL esté bien configurada
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5000";
-  console.log("✅ URL de redirección:", frontendUrl);
+    // Generar el token JWT solo si el usuario existe
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+    console.log("✅ Token generado:", token);
 
-  if (!frontendUrl) {
-    return res.status(500).json({ message: "Frontend URL no está configurada" });
+    // Verificar URL del frontend
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    console.log("✅ URL de redirección:", frontendUrl);
+
+    if (!frontendUrl) {
+      console.error("❌ Error: FRONTEND_URL no está configurada.");
+      return res.status(500).json({ message: "Error en la configuración del frontend" });
+    }
+
+    // Redirigir al frontend con el token
+    res.redirect(`${frontendUrl}/google-success?token=${token}`);
+  } catch (error) {
+    console.error("❌ Error en el callback de Google:", error);
+    res.status(500).send("Error interno del servidor");
   }
-  
-  // Redirigimos de manera segura
-  res.redirect(`${frontendUrl}/google-success?token=${token}`);
 });
+
 
 
 module.exports = router;
