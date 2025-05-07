@@ -23,10 +23,22 @@ function GoogleSuccess() {
           return;
         }
 
-        // Guardamos el token en el contexto y localStorage
+        // ✅ Guardamos el token en el contexto y en localStorage
         login(token);
+        localStorage.setItem("token", token);
         console.log("✅ Token recibido:", token);
-        navigate("/consultas", { replace: true });
+
+        // Verificamos que el token se haya guardado correctamente
+        const savedToken = localStorage.getItem("token");
+        if (!savedToken) {
+          setError("Error al guardar el token. Intenta de nuevo.");
+          return;
+        }
+
+        // ✅ Redirigimos a /consultas después de un pequeño delay
+        setTimeout(() => {
+          navigate("/consultas", { replace: true });
+        }, 1500);
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);
         setError("Ocurrió un error al iniciar sesión. Redirigiendo al login...");
@@ -48,6 +60,7 @@ function GoogleSuccess() {
       flexDirection="column"
       bgcolor="#111"
       color="#fff"
+      textAlign="center"
     >
       {loading ? (
         <>
@@ -56,9 +69,13 @@ function GoogleSuccess() {
             Iniciando sesión con Google...
           </Typography>
         </>
-      ) : (
+      ) : error ? (
         <Typography variant="h6" color="error">
-          {error || "Redirigiendo..."}
+          {error}
+        </Typography>
+      ) : (
+        <Typography variant="h6" color="success">
+          ¡Inicio de sesión exitoso! Redirigiendo...
         </Typography>
       )}
     </Box>
