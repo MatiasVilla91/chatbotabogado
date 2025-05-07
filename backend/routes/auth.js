@@ -88,10 +88,11 @@ router.get('/google/callback', passport.authenticate('google', {
 
     // Generar el token JWT solo si el usuario existe
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+    
     console.log("✅ Token generado:", token);
 
     // Verificar URL del frontend
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.FRONTEND_URL;
     console.log("✅ URL de redirección:", frontendUrl);
 
     if (!frontendUrl) {
