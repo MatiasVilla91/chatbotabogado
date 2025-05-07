@@ -64,14 +64,21 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('✅ Conectado a MongoDB'))
   .catch(err => console.log('❌ Error en MongoDB:', err));
 
-// ✅ Session + Passport (ANTES de las rutas)
+// ✅ Configuración de sesiones y Passport (ANTES DE LAS RUTAS)
 app.use(session({
-  secret: 'loquesea123',
+  secret: process.env.SESSION_SECRET || 'mi_secreto_super_seguro',
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // Solo seguro en producción
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 1 día
+  }
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // ✅ Rutas
 app.use('/api/auth', authRoutes);
@@ -128,10 +135,3 @@ app.listen(PORT, () => {
 
 const jwt = require("jsonwebtoken");
 
-app.get('/api/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}`);
-  }
-);

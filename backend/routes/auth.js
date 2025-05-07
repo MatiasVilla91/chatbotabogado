@@ -72,9 +72,10 @@ router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
 }));
 
-// 🔁 CALLBACK de Google (Mejorado)
+/// 🔁 CALLBACK de Google (Mejorado y Seguro)
 router.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/login',
+  session: true, // ✅ Habilitamos sesión
 }), async (req, res) => {
   try {
     console.log("✅ Callback de Google - Usuario recibido:", req.user);
@@ -89,7 +90,7 @@ router.get('/google/callback', passport.authenticate('google', {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
     console.log("✅ Token generado:", token);
 
-    // Verificar URL del frontend (AJUSTE)
+    // Verificar URL del frontend
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     console.log("✅ URL de redirección:", frontendUrl);
 
@@ -98,17 +99,22 @@ router.get('/google/callback', passport.authenticate('google', {
       return res.status(500).json({ message: "Error en la configuración del frontend" });
     }
 
-    // Redirigir al frontend con el token
-    res.redirect(`${frontendUrl}/google-success?token=${token}`);
+    // ✅ Guardamos la sesión correctamente
+    req.login(user, (err) => {
+      if (err) {
+        console.error("❌ Error al iniciar sesión en la sesión:", err);
+        return res.status(500).send("Error al iniciar sesión en la sesión");
+      }
+
+      console.log("✅ Sesión de usuario guardada:", req.session);
+      res.redirect(`${frontendUrl}/google-success?token=${token}`);
+    });
+
   } catch (error) {
     console.error("❌ Error en el callback de Google:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
 
-// 🌐 Verificar autenticación (Protegido)
-router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.json({ message: "Perfil de usuario protegido", user: req.user });
-});
 
 module.exports = router;
