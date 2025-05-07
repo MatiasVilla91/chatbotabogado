@@ -6,10 +6,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 const passport = require('passport');
 const rateLimit = require('express-rate-limit');
-
-
 const { body, validationResult } = require('express-validator');
-
 
 // ❗ Limitador de intentos de login
 const loginLimiter = rateLimit({
@@ -31,12 +28,8 @@ const validateRegister = [
   }
 ];
 
-
-  
-
 // 🔐 Registro con email
 router.post('/register', validateRegister, async (req, res) => {
-
   try {
     const { name, email, password } = req.body;
     let user = await User.findOne({ email });
@@ -55,7 +48,6 @@ router.post('/register', validateRegister, async (req, res) => {
 
 // 🔐 Login con email
 router.post('/login', loginLimiter, async (req, res) => {
-
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: "Email y contraseña requeridos" });
@@ -97,7 +89,7 @@ router.get('/google/callback', passport.authenticate('google', {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
     console.log("✅ Token generado:", token);
 
-    // Verificar URL del frontend
+    // Verificar URL del frontend (AJUSTE)
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     console.log("✅ URL de redirección:", frontendUrl);
 
@@ -114,7 +106,9 @@ router.get('/google/callback', passport.authenticate('google', {
   }
 });
 
-
+// 🌐 Verificar autenticación (Protegido)
+router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.json({ message: "Perfil de usuario protegido", user: req.user });
+});
 
 module.exports = router;
-    
