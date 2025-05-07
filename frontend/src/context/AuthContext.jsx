@@ -1,44 +1,40 @@
+// AuthContext.jsx
 import { createContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  useEffect(() => {
-    if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
-  }, [token]);
-
+  // ✅ Sincronizamos el token solo cuando el usuario cambia
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", user.token);
     } else {
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     }
   }, [user]);
 
   const login = (newToken, userData) => {
-    setToken(newToken);
-    setUser(userData);
+    setUser({
+      token: newToken,
+      ...userData,
+    });
+    console.log("✅ Usuario autenticado:", { token: newToken, ...userData });
   };
 
   const logout = () => {
-    setToken(null);
     setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    console.log("✅ Usuario cerrado sesión.");
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

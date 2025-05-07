@@ -13,9 +13,12 @@ function GoogleSuccess() {
 
   useEffect(() => {
     const processLogin = async () => {
+      console.log("🌐 Iniciando proceso de login con Google...");
+      
       try {
         const params = new URLSearchParams(location.search);
         const token = params.get("token");
+        console.log("🌐 Token recibido:", token);
 
         if (!token) {
           setError("No se encontró el token. Redirigiendo al login...");
@@ -23,22 +26,14 @@ function GoogleSuccess() {
           return;
         }
 
-        // ✅ Guardamos el token en el contexto y en localStorage
-        login(token);
-        localStorage.setItem("token", token);
-        console.log("✅ Token recibido:", token);
-
-        // Verificamos que el token se haya guardado correctamente
-        const savedToken = localStorage.getItem("token");
-        if (!savedToken) {
-          setError("Error al guardar el token. Intenta de nuevo.");
-          return;
-        }
+        // ✅ Guardamos el token y el usuario en el contexto
+        login(token, { email: "Usuario de Google" });
+        console.log("✅ Usuario autenticado con Google.");
 
         // ✅ Redirigimos a /consultas después de un pequeño delay
         setTimeout(() => {
           navigate("/consultas", { replace: true });
-        }, 1500);
+        }, 3000);
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);
         setError("Ocurrió un error al iniciar sesión. Redirigiendo al login...");
