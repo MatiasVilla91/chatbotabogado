@@ -78,18 +78,27 @@ router.post('/login', loginLimiter, async (req, res) => {
 // 🌐 INICIAR login con Google
 router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
-  session: false, // 👈 sin sesiones
 }));
 
 // 🔁 CALLBACK de Google
 router.get('/google/callback', passport.authenticate('google', {
-  session: false,
   failureRedirect: '/login',
 }), (req, res) => {
   const user = req.user;
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-  res.redirect(`${process.env.FRONTEND_URL}/google-success?token=${token}`);
+
+  // Verificamos que la URL esté bien configurada
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5000";
+  console.log("✅ URL de redirección:", frontendUrl);
+
+  if (!frontendUrl) {
+    return res.status(500).json({ message: "Frontend URL no está configurada" });
+  }
+  
+  // Redirigimos de manera segura
+  res.redirect(`${frontendUrl}/google-success?token=${token}`);
 });
+
 
 module.exports = router;
     

@@ -1,3 +1,4 @@
+// GoogleSuccess.jsx
 import { useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -5,15 +6,15 @@ import { AuthContext } from '../context/AuthContext';
 function GoogleSuccess() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useContext(AuthContext); // ✅ usa el contexto para guardar el token
+  const { login } = useContext(AuthContext);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
 
     if (token) {
-      login(token); // guarda en localStorage y contexto
-      navigate("/consultas", { replace: true }); // ✅ navegación sin dejar token en la URL
+      login(token); // Guarda el token en el contexto y localStorage
+      navigate("/consultas", { replace: true });
     } else {
       navigate("/login");
     }

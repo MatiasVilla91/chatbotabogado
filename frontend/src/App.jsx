@@ -13,7 +13,6 @@ import Precios from "./pages/Precios";
 import Historial from "./pages/Historial";
 import { RutaProtegida, RutaPublica } from "./components/RutasProtegidas";
 import GoogleSuccess from "./pages/GoogleSuccess";
-import GoogleCallback from "./pages/GoogleCallback"; // ✅ Agregá este import
 import Perfil from "./pages/Perfil";
 
 
@@ -129,7 +128,7 @@ function App() {
 
         {/* Google OAuth */}
         <Route path="/google-success" element={<GoogleSuccess />} />
-        <Route path="/login/callback" element={<GoogleCallback />} />
+      
       </Routes>
 
       <FloatingHelpButton />

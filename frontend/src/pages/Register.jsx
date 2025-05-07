@@ -8,6 +8,8 @@ import {
   CircularProgress // ⬅️ spinner
 } from "@mui/material";
 import AuthCard from "../components/AuthCard"; // ✅ importamos el nuevo layout
+import GoogleIcon from "@mui/icons-material/Google"; // ✅ Usamos el icono de Google directamente de Material UI
+
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -83,6 +85,19 @@ function Register() {
         >
           {loading ? <CircularProgress size={28} color="inherit" /> : "Registrarse"}
         </Button>
+        
+<Button
+  variant="outlined"
+  fullWidth
+  sx={{ mt: 2 }}
+  onClick={() => window.location.href = `${backendUrl}/api/auth/google`}
+>
+  <GoogleIcon sx={{ fontSize: 24 }} /> 
+  {loading ? <CircularProgress size={28} color="inherit" /> : ""}
+  
+</Button>
+
+
         <Typography align="center" variant="body2" sx={{ mt: 2, color: '#ccc' }}>
           ¿Ya tenés cuenta?{" "}
           <Link to="/login" style={{ color: "#0a84ff", textDecoration: "none" }}>
