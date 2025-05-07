@@ -28,12 +28,38 @@ const logger = require('./utils/logger');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+
+
+
+
+
+
+
+// ✅ Configuración de sesiones y Passport (ANTES DE LAS RUTAS)
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'mi_secreto_super_seguro',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // Solo seguro en producción
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 1 día
+  }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+
+
 // ✅ CORS
 app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://drleyes.netlify.app',
-    'http://localhost:3000',
+    'https://chatbotabogado.onrender.com',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
@@ -64,20 +90,6 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('✅ Conectado a MongoDB'))
   .catch(err => console.log('❌ Error en MongoDB:', err));
 
-// ✅ Configuración de sesiones y Passport (ANTES DE LAS RUTAS)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'mi_secreto_super_seguro',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // Solo seguro en producción
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 1 día
-  }
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 
 // ✅ Rutas
