@@ -14,7 +14,7 @@ function GoogleSuccess() {
   useEffect(() => {
     const processLogin = async () => {
       console.log("🌐 Iniciando proceso de login con Google...");
-      
+
       try {
         const params = new URLSearchParams(location.search);
         const token = params.get("token");
@@ -22,7 +22,14 @@ function GoogleSuccess() {
 
         if (!token) {
           setError("No se encontró el token. Redirigiendo al login...");
-          setTimeout(() => navigate("/login"), 3000);
+          setTimeout(() => navigate("/login"), 2000);
+          return;
+        }
+
+        // ✅ Verificar si el token es válido (opcional pero recomendado)
+        if (token.length < 50) {
+          setError("Token inválido. Redirigiendo al login...");
+          setTimeout(() => navigate("/login"), 2000);
           return;
         }
 
@@ -30,14 +37,12 @@ function GoogleSuccess() {
         login(token, { email: "Usuario de Google" });
         console.log("✅ Usuario autenticado con Google.");
 
-        // ✅ Redirigimos a /consultas después de un pequeño delay
-        setTimeout(() => {
-          navigate("/consultas", { replace: true });
-        }, 3000);
+        // ✅ Redirigir de inmediato
+        navigate("/consultas", { replace: true });
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);
         setError("Ocurrió un error al iniciar sesión. Redirigiendo al login...");
-        setTimeout(() => navigate("/login"), 3000);
+        setTimeout(() => navigate("/login"), 2000);
       } finally {
         setLoading(false);
       }
