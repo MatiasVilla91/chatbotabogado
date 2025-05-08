@@ -10,9 +10,13 @@ function GoogleSuccess() {
   const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false); // 🔥 Nuevo control para evitar bucles
 
   useEffect(() => {
     const processLogin = async () => {
+      if (isProcessing) return; // 🔥 Evitar bucle
+      
+      setIsProcessing(true); // 🔥 Activar control
       console.log("🌐 Iniciando proceso de login con Google...");
 
       try {
@@ -35,9 +39,10 @@ function GoogleSuccess() {
 
         // Guardamos el token y el usuario en el contexto
         login(token, { email: "Usuario de Google" });
-
         console.log("✅ Usuario autenticado con Google.");
-        navigate("/consultas", { replace: true });
+
+        // ✅ Redirigir de inmediato (sin bucle)
+        setTimeout(() => navigate("/consultas", { replace: true }), 500);
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);
         setError("Ocurrió un error al iniciar sesión. Redirigiendo al login...");
@@ -48,7 +53,7 @@ function GoogleSuccess() {
     };
 
     processLogin();
-  }, [location, login, navigate]);
+  }, [location, login, navigate, isProcessing]); // 🔥 isProcessing agregado
 
   return (
     <Box
