@@ -26,18 +26,17 @@ function GoogleSuccess() {
           return;
         }
 
-        // ✅ Verificar si el token es válido (opcional pero recomendado)
+        // Verificar que el token sea válido (opcional pero recomendado)
         if (token.length < 50) {
           setError("Token inválido. Redirigiendo al login...");
           setTimeout(() => navigate("/login"), 2000);
           return;
         }
 
-        // ✅ Guardamos el token y el usuario en el contexto
+        // Guardamos el token y el usuario en el contexto
         login(token, { email: "Usuario de Google" });
-        console.log("✅ Usuario autenticado con Google.");
 
-        // ✅ Redirigir de inmediato
+        console.log("✅ Usuario autenticado con Google.");
         navigate("/consultas", { replace: true });
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);

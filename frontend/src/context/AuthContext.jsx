@@ -1,3 +1,4 @@
+// AuthContext.jsx
 import { createContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
@@ -9,25 +10,11 @@ const AuthProvider = ({ children }) => {
     return stored ? JSON.parse(stored) : null;
   });
 
-  useEffect(() => {
-    if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [user]);
-
   const login = (newToken, userData) => {
     setToken(newToken);
     setUser(userData);
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
