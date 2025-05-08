@@ -1,8 +1,11 @@
+// api.js
 import axios from 'axios';
 
-// Crear una instancia de Axios con la URL base
+// Verificar si está en producción o desarrollo
+const baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
+
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL,
 });
 
 // Interceptor para añadir el token a cada solicitud

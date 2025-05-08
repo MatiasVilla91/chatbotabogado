@@ -27,6 +27,7 @@ function Sidebar() {
   const { token } = useContext(AuthContext);
 
   const fetchConversaciones = async () => {
+    if (!token) return; // ✅ Verifica que el token exista
     try {
       const response = await api.get("/legal/conversaciones");
       const lista = response.data?.conversaciones ?? [];
