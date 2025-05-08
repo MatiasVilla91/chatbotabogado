@@ -236,6 +236,33 @@ router.get('/chat/:id', checkAuth, async (req, res) => {
 });
 
 
+// ✅ Ruta para eliminar una conversación específica del historial
+router.delete('/conversaciones/:id', checkAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verificamos que la conversación exista y pertenezca al usuario autenticado
+    const chat = await ChatLegal.findById(id);
+    if (!chat) {
+      return res.status(404).json({ message: "Conversación no encontrada." });
+    }
+
+    if (chat.usuario.toString() !== req.user.id) {
+      return res.status(403).json({ message: "No autorizado para eliminar esta conversación." });
+    }
+
+    // Eliminamos la conversación
+    await ChatLegal.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Conversación eliminada correctamente." });
+  } catch (error) {
+    console.error("❌ Error al eliminar la conversación:", error);
+    res.status(500).json({ message: "Error al eliminar la conversación" });
+  }
+});
+
+
+
 
 
 
