@@ -216,12 +216,24 @@ function Sidebar() {
     </Box>
   );
 
-  return isMobile ? (
-    <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
-      {sidebarContent}
-    </Drawer>
-  ) : (
-    sidebarContent
+  return (
+    <>
+      {isMobile ? (
+        <>
+          <IconButton
+            onClick={() => setOpen(!open)}
+            sx={{ color: "#fff", position: "absolute", top: 16, left: 16 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
+            {sidebarContent}
+          </Drawer>
+        </>
+      ) : (
+        sidebarContent
+      )}
+    </>
   );
 }
 
