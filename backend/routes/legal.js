@@ -170,6 +170,28 @@ router.get('/conversaciones', checkAuth, async (req, res) => {
   }
 });
 
+// ✅ Ruta para obtener una conversación específica por ID
+router.get('/conversacion/:id', checkAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const chat = await ChatLegal.findById(id);
+
+    if (!chat) {
+      return res.status(404).json({ message: "Conversación no encontrada." });
+    }
+
+    if (chat.usuario.toString() !== req.user.id) {
+      return res.status(403).json({ message: "No autorizado para ver esta conversación." });
+    }
+
+    res.json({ mensajes: chat.mensajes });
+  } catch (error) {
+    console.error("❌ Error al obtener la conversación:", error);
+    res.status(500).json({ message: "Error al obtener la conversación." });
+  }
+});
+
+
 
 
 

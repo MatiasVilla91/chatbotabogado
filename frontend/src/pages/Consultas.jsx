@@ -38,7 +38,7 @@ function Consultas() {
     if (chatId && token) {
       const fetchConversacion = async () => {
         try {
-          const res = await axios.get(`${backendUrl}/api/legal/chat/${chatId}`, {
+          const res = await axios.get(`${backendUrl}/api/legal/conversacion/${chatId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setMensajes(res.data.mensajes || []);

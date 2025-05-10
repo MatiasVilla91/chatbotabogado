@@ -27,6 +27,9 @@ function Sidebar() {
   const [open, setOpen] = useState(false);
   const [conversaciones, setConversaciones] = useState([]);
   const { token } = useContext(AuthContext);
+  // ✅ En Sidebar.jsx
+  const [loading, setLoading] = useState(false);
+
   
 
   // ✅ Cargar conversaciones siempre que se abra el menú
@@ -36,7 +39,7 @@ function Sidebar() {
       return;
     }
 
-   
+    setLoading(true);
 
     try {
       const response = await api.get("/api/legal/conversaciones", {
