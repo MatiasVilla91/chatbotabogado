@@ -147,19 +147,30 @@ router.post(
 });
 
 
-// 📁 Historial de contratos
-router.get('/historial', checkAuth, async (req, res) => {
+// ✅ Ruta para obtener el historial de conversaciones
+router.get('/conversaciones', checkAuth, async (req, res) => {
   try {
-    const contratos = await Contrato.find({ usuario: req.user.id })
-      .sort({ createdAt: -1 })
-      .select('mensaje_original contrato_generado ruta_pdf createdAt');
+    const historial = await ChatLegal.find({ usuario: req.user.id })
+      .sort({ creado: -1 })
+      .select('mensajes creado');
 
-    res.json({ contratos });
+    const resumen = historial.map(chat => {
+      const titulo = chat.mensajes.find(m => m.tipo === "sent")?.texto?.slice(0, 40) || "Sin título";
+      return {
+        _id: chat._id,
+        titulo,
+        creado: chat.creado,
+      };
+    });
+
+    res.json({ conversaciones: resumen });
   } catch (error) {
-    console.error("❌ Error al obtener historial:", error);
-    res.status(500).json({ message: "Error al obtener historial", error: error.message });
+    console.error("❌ Error al obtener conversaciones:", error);
+    res.status(500).json({ message: "Error al obtener historial de chats" });
   }
 });
+
+
 
 
 // 📎 Descargar contrato desde Cloudinary
@@ -178,62 +189,7 @@ router.get('/descargar/:id', checkAuth, async (req, res) => {
   }
 });
 
-// 📜 Obtener historial de conversaciones del usuario (resumen)
-router.get('/conversaciones', checkAuth, async (req, res) => {
-  try {
-    const historial = await ChatLegal.find({ usuario: req.user.id })
-      .sort({ creado: -1 })
-      .select('mensajes creado');
 
-    const resumen = historial.map(chat => {
-      const titulo = chat.mensajes.find(m => m.tipo === "sent")?.texto?.slice(0, 40) || "Sin título";
-      return {
-        _id: chat._id, // 👈 esto es lo que el Sidebar espera
-        titulo,
-        creado: chat.creado,
-      };
-    });
-
-    res.json({ conversaciones: resumen });
-  } catch (error) {
-    console.error("❌ Error al obtener conversaciones:", error);
-    res.status(500).json({ message: "Error al obtener historial de chats" });
-  }
-});
-
-// ✅ Ruta para guardar manualmente una conversación
-router.post('/guardar-chat', checkAuth, async (req, res) => {
-  try {
-    const { mensajes } = req.body;
-    if (!Array.isArray(mensajes) || mensajes.length < 2) {
-      return res.status(400).json({ message: "Formato de mensajes inválido" });
-    }
-
-    await ChatLegal.create({
-      usuario: req.user.id,
-      mensajes,
-    });
-
-    res.json({ message: "Conversación guardada correctamente" });
-  } catch (error) {
-    console.error("❌ Error al guardar conversación:", error);
-    res.status(500).json({ message: "Error al guardar conversación" });
-  }
-});
-
-// 📥 Obtener una conversación por ID
-router.get('/chat/:id', checkAuth, async (req, res) => {
-  try {
-    const chat = await ChatLegal.findById(req.params.id);
-    if (!chat) return res.status(404).json({ message: "Conversación no encontrada" });
-    if (chat.usuario.toString() !== req.user.id) return res.status(403).json({ message: "No autorizado" });
-
-    res.json(chat);
-  } catch (error) {
-    console.error("❌ Error al obtener el chat:", error);
-    res.status(500).json({ message: "Error al obtener la conversación" });
-  }
-});
 
 
 // ✅ Ruta para eliminar una conversación específica del historial

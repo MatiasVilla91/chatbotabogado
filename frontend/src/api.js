@@ -1,5 +1,6 @@
-// api.js
 import axios from 'axios';
+import { AuthContext } from './context/AuthContext';
+//import React, { useContext } from 'react';
 
 // Verificar si está en producción o desarrollo
 const baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
