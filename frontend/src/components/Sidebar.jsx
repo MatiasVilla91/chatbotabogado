@@ -206,9 +206,36 @@ const deleteConversation = async (id) => {
             </Box>
           </Link>
         ))}
+
+<Box sx={{ mt: 3 }}>
+        <Link to="/planes" style={{ textDecoration: "none" }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 1,
+              backgroundColor: "#0a84ff",
+              borderRadius: 2,
+              color: "#fff",
+              fontWeight: "bold",
+              fontSize: "0.875rem",
+              "&:hover": {
+                backgroundColor: "#0077e6",
+              },
+            }}
+          >
+            🌟 Mejorar plan
+          </Box>
+        </Link>
       </Box>
+      </Box>
+      
     </Box>
+    
+    
+    
   );
+
+
 
   // ✅ Renderizar Sidebar y Menú Hamburguesa
   return (
