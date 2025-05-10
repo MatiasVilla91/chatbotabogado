@@ -64,7 +64,6 @@ function Precios() {
           mx: "auto",
         }}
       >
-        Elegí el plan que mejor se adapte a tus necesidades. Todos nuestros planes incluyen acceso a inteligencia artificial especializada en derecho argentino, diseñada para profesionales legales.
       </Typography>
 
       <Box
