@@ -67,17 +67,24 @@ function Sidebar() {
   }, [token]);
 
   
-  // ✅ Eliminar conversación
-  const deleteConversation = async (id) => {
-    try {
-      await api.delete(`/legal/conversaciones/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setConversaciones(conversaciones.filter((c) => c._id !== id));
-    } catch (error) {
-      console.error("Error al eliminar conversación:", error);
-    }
-  };
+ // ✅ Eliminar conversación
+const deleteConversation = async (id) => {
+  try {
+    await api.delete(`/api/legal/conversaciones/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // ✅ Volvemos a cargar las conversaciones después de eliminar
+    setConversaciones((prevConversaciones) =>
+      prevConversaciones.filter((c) => c._id !== id)
+    );
+    console.log(`✅ Conversación ${id} eliminada correctamente.`);
+  } catch (error) {
+    console.error("❌ Error al eliminar conversación:", error);
+    alert("Error al eliminar la conversación. Intenta nuevamente.");
+  }
+};
+
 
   // ✅ Navegación
   const navItems = [
