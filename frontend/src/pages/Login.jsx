@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { TextField, Button, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import AuthCard from "../components/AuthCard"; // ✅ Usamos el mismo layout
+import GoogleIcon from "@mui/icons-material/Google"; // ✅ Usamos el icono de Google directamente de Material UI
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -22,7 +23,7 @@ function Login() {
         email,
         password,
       });
-      console.log("🧠 Datos que llegan del backend:", response.data);
+      //console.log("🧠 Datos que llegan del backend:", response.data);
 
       login(response.data.token, response.data.user);
       navigate("/consultas");
@@ -36,17 +37,7 @@ function Login() {
 
   return (
     <AuthCard>
-      <Button
-        variant="outlined"
-        fullWidth
-        sx={{ mt: 2 }}
-        onClick={() =>
-          window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`
-        }
-        disabled={loading} // ✅ Deshabilitamos si está cargando
-      >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Iniciar sesión con Google"}
-      </Button>
+    
 
       <Typography
         variant="h4"
@@ -82,6 +73,20 @@ function Login() {
         >
           {loading ? <CircularProgress size={28} color="inherit" /> : "Iniciar Sesión"}
         </Button>
+        <Button
+        variant="outlined"
+        fullWidth
+        sx={{ mt: 2 }}
+        onClick={() =>
+          window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`
+        }
+        disabled={loading} // ✅ Deshabilitamos si está cargando
+        
+      > 
+        <GoogleIcon sx={{ fontSize: 24 }} />      
+        {loading ? <CircularProgress size={24} color="inherit" /> : ""}
+      </Button>
+
         <Typography align="center" variant="body2" sx={{ mt: 2, color: "#ccc" }}>
           ¿No tenés cuenta?{" "}
           <Link to="/register" style={{ color: "#0a84ff", textDecoration: "none" }}>
