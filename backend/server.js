@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { Preference } = require("mercadopago");
+
 const mongoSanitize = require('express-mongo-sanitize');
 
 
@@ -101,39 +101,43 @@ app.use('/api/usuario', usuarioRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/admin', adminRoutes);
 
-// ✅ MercadoPago
 app.post('/api/payment', async (req, res) => {
-  const { description, price, quantity } = req.body;
-
-  const preference = {
-    items: [{
-      title: description,
-      unit_price: parseFloat(price),
-      quantity: parseInt(quantity),
-    }],
-    back_urls: {
-      success: "https://drleyes.netlify.app/success",
-      failure: "https://drleyes.netlify.app/failure",
-      pending: "https://drleyes.netlify.app/pending",
-    },
-    auto_return: "approved",
-  };
-
   try {
-    const preferenceClient = new Preference(mercadopago);
-    const response = await preferenceClient.create({ body: preference });
+    const { description, price, quantity } = req.body;
+
+    if (!description || !price || !quantity) {
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
+    }
+
+    const preference = {
+      items: [{
+        title: description,
+        unit_price: parseFloat(price),
+        quantity: parseInt(quantity),
+      }],
+      back_urls: {
+        success: "https://drleyes.netlify.app/success",
+        failure: "https://drleyes.netlify.app/failure",
+        pending: "https://drleyes.netlify.app/pending",
+      },
+      auto_return: "approved",
+    };
+
+    console.log("🟢 Preferencia a enviar:", preference); // DEBUG
+
+    const response = await mercadopago.preferences.create(preference);
 
     res.status(200).json({
-      init_point: response.init_point // SOLO PRODUCCIÓN
-      //init_point: response.sandbox_init_point // SOLO SANDBOX
-
-
+      init_point: response.body.init_point,
     });
   } catch (error) {
-    console.error("❌ Error creando preferencia:", error);
-    res.status(500).json({ error: error.message || "Error interno del servidor" });
+    console.error("❌ Error creando preferencia:", error.response?.data || error.message);
+    res.status(500).json({
+      error: error.message || "Error interno del servidor",
+    });
   }
 });
+
 
 // ✅ Health Check
 app.get('/', (req, res) => {
