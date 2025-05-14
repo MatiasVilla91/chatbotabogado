@@ -124,7 +124,10 @@ app.post('/api/payment', async (req, res) => {
     const response = await preferenceClient.create({ body: preference });
 
     res.status(200).json({
-      init_point: response.sandbox_init_point || response.init_point
+      init_point: response.init_point // SOLO PRODUCCIÓN
+      //init_point: response.sandbox_init_point // SOLO SANDBOX
+
+
     });
   } catch (error) {
     console.error("❌ Error creando preferencia:", error);
