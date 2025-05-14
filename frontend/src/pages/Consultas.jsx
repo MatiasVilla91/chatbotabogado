@@ -65,18 +65,30 @@ function Consultas() {
   }, []);
 
   const handlePayment = async () => {
-    try {
-      const response = await axios.post(`${backendUrl}/api/payment`, {
-        description: "Asesoría Legal IA",
-        price: 1000,
-        quantity: 1,
-      });
-      window.location.href = response.data.init_point;
-    } catch (error) {
-      console.error("❌ Error al iniciar el pago:", error.response ? error.response.data : error.message);
-      alert("Error al iniciar el pago, revisa la consola para más detalles.");
+  try {
+    const response = await axios.post(`${backendUrl}/api/payment`, {
+      description: "Asesoría Legal IA",
+      price: 1000,
+      quantity: 1,
+    });
+
+    const initPoint = response.data.init_point;
+
+    if (initPoint) {
+      window.location.href = initPoint;
+    } else {
+      alert("❌ El backend respondió pero no envió un link válido para pagar.");
     }
-  };
+  } catch (error) {
+    const mensaje =
+      error?.response?.data?.error ||
+      error?.message ||
+      "Error desconocido al intentar generar el link de pago.";
+
+    alert("❌ Error al iniciar el pago:\n" + mensaje);
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
