@@ -1,31 +1,55 @@
-# Logs
-logs
+# 📦 Logs y archivos temporales
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+*.tmp
+.DS_Store
+Thumbs.db
 
-node_modules
-dist
-dist-ssr
+# 📦 Dependencias y builds
+node_modules/
+dist/
+dist-ssr/
+
+# ⚙️ Archivos locales/env
 *.local
+.env
+.env.produccion
 
-# Editor directories and files
+# 🧾 Contratos y archivos PDF de prueba
+contrato.pdf
+contrato.json
+
+# 🧠 Embeddings
+backend/data/embeddings/              # ❌ carpeta vieja no usada
+backend/data/embeddings_privados/     # ❌ backup total privado
+backend/data/embeddings_publicos/     # ❌ donde generaste los partidos (si ya no usás esa carpeta)
+backend/data/embeddings_originales/   # ❌ si guardás los archivos grandes enteros
+# ✅ NO ignores embeddings_final (eso se sube)
+
+# 🛠️ Scripts personales y auditorías
+*.py
+auditor.py
+auditor_filtro.py
+dividir.py
+consolidar.py
+
+# 🧪 Archivos de debug
+#backend/utils/debugTokens.js
+
+# 🖥️ Archivos del editor
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-*.env
-.env.produccion
-contrato.pdf
-contrato.json
 
-# Panel de administración local
+# 🧱 Panel local
 admin-panel.html

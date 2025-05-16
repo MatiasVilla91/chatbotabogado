@@ -7,22 +7,22 @@ const upload = require('../middleware/upload');
 const fs = require('fs');
 const path = require('path');
 const pdfParse = require('pdf-parse');
-
 const Contrato = require('../models/Contrato');
 const ChatLegal = require('../models/ChatLegal');
 const promptLegal = require('../utils/promptLegal');
-
+const promptEstudiante = require('../utils/promptLegalEstudiante');
+const { cargarEmbeddings, buscarFragmentosRelevantes } = require("../services/legalRetriever");
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const router = express.Router();
 const logger = require('../utils/logger'); // ✅ al principio, limpio y global
 
+cargarEmbeddings(); // Cargar embeddings al iniciar
 
 // Validaciones y manejo de tokens
 const { body, validationResult } = require('express-validator');
 const { truncarHistorialPorTokens } = require('../utils/tokenUtils');
 
 
-// 📌 Consulta legal con IA y guardado en MongoDB
 router.post(
   '/consulta',
   checkAuth,
@@ -34,13 +34,21 @@ router.post(
       return res.status(400).json({ errores: errores.array() });
     }
 
-
-
     try {
-      const { pregunta } = req.body;
+      const { pregunta, modoLegal } = req.body;
+      const promptBase = modoLegal === 'estudiante' ? promptEstudiante : promptLegal;
 
+      // 🔍 Fragmentos legales relevantes
+      const fragmentos = await buscarFragmentosRelevantes(pregunta, 5); // podés reducir a 3 si querés
+      const fragmentosLimitados = fragmentos.map(f => f.slice(0, 1000)); // 🔪 recorte seguro
+
+      const fragmentosComoMensajes = fragmentosLimitados.map(frag => ({
+        role: "system",
+        content: `📚 Fragmento legal:\n${frag}`
+      }));
+
+      // 🧠 Historial
       const chatsAnteriores = await ChatLegal.find({ usuario: req.user.id }).sort({ creado: 1 });
-
       let historial = [];
       chatsAnteriores.forEach(chat => {
         chat.mensajes.forEach(m => {
@@ -51,15 +59,19 @@ router.post(
         });
       });
 
-      const historialReducido = truncarHistorialPorTokens(historial, 8192 - 1000);
+      const historialReducido = truncarHistorialPorTokens(historial, 4000); // 🔧 conservador
+
+      // 🧠 Construcción del mensaje
+      const messages = [
+        { role: "system", content: promptBase },
+        ...fragmentosComoMensajes,
+        ...historialReducido,
+        { role: "user", content: pregunta }
+      ];
 
       const response = await openai.chat.completions.create({
         model: "gpt-4",
-        messages: [
-          { role: "system", content: promptLegal },
-          ...historialReducido,
-          { role: "user", content: pregunta }
-        ],
+        messages,
         temperature: 0.2,
         max_tokens: 1000
       });
@@ -76,14 +88,16 @@ router.post(
       });
 
       logger.info(`📚 Consulta legal registrada para usuario ${req.user.id}`);
-
-
       res.json({ respuesta });
+
     } catch (error) {
       console.error("❌ Error en la consulta legal:", error);
       res.status(500).json({ message: "Error al consultar la IA", error: error.message });
     }
-});
+  }
+);
+
+
 
 
 // 🧾 Subida de PDF y extracción de texto
@@ -139,6 +153,7 @@ router.post(
       const respuesta = response.choices?.[0]?.message?.content || "No se pudo generar una respuesta válida.";
       logger.info(`📑 Consulta sobre PDF respondida para usuario ${req.user.id}`);
 
+
       res.json({ respuesta });
     } catch (error) {
       console.error("❌ Error en la consulta a OpenAI:", error);
@@ -146,6 +161,22 @@ router.post(
     }
 });
 
+
+// ✅ TEST EMBEDDINGS
+router.get('/test-embedding', async (req, res) => {
+  try {
+    const pregunta = req.query.q || "¿Qué es una declaratoria de herederos?";
+    const fragmentos = await buscarFragmentosRelevantes(pregunta);
+
+    res.json({
+      pregunta,
+      fragmentos
+    });
+  } catch (error) {
+    console.error("❌ Error al testear embeddings:", error);
+    res.status(500).json({ error: "Error interno al testear embeddings." });
+  }
+});
 
 // ✅ Ruta para obtener el historial de conversaciones
 router.get('/conversaciones', checkAuth, async (req, res) => {
@@ -203,6 +234,7 @@ router.get('/descargar/:id', checkAuth, async (req, res) => {
     if (contrato.usuario.toString() !== req.user.id) return res.status(403).json({ message: "No autorizado." });
 
   logger.info(`📥 Descarga de contrato: ${contrato._id} por usuario ${req.user.id}`);
+
 
     return res.redirect(contrato.ruta_pdf);
   } catch (error) {
