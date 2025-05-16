@@ -5,7 +5,8 @@ const { cosineSimilarity } = require("../utils/similarity");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const embeddingsDir = path.join(__dirname, "..", "data", "embeddings");
+const embeddingsDir = path.join(__dirname, "..", "data", "embeddings_final");
+
 
 let baseEmbeddings = [];
 
