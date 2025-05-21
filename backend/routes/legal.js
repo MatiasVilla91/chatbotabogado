@@ -70,7 +70,7 @@ router.post(
       ];
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         messages,
         temperature: 0.2,
         max_tokens: 1000
@@ -135,7 +135,7 @@ router.post(
       const { pregunta, contenidoPDF } = req.body;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         messages: [
           {
             role: "system",
