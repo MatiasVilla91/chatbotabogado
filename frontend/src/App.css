@@ -1,3 +1,23 @@
+@media (max-width: 600px) {
+  .MuiTextField-root {
+    font-size: 16px;
+  }
+
+  body,
+  #root {
+    overscroll-behavior: contain;
+    overflow-x: hidden;
+    touch-action: manipulation;
+  }
+}
+
+html, body, #root {
+  height: 100%;
+  overflow-y: auto !important;
+}
+
+
+
 #root {
   min-height: 100vh;
   height: 100%;
@@ -5,6 +25,8 @@
   margin: 0;
   padding: 0;
   display: flex;
+  flex-direction: column;
+  overflow-y: auto;  /* 👈 permite scroll si el contenido se expande */
   background-color: #111;
 }
 

@@ -24,13 +24,14 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  background-color: #1a1a1a; /* Fondo oscuro */
+  padding: 0;
+  width: 100%;
   min-height: 100vh;
-  overflow: auto; /* 🔄 cambiado de hidden a auto para permitir scroll */
+  background-color: #1a1a1a;
+  overflow-y: auto;  /* 👈 asegura scroll vertical */
+  display: block;    /* 🔄 evitar flex mal aplicado globalmente */
 }
+
 
 h1 {
   font-size: 3.2em;
@@ -83,3 +84,6 @@ button:focus-visible {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }
 }
+
+
+

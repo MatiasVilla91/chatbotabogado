@@ -1,4 +1,4 @@
-// Consultas.jsx - Layout profesional estilo GPT
+// Consultas.jsx - Layout profesional estilo GPT optimizado para scroll correcto
 import { useSearchParams } from "react-router-dom";
 import { useState, useContext, useEffect, useRef } from "react";
 import {
@@ -65,30 +65,29 @@ function Consultas() {
   }, []);
 
   const handlePayment = async () => {
-  try {
-    const response = await axios.post(`${backendUrl}/api/payment`, {
-      description: "Asesoría Legal IA",
-      price: 1000,
-      quantity: 1,
-    });
+    try {
+      const response = await axios.post(`${backendUrl}/api/payment`, {
+        description: "Asesoría Legal IA",
+        price: 1000,
+        quantity: 1,
+      });
 
-    const initPoint = response.data.init_point;
+      const initPoint = response.data.init_point;
 
-    if (initPoint) {
-      window.location.href = initPoint;
-    } else {
-      alert("❌ El backend respondió pero no envió un link válido para pagar.");
+      if (initPoint) {
+        window.location.href = initPoint;
+      } else {
+        alert("❌ El backend respondió pero no envió un link válido para pagar.");
+      }
+    } catch (error) {
+      const mensaje =
+        error?.response?.data?.error ||
+        error?.message ||
+        "Error desconocido al intentar generar el link de pago.";
+
+      alert("❌ Error al iniciar el pago:\n" + mensaje);
     }
-  } catch (error) {
-    const mensaje =
-      error?.response?.data?.error ||
-      error?.message ||
-      "Error desconocido al intentar generar el link de pago.";
-
-    alert("❌ Error al iniciar el pago:\n" + mensaje);
-  }
-};
-
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,92 +143,85 @@ function Consultas() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "90vh", overflow: "hidden" }}>
-
-      {/* CONTENIDO PRINCIPAL - RESPETA ESPACIO DE SIDEBAR */}
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "#111" }}>
-        {/* ENCABEZADO */}
-        <Box sx={{ px: isMobile ? 2 : 6, pt: 4, pb: 1 }}>
-          <Typography variant="h4" align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
-            Dictum IA
+    <Box sx={{ display: "flex", flexDirection: "column", height: "90vh", backgroundColor: "#111" }}>
+      {/* ENCABEZADO */}
+      <Box sx={{ px: isMobile ? 2 : 6, pt: 4, pb: 1 }}>
+        <Typography variant="h4" align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+          Dictum IA
+        </Typography>
+        {plan && (
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{ mt: 1, color: plan.esPremium ? "#81c784" : "#ccc" }}
+          >
+            {plan.esPremium
+              ? "🌟 Estás usando una cuenta Premium sin límites."
+              : `💬 Consultas restantes: ${plan.consultasRestantes} | 📄 Contratos restantes: ${plan.contratosRestantes}`}
           </Typography>
-          {plan && (
-            <Typography
-              variant="body2"
-              align="center"
-              sx={{ mt: 1, color: plan.esPremium ? "#81c784" : "#ccc" }}
+        )}
+      </Box>
+
+      {/* MENSAJES */}
+      <Box sx={{ flex: 1, overflowY: "auto", px: isMobile ? 2 : 6, py: 2 }}>
+        <AnimatePresence>
+          {mensajes.map((msg, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              {plan.esPremium
-                ? "🌟 Estás usando una cuenta Premium sin límites."
-                : `💬 Consultas restantes: ${plan.consultasRestantes} | 📄 Contratos restantes: ${plan.contratosRestantes}`}
-            </Typography>
-          )}
-        </Box>
-
-        {/* MENSAJES */}
-        <Box sx={{ flex: 1, overflowY: "auto", px: isMobile ? 2 : 6, py: 2 }}>
-          <AnimatePresence>
-            {mensajes.map((msg, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="caption" sx={{ color: "#999", mb: 0.5 }}>
-                    {msg.tipo === "sent" ? "👤 Usuario" : "⚖️ Dictum IA"} – {msg.hora || ""}
-                  </Typography>
-                  <Box
-                    sx={{
-                      backgroundColor: msg.tipo === "sent" ? "#2e2e2e" : "#1e1e1e",
-                      color: "#fff",
-                      p: 2,
-                      borderRadius: 2,
-                      textAlign: msg.tipo === "sent" ? "right" : "left",
-                      border: msg.tipo === "received" ? "1px solid #444" : "none",
-                      whiteSpace: "pre-wrap",
-                    }}
-                  >
-                    <Typography variant="body1">{msg.texto}</Typography>
-                  </Box>
-                </Box>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {isTyping && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="caption" sx={{ color: "#999", mb: 0.5 }}>
-                  ⚖️ Dictum IA – escribiendo...
+                  {msg.tipo === "sent" ? "👤 Usuario" : "⚖️ Dictum IA"} – {msg.hora || ""}
                 </Typography>
                 <Box
                   sx={{
-                    backgroundColor: "#1e1e1e",
+                    backgroundColor: msg.tipo === "sent" ? "#2e2e2e" : "#1e1e1e",
                     color: "#fff",
                     p: 2,
                     borderRadius: 2,
-                    textAlign: "left",
-                    border: "1px solid #444",
+                    textAlign: msg.tipo === "sent" ? "right" : "left",
+                    border: msg.tipo === "received" ? "1px solid #444" : "none",
+                    whiteSpace: "pre-wrap",
                   }}
                 >
-                  <Typography variant="body1">...</Typography>
+                  <Typography variant="body1">{msg.texto}</Typography>
                 </Box>
               </Box>
             </motion.div>
-          )}
+          ))}
+        </AnimatePresence>
 
-          <div ref={chatEndRef} />
-        </Box>
+        {isTyping && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" sx={{ color: "#999", mb: 0.5 }}>
+                ⚖️ Dictum IA – escribiendo...
+              </Typography>
+              <Box
+                sx={{
+                  backgroundColor: "#1e1e1e",
+                  color: "#fff",
+                  p: 2,
+                  borderRadius: 2,
+                  textAlign: "left",
+                  border: "1px solid #444",
+                }}
+              >
+                <Typography variant="body1">...</Typography>
+              </Box>
+            </Box>
+          </motion.div>
+        )}
+        <div ref={chatEndRef} />
+      </Box>
 
-        {/* INPUT DE CONSULTA */}
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{ px: isMobile ? 2 : 6, py: 2, borderTop: "1px solid #222", backgroundColor: "#111" }}
-        >
+      {/* INPUT DE CONSULTA + BOTÓN DE PAGO */}
+      <Box sx={{ px: isMobile ? 2 : 6, py: 2, borderTop: "1px solid #222", backgroundColor: "#111" }}>
+        <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
             placeholder="Escribí tu consulta legal..."
@@ -254,14 +246,15 @@ function Consultas() {
               ),
             }}
           />
-        </Box>
-
-        {/* BOTÓN DE PAGO */}
-        <Box sx={{ px: isMobile ? 2 : 6, pb: 2 }}>
-          <Button fullWidth onClick={handlePayment} variant="contained" sx={{ backgroundColor: "#333", "&:hover": { backgroundColor: "#444" } }}>
-            Pagar con MercadoPago
-          </Button>
-        </Box>
+        </form>
+        <Button
+          fullWidth
+          onClick={handlePayment}
+          variant="contained"
+          sx={{ mt: 2, backgroundColor: "#333", "&:hover": { backgroundColor: "#444" } }}
+        >
+          Pagar con MercadoPago
+        </Button>
       </Box>
 
       {/* MODAL DE PAGO */}
