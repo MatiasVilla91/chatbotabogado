@@ -7,7 +7,6 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const embeddingsDir = path.join(__dirname, "..", "data", "embeddings_final");
 
-
 let baseEmbeddings = [];
 
 function cargarEmbeddings() {
@@ -15,9 +14,12 @@ function cargarEmbeddings() {
   console.log("📁 Archivos encontrados:", archivos.length);
 
   archivos.forEach(nombre => {
-    const contenido = fs.readFileSync(path.join(embeddingsDir, nombre), "utf-8");
+    const ruta = path.join(embeddingsDir, nombre);
+    console.log("📄 Leyendo archivo:", nombre);
 
-    contenido.split("\n").forEach(linea => {
+    const contenido = fs.readFileSync(ruta, "utf-8");
+
+    contenido.split("\n").forEach((linea, index) => {
       if (!linea.trim()) return;
 
       try {
@@ -25,7 +27,16 @@ function cargarEmbeddings() {
         const vector = json.embeddings || json.embedding;
         const texto = json.texto || json.fragmento;
 
-        if (vector && Array.isArray(vector) && texto) {
+        if (!vector || !Array.isArray(vector)) {
+          console.warn(`⚠️ Vector inválido en ${nombre}, línea ${index + 1}`);
+          return;
+        }
+
+        if (vector.length < 100) {
+          console.warn(`❌ Embedding sospechosamente corto en ${nombre}, línea ${index + 1} (${vector.length} dimensiones)`);
+        }
+
+        if (texto) {
           baseEmbeddings.push({
             texto,
             embeddings: vector,
@@ -33,14 +44,24 @@ function cargarEmbeddings() {
           });
         }
       } catch (err) {
-        console.warn(`⚠️ Línea inválida en ${nombre}:`, err.message);
+        console.warn(`⚠️ Línea inválida en ${nombre}, línea ${index + 1}:`, err.message);
       }
     });
   });
 
   console.log("✅ Embeddings legales cargados:", baseEmbeddings.length);
-}
 
+  // Resumen por archivo
+  const porArchivo = {};
+  baseEmbeddings.forEach(e => {
+    porArchivo[e.origen] = (porArchivo[e.origen] || 0) + 1;
+  });
+
+  console.log("📊 Fragmentos por archivo:");
+  Object.entries(porArchivo).forEach(([archivo, cantidad]) => {
+    console.log(`   📁 ${archivo}: ${cantidad} fragmentos`);
+  });
+}
 
 async function buscarFragmentosRelevantes(pregunta, topN = 5) {
   const resultado = await openai.embeddings.create({
@@ -49,6 +70,8 @@ async function buscarFragmentosRelevantes(pregunta, topN = 5) {
   });
 
   const preguntaEmbed = resultado.data[0].embedding;
+
+  console.log("\n🧪 Embedding generado para la pregunta:", preguntaEmbed.length, "dimensiones");
 
   const similitudes = baseEmbeddings.map(obj => ({
     texto: obj.texto,

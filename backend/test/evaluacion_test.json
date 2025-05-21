@@ -1,0 +1,14 @@
+[
+  {
+    "pregunta": "¿Qué es la posesión hereditaria?",
+    "esperado": ["automática", "artículo 2337", "posesión de pleno derecho"]
+  },
+  {
+    "pregunta": "¿Qué se necesita para iniciar una declaratoria de herederos?",
+    "esperado": ["acta de defunción", "DNI", "partida de nacimiento"]
+  },
+  {
+    "pregunta": "¿Qué es el tracto abreviado?",
+    "esperado": ["venta anticipada", "antes de finalizar la sucesión"]
+  }
+]

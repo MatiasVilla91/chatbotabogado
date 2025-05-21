@@ -60,6 +60,9 @@ router.post('/login', loginLimiter, async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
     logger.info(`🔓 Inicio de sesión: ${email}`);
+    // ✅ MOSTRAR EL TOKEN EN CONSOLA
+    console.log(`✅ Login exitoso para ${email}`);
+    console.log(`🔐 TOKEN JWT: ${token}`);
     res.json({ token, user: { name: user.name, email: user.email }, message: "Inicio de sesión exitoso" });
   } catch (error) {
     logger.error(`❌ Error al iniciar sesión: ${error.message}`);
