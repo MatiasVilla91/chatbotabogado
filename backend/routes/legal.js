@@ -16,7 +16,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const router = express.Router();
 const logger = require('../utils/logger'); // ✅ al principio, limpio y global
 
-cargarEmbeddings(); // Cargar embeddings al iniciar
+//cargarEmbeddings(); // Cargar embeddings al iniciar
 
 // Validaciones y manejo de tokens
 const { body, validationResult } = require('express-validator');
