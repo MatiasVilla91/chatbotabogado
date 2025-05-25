@@ -2,13 +2,13 @@ import { Container, Typography, Box, Divider } from "@mui/material";
 
 function PoliticaPrivacidad() {
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth="xl" sx={{ py: 1 }}>
       <Typography variant="h3" gutterBottom>
         Política de Privacidad
       </Typography>
 
       <Typography variant="body1" sx={{ mb: 4 }}>
-        Esta Política de Privacidad describe cómo <strong>[Nombre de la App]</strong> (en adelante, “la Plataforma” o “nosotros”) recopila, utiliza, almacena y protege los datos personales de los usuarios que acceden y utilizan nuestros servicios. Al utilizar la Plataforma, el usuario acepta los términos de esta política.
+        Esta Política de Privacidad describe cómo <strong>Dictum IA</strong> (en adelante, “la Plataforma” o “nosotros”) recopila, utiliza, almacena y protege los datos personales de los usuarios que acceden y utilizan nuestros servicios. Al utilizar la Plataforma, el usuario acepta los términos de esta política.
       </Typography>
 
       <Divider sx={{ mb: 4 }} />

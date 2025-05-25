@@ -28,7 +28,7 @@ function Home() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "90vh", //en un futuro modificar a 100
         backgroundColor: "#111",
         display: "flex",
         flexDirection: "column",
@@ -52,7 +52,7 @@ function Home() {
       </Typography>
 
       <Typography variant="h6" color="#ccc" sx={{ mb: 4, maxWidth: 500 }}>
-        La inteligencia artificial legal a tu servicio.
+        Inteligencia Artificial Legal a tu servicio
       </Typography>
 
       <Button

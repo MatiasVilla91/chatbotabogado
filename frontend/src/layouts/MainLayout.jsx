@@ -11,7 +11,7 @@ const MainLayout = ({ children }) => {
   const { token } = useContext(AuthContext);
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#111" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh",height:"100vh",alignItems: "stretch" ,backgroundColor: "#111" }}>
       <Sidebar />
 
       <Box

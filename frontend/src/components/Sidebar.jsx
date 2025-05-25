@@ -170,17 +170,20 @@ const deleteConversation = async (id) => {
 
   // ✅ Contenido del sidebar
   const sidebarContent = (
-    <Box
-      sx={{
-        width: 240,
-        height: "100vh",
-        backgroundColor: "#1a1a1a",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        overflow: "hidden",
-      }}
-    >
+   <Box
+    sx={{
+      width: 290,
+      backgroundColor: "#1a1a1a",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      
+      minHeight: "100vh",     // 🔧 que al menos se estire como el contenedor padre
+      height: "auto",        // 🔧 que crezca con el contenido
+      position: "relative",   // Para evitar errores de overlay
+    }}
+  >
+
       <Box sx={{ px: 3, py: 3 }}>
         <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", mb: 4 }}>
           DICTUM IA
@@ -208,7 +211,7 @@ const deleteConversation = async (id) => {
         ))}
 
 <Box sx={{ mt: 3 }}>
-        <Link to="/planes" style={{ textDecoration: "none" }}>
+        <Link to="/precios" style={{ textDecoration: "none" }}>
           <Box
             sx={{
               textAlign: "center",

@@ -1,7 +1,7 @@
 // src/pages/Precios.jsx
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
 import ContentCard from "../components/ContentCard";
-import { useNavigate } from "react-router-dom"; // al principio del component
+import { useNavigate } from "react-router-dom";
 
 const planes = [
   {
@@ -20,7 +20,6 @@ const planes = [
     descripcion: "Ideal para abogados en ejercicio o estudios pequeños",
     beneficios: [
       "Accedé a toda la potencia de Dictum IA, diseñada para profesionales del derecho argentino.",
-
       "Atención prioritaria",
       "Actualizaciones automáticas",
     ],
@@ -29,7 +28,7 @@ const planes = [
   },
   {
     nombre: "Estudio Pro",
-    precio: "$50.000 Arg/mes",
+    precio: "$200.000 Arg/mes",
     descripcion: "Para equipos legales con alto volumen de trabajo",
     beneficios: [
       "Hasta 5 cuentas activas por estudio",
@@ -43,13 +42,41 @@ const planes = [
 ];
 
 function Precios() {
-  const navigate = useNavigate(); // Hook para navegación
+  const navigate = useNavigate();
+
+  const handlePago = async (plan) => {
+    try {
+      const res = await fetch("https://chatbotabogado.onrender.com/api/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          description: `Plan ${plan.nombre}`,
+        price: plan.nombre === "Premium" ? 35000 : 200000,
+        quantity: 1,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert("⚠️ No se pudo generar el enlace de pago.");
+      }
+    } catch (error) {
+      console.error("❌ Error al iniciar el pago:", error);
+      alert("Error al conectar con MercadoPago.");
+    }
+  };
+
   return (
     <ContentCard>
       <Typography
         variant="h4"
         align="center"
-        sx={{ color: "#fff", fontWeight: "bold", mb: 2 }}
+        sx={{ color: "#fff", fontWeight: "bold", mb: -6 }}
       >
         Planes y Precios
       </Typography>
@@ -64,47 +91,47 @@ function Precios() {
           mx: "auto",
         }}
       >
+        
       </Typography>
 
       <Box
-  display="flex"
-  flexWrap="wrap"
-  justifyContent="space-between"
-  alignItems="stretch"
-  gap={{ xs: 3, md: 4 }}
-  sx={{
-    width: "100%",
-    maxWidth: "1200px",
-    mx: "auto",
-  }}
->
-
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="space-between"
+        alignItems="stretch"
+        gap={{ xs: 3, md: 4 }}
+        sx={{
+          width: "100%",
+          maxWidth: "1550px",
+          mx: "auto",
+        }}
+      >
         {planes.map((plan, index) => (
           <Card
             key={index}
             sx={{
-                backgroundColor: "#1e1e1e",
-                color: "#fff",
-                borderRadius: 3,
-                flex: "1 1 300px",
-                minWidth: "280px",
-                maxWidth: "360px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                p: 2,
-                border: plan.nombre === "Premium" ? "2px solid #0a84ff" : "1px solid #333",
-              }}
+              backgroundColor: "#1e1e1e",
+              color: "#fff",
+              borderRadius: 3,
+              flex: "1 1 300px",
+              minWidth: "280px",
+              maxWidth: "360px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              p: 2,
+              border: plan.nombre === "Premium" ? "2px solid #0a84ff" : "1px solid #333",
+            }}
           >
-            <CardContent>
+            <CardContent sx={{flexGrow:1}}>
               {plan.destacado && (
                 <Box
                   sx={{
                     backgroundColor: "#0a84ff",
                     color: "#fff",
-                    px: 1.5,
+                    px: 0.5,
                     py: 0.5,
-                    fontSize: "0.75rem",
+                    fontSize: "0.60rem",
                     fontWeight: "bold",
                     textAlign: "center",
                     borderRadius: "8px",
@@ -115,6 +142,7 @@ function Precios() {
                   Más elegido
                 </Box>
               )}
+              
               <Typography
                 variant="h5"
                 sx={{ fontWeight: "bold", mb: 1, textAlign: "center" }}
@@ -145,14 +173,17 @@ function Precios() {
                   <li key={i} style={{ marginBottom: "8px" }}>{item}</li>
                 ))}
               </ul>
-              <Button
+             
+              
+            </CardContent>
+
+             <Button
                 variant="contained"
                 fullWidth
                 onClick={() => {
-                    if (plan.nombre === "Gratis") navigate("/register");
-                    else if (plan.nombre === "Premium") navigate("/register?plan=premium");
-                    else if (plan.nombre === "Estudio Pro") navigate("/contacto");
-                  }}
+                  if (plan.nombre === "Gratis") navigate("/register");
+                  else if (plan.nombre === "Premium" || plan.nombre === "Estudio Pro") handlePago(plan);
+                }}
                 sx={{
                   mt: 2,
                   backgroundColor: "#0a84ff",
@@ -163,11 +194,16 @@ function Precios() {
               >
                 {plan.boton}
               </Button>
-            </CardContent>
+
+
           </Card>
+          
         ))}
+        
       </Box>
+      
     </ContentCard>
+    
   );
 }
 

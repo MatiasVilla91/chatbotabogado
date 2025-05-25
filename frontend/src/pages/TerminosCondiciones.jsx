@@ -3,9 +3,9 @@ import { Container, Typography, Box } from "@mui/material";
 
 function TerminosCondiciones() {
   return (
-    <Box sx={{ backgroundColor: "#111", minHeight: "100vh", py: 6 }}>
-      <Container maxWidth="md">
-        <Typography variant="h4" sx={{ color: "#fff", fontWeight: "bold", mb: 3 }}>
+    <Box sx={{ backgroundColor: "#111", minHeight: "100vh", py: 1 }}>
+      <Container maxWidth="xl">
+        <Typography variant="h3" sx={{ color: "#fff"}}>
           Términos y Condiciones
         </Typography>
 
