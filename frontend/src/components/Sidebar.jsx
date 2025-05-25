@@ -152,13 +152,19 @@ const deleteConversation = async (id) => {
                     {c.titulo || "Sin título"}
                   </Link>
                   <Tooltip title="Eliminar conversación" arrow>
-                    <IconButton
-                      onClick={() => deleteConversation(c._id)}
-                      sx={{ color: "#ff4d4d" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
+  <IconButton
+    onClick={() => deleteConversation(c._id)}
+    sx={{
+      color: "#aaa", // gris claro
+      transition: "color 0.2s",
+      "&:hover": {
+        color: "#ff4d4d", // rojo al hacer hover
+      },
+    }}
+  >
+    <DeleteIcon />
+  </IconButton>
+</Tooltip>
                 </Box>
               </motion.div>
             ))}

@@ -28,7 +28,7 @@ const planes = [
   },
   {
     nombre: "Estudio Pro",
-    precio: "$200.000 Arg/mes",
+    precio: "$131.250 Arg/mes",
     descripcion: "Para equipos legales con alto volumen de trabajo",
     beneficios: [
       "Hasta 5 cuentas activas por estudio",
@@ -37,7 +37,7 @@ const planes = [
       "Atención prioritaria dedicada",
       "Soporte personalizado con seguimiento",
     ],
-    boton: "Contactar para acceder",
+    boton: "Unirme al plan Pro",
   },
 ];
 
@@ -86,7 +86,7 @@ function Precios() {
         sx={{
           color: "#ccc",
           mb: 4,
-          fontSize: { xs: "1rem", md: "1.1rem" },
+          fontSize: { xs: "1rem", md: "0.5em" },
           maxWidth: "700px",
           mx: "auto",
         }}
@@ -144,7 +144,7 @@ function Precios() {
               )}
               
               <Typography
-                variant="h5"
+                variant="h4"
                 sx={{ fontWeight: "bold", mb: 1, textAlign: "center" }}
               >
                 {plan.nombre}
@@ -156,8 +156,8 @@ function Precios() {
                   color: "#0a84ff",
                   fontWeight: "bold",
                   mb: 2,
-                  fontSize: { xs: "2.2rem", sm: "2.8rem", md: "3.2rem" },
-                  lineHeight: 1.2,
+                  fontSize: { xs: "2.2rem", sm: "2.8rem", md: "1.5rem" },
+                  lineHeight: 1.1,
                 }}
               >
                 {plan.precio}
