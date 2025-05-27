@@ -172,15 +172,18 @@ router.post(
       }
 
       // 📨 Enviar respuesta por WhatsApp
-     await client.messages.create({
+await client.messages.create({
   body: respuesta,
   from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
   to: From
-}).then((msg) => {
+})
+.then(msg => {
   console.log("📤 Twilio SID:", msg.sid);
-}).catch((err) => {
-  console.error("❌ ERROR AL ENVIAR POR TWILIO:", err);
+})
+.catch(err => {
+  console.error("❌ ERROR AL ENVIAR POR TWILIO:", err?.message || err);
 });
+
 
 
       logger.info(`✅ Mensaje enviado a ${From}: ${respuesta}`);
