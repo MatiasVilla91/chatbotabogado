@@ -73,23 +73,23 @@ import {
           <MenuItem onClick={() => { navigate("/perfil"); handleClose(); }}>
             <ListItemIcon><AccountCircleIcon sx={{ color: "#ccc" }} /></ListItemIcon>
             Ver perfil
-          </MenuItem>
+          </MenuItem>{/*
           <MenuItem onClick={() => { navigate("/configuracion"); handleClose(); }}>
             <ListItemIcon><SettingsIcon sx={{ color: "#ccc" }} /></ListItemIcon>
             Configuración
-          </MenuItem>
+          </MenuItem>*/}
   
           <Divider sx={{ backgroundColor: "#444" }} />
-  
-          <MenuItem onClick={() => { navigate("/planes"); handleClose(); }}>
+ 
+          <MenuItem onClick={() => { navigate("/precios"); handleClose(); }}>
             <ListItemIcon><UpgradeIcon sx={{ color: "#ccc" }} /></ListItemIcon>
             Mejorar plan
-          </MenuItem>
+          </MenuItem> {/*
           <MenuItem onClick={() => { navigate("/historial"); handleClose(); }}>
             <ListItemIcon><DescriptionIcon sx={{ color: "#ccc" }} /></ListItemIcon>
             Mis contratos
           </MenuItem>
-  
+  */ }
           <Divider sx={{ backgroundColor: "#444" }} />
   
           <MenuItem onClick={handleLogout}>

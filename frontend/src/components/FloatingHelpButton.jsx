@@ -1,10 +1,10 @@
 // components/FloatingHelpButton.jsx
 import { Fab, Tooltip } from '@mui/material';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 function FloatingHelpButton() {
   return (
-    <Tooltip title="¿Necesitás ayuda?" arrow>
+    <Tooltip title="Usar Dictum en Whatsapp" arrow>
       <Fab
         color="primary"
         sx={{
@@ -18,10 +18,10 @@ function FloatingHelpButton() {
           zIndex: 1000,
         }}
         onClick={() => {
-          window.open("https://wa.me/5493510000000?text=Hola%20necesito%20ayuda%20con%20Dictum%20IA", "_blank");
+          window.open("https://wa.me/5493572500068?text=Hola%20necesito%20ayuda%20con%20Dictum%20IA", "_blank");
         }}
       >
-        <HelpOutlineIcon />
+        <WhatsAppIcon />
       </Fab>
     </Tooltip>
   );
