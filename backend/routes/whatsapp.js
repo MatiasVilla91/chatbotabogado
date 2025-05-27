@@ -38,17 +38,25 @@ router.post(
       // Registro automático si no existe usuario
       let user = await User.findOne({ telefono: From });
       if (!user) {
-        user = await User.create({
-          name: 'Invitado',
-          email: `auto+${Date.now()}@dictum.com`,
-          telefono: From,
-          password: 'temporal123',
-          esPremium: false,
-          consultasRestantes: 5,
-          contratosRestantes: 2
-        });
-        logger.info(`👤 Usuario registrado automáticamente: ${user.telefono}`);
-      }
+  user = await User.create({
+    name: 'Invitado',
+    email: `auto+${Date.now()}@dictum.com`,
+    telefono: From,
+    password: 'temporal123',
+    esPremium: false,
+    consultasRestantes: 5,
+    contratosRestantes: 2
+  });
+  logger.info(`👤 Usuario registrado automáticamente: ${user.telefono}`);
+
+  // Mensaje de bienvenida
+  await client.messages.create({
+    from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    to: From,
+    body: `👋 ¡Bienvenido a *Dictum IA*! Soy tu asistente legal. Podés escribirme lo que necesites o usar comandos como:\n\n📄 /contrato\n🔎 /consulta\n💎 /premium\n❓ /ayuda\n\n🧠 Estoy listo para ayudarte con cualquier tema legal relacionado con Argentina.`
+  });
+}
+
 
       const historialDB = await ChatLegal.find({ telefono: From }).sort({ creado: 1 });
       let historial = [];
@@ -66,8 +74,37 @@ router.post(
       const bodyLower = Body.toLowerCase();
 
       if (bodyLower.includes("/ayuda")) {
-        respuesta = `📌 Comandos disponibles:\n- contrato: genera un contrato personalizado\n- /ultimo: muestra tu último contrato\n- /contratos: muestra los últimos contratos\n- /plan: consulta tu estado de cuenta\n- /premium: actualizar tu cuenta\n- /ayuda: muestra este menú`;
-      }
+  respuesta =
+    `📚 *Menú de ayuda de Dictum IA*\n\n` +
+    `🧠 *Consultas legales*\n` +
+    `Escribí tu pregunta directamente o usá /consulta\n\n` +
+    `📄 *Contratos*\n` +
+    `/contrato → Genera un contrato legal personalizado\n` +
+    `/miscontratos → Ver últimos contratos generados\n\n` +
+    `🗂️ *Historial*\n` +
+    `/historial → Ver tus consultas anteriores\n\n` +
+    `💎 *Cuenta y suscripción*\n` +
+    `/plan → Ver tu plan actual\n` +
+    `/premium → Pasar a Premium y desbloquear todo\n\n` +
+    `ℹ️ /ayuda → Mostrar este menú`;
+}
+
+else if (bodyLower.includes("/historial")) {
+  const chats = await ChatLegal.find({ telefono: From }).sort({ creado: -1 }).limit(5);
+
+  if (!chats.length) {
+    respuesta = "🗂️ No encontré consultas anteriores tuyas. ¡Escribime cualquier duda legal que tengas!";
+  } else {
+    const resumen = chats.map((c, i) => {
+      const pregunta = c.mensajes.find(m => m.tipo === "sent")?.texto?.slice(0, 60) || "Consulta sin título";
+      return `🧠 ${i + 1}) ${pregunta}`;
+    }).join("\n");
+
+    respuesta = `📚 *Últimas consultas realizadas:*\n\n${resumen}\n\nEscribí nuevamente cualquiera para retomarla.`;
+  }
+}
+
+
 
       else if (bodyLower.includes("/plan")) {
         respuesta = user.esPremium
@@ -76,8 +113,14 @@ router.post(
       }
 
       else if (bodyLower.includes("/premium")) {
-        respuesta = `✨ Para desbloquear uso ilimitado del asistente legal, actualizá a Premium aquí:\n${process.env.LINK_PREMIUM || 'https://tu-link-de-pago.com'}`;
-      }
+  respuesta =
+    `💎 *Dictum IA Premium*\n\n` +
+    `✔️ Consultas legales ilimitadas\n` +
+    `✔️ Generación de contratos sin límites\n` +
+    `✔️ Soporte prioritario\n\n` +
+    `💳 Activá tu cuenta Premium aquí:\n${process.env.LINK_PREMIUM || 'https://tu-link-de-pago.com'}`;
+}
+
 
       else if (bodyLower.includes("/ultimo")) {
         const ultimo = await Contrato.find({ usuario: user._id }).sort({ createdAt: -1 }).limit(1);
@@ -88,14 +131,16 @@ router.post(
         }
       }
 
-      else if (bodyLower.includes("/contratos")) {
-        const ultimos = await Contrato.find({ usuario: user._id }).sort({ createdAt: -1 }).limit(3);
-        if (ultimos.length === 0) {
-          respuesta = "❗ No encontré contratos anteriores.";
-        } else {
-          respuesta = ultimos.map((c, i) => `📄 Contrato ${i + 1}: ${c.ruta_pdf}`).join("\n");
-        }
-      }
+      else if (bodyLower.includes("/miscontratos") || bodyLower.includes("/contratos")) {
+  const ultimos = await Contrato.find({ usuario: user._id }).sort({ createdAt: -1 }).limit(3);
+  if (ultimos.length === 0) {
+    respuesta = "📂 Aún no generaste ningún contrato legal. Escribí 'Quiero un contrato de...' para crear el primero.";
+  } else {
+    respuesta = `📄 *Tus últimos contratos generados:*\n\n` +
+      ultimos.map((c, i) => `📑 Contrato ${i + 1}: ${c.ruta_pdf}`).join("\n");
+  }
+}
+
 
       // 🚨 CONTRATO
       else if (bodyLower.includes("contrato")) {
@@ -171,8 +216,39 @@ router.post(
         }
       }
 
-      // 📨 Enviar respuesta por WhatsApp
-await client.messages.create({
+      //dividir mensajes largos
+      const partes = [];
+let texto = respuesta;
+
+while (texto.length > 0) {
+  partes.push(texto.slice(0, 1500));
+  texto = texto.slice(1500);
+}
+
+for (let i = 0; i < partes.length; i++) {
+  const parte = partes.length > 1 ? `(${i + 1}/${partes.length}) ${partes[i]}` : partes[i];
+
+  await client.messages.create({
+    body: parte,
+    from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    to: From
+  }).then(msg => {
+    console.log("📤 Twilio SID:", msg.sid);
+  }).catch(err => {
+    console.error("❌ ERROR AL ENVIAR POR TWILIO:", err?.message || err);
+  });
+
+  await new Promise(r => setTimeout(r, 1000)); // Espera 1 segundo entre partes
+}
+
+logger.info(`✅ Mensaje enviado a ${From}: ${respuesta}`);
+res.status(200).send('Mensaje procesado');
+
+
+
+
+      // 📨 Enviar respuesta por WhatsApp 
+{/*await client.messages.create({
   body: respuesta,
   from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
   to: From
@@ -182,7 +258,7 @@ await client.messages.create({
 })
 .catch(err => {
   console.error("❌ ERROR AL ENVIAR POR TWILIO:", err?.message || err);
-});
+});*/}
 
 
 
