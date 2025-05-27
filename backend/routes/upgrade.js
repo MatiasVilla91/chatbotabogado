@@ -2,15 +2,19 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const { checkAuth } = require('../middleware/auth');
-const logger = require('../utils/logger'); // ✅ arriba
+const logger = require('../utils/logger');
 
-// ✅ Ruta para actualizar después del pago
 router.post('/upgrade', checkAuth, async (req, res) => {
     try {
+        const ahora = new Date();
+        const unMesDespues = new Date(ahora.getTime() + 30 * 24 * 60 * 60 * 1000); // ✅ 30 días exactos
+
         await User.findByIdAndUpdate(req.user.id, {
             esPremium: true,
             consultasRestantes: 9999,
-            contratosRestantes: 9999
+            contratosRestantes: 9999,
+            fechaInicioPremium: ahora,
+            fechaFinPremium: unMesDespues
         });
 
         logger.info(`💎 Usuario actualizado a Premium: ${req.user.id}`);

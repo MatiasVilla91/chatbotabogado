@@ -5,40 +5,53 @@ import { useNavigate } from "react-router-dom";
 
 const planes = [
   {
-    nombre: "Gratis",
-    precio: "$0",
-    descripcion: "Probá la app sin compromiso",
-    beneficios: [
-      "5 consultas legales con IA especializada",
-      "Soporte básico",
-    ],
-    boton: "Probar gratis",
-  },
+  nombre: "Plan Gratis",
+  precio: "$0",
+  descripcion: "Empezá a usar Dictum IA hoy, sin riesgos ni compromiso",
+  beneficios: [
+    "✅ 5 consultas legales mensuales con IA experta en derecho argentino",
+    "⚡ Acceso inmediato sin tarjeta: registrate y usalo al instante",
+    "🚀 Revolucioná tu práctica legal con tecnología de punta",
+    "⏱️ Respuestas claras en segundos, sin esperas ni turnos",
+    "🔒 Máxima privacidad y seguridad en cada consulta",
+  ],
+  boton: "Acceder gratis ahora",
+  destacado: false,
+  
+  destacadoTexto: "¡Empieza sin pagar!",
+},
   {
     nombre: "Premium",
     precio: "$35.000 Arg/mes",
-    descripcion: "Ideal para abogados en ejercicio o estudios pequeños",
+    descripcion: "La elección perfecta para abogados que buscan destacarse",
     beneficios: [
-      "Accedé a toda la potencia de Dictum IA, diseñada para profesionales del derecho argentino.",
-      "Atención prioritaria",
-      "Actualizaciones automáticas",
+    "✅ Consultas ilimitadas con IA legal entrenada en normativa argentina",
+    "🚀 Resolvé casos en menos tiempo y con mayor precisión",
+    "📞 Soporte prioritario para que nunca pierdas tiempo valioso",
+    "🔔 Alertas legales y actualizaciones automáticas que te mantienen un paso adelante",
+    "🧠 Optimizado para profesionales en ejercicio",
+    "⌛Ahorra tiempo y descubre solciones en segundos"
     ],
-    boton: "Unirme al plan Premium",
+    boton: "Quiero ser Premium",
     destacado: true,
+    destacadoTexto: "Ideal para Profesionales",
+    
   },
   {
-    nombre: "Estudio Pro",
-    precio: "$131.250 Arg/mes",
-    descripcion: "Para equipos legales con alto volumen de trabajo",
-    beneficios: [
-      "Hasta 5 cuentas activas por estudio",
-      "Consultas ilimitadas con IA legal",
-      "Generación masiva de contratos",
-      "Atención prioritaria dedicada",
-      "Soporte personalizado con seguimiento",
-    ],
-    boton: "Unirme al plan Pro",
-  },
+  nombre: "Estudio Pro",
+  precio: "$200.000 Arg/mes",
+  descripcion: "La solución definitiva para estudios jurídicos con alta demanda",
+  beneficios: [
+    "👥 Hasta 10 cuentas activas con acceso completo a Dictum IA",
+    "🔍 Consultas ilimitadas con IA especializada en derecho argentino",
+    "🎯 Soporte premium personalizado con seguimiento estratégico",
+    "⚙️ Atención dedicada y herramientas diseñadas para equipos legales de alto rendimiento",
+    "📈 Más velocidad, más organización, más resultados",
+  ],
+  boton: "Solicitar acceso al Plan Pro",
+  destacado: false,
+  destacadoTexto: "Ideal para estudios jurídicos",
+},
 ];
 
 function Precios() {
@@ -124,24 +137,25 @@ function Precios() {
             }}
           >
             <CardContent sx={{flexGrow:1}}>
-              {plan.destacado && (
-                <Box
-                  sx={{
-                    backgroundColor: "#0a84ff",
-                    color: "#fff",
-                    px: 0.5,
-                    py: 0.5,
-                    fontSize: "0.60rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    borderRadius: "8px",
-                    mb: 2,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Más elegido
-                </Box>
-              )}
+             {plan.destacadoTexto && (
+  <Box
+    sx={{
+      backgroundColor: "#0a84ff",
+      color: "#fff",
+      px: 0.5,
+      py: 0.5,
+      fontSize: "0.60rem",
+      fontWeight: "bold",
+      textAlign: "center",
+      borderRadius: "8px",
+      mb: 2,
+      textTransform: "uppercase",
+    }}
+  >
+    {plan.destacadoTexto}
+  </Box>
+)}
+
               
               <Typography
                 variant="h4"

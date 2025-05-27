@@ -143,7 +143,7 @@ function Consultas() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "90vh", backgroundColor: "#111" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh", backgroundColor: "#111" }}>
       {/* ENCABEZADO */}
       <Box sx={{ px: isMobile ? 2 : 6, pt: 4, pb: 1 }}>
         <Typography variant="h4" align="center" sx={{ color: "#fff", fontWeight: "bold" }}>

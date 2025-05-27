@@ -184,7 +184,7 @@ const deleteConversation = async (id) => {
       flexDirection: "column",
       justifyContent: "space-between",
       
-      minHeight: "100vh",     // 🔧 que al menos se estire como el contenedor padre
+      minHeight: "111vh",     // 🔧 que al menos se estire como el contenedor padre
       height: "auto",        // 🔧 que crezca con el contenido
       position: "relative",   // Para evitar errores de overlay
     }}

@@ -24,6 +24,7 @@ const whatsappRoutes = require('./routes/whatsapp');
 const adminRoutes = require('./routes/admin');
 const { checkAuth } = require('./middleware/auth');
 const logger = require('./utils/logger');
+const verificarPlan = require('./middleware/verificarPlan');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -101,6 +102,7 @@ app.use('/api/upgrade', upgradeRoutes);
 app.use('/api/usuario', usuarioRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/admin', adminRoutes);
+app.use('/api', checkAuth, verificarPlan);
 
 app.post('/api/payment', async (req, res) => {
   try {

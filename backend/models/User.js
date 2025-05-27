@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  fechaInicioPremium: { type: Date },
+  fechaFinPremium: { type: Date },
+
+  
 
   // ✅ Password solo requerido si NO es login por Google
   password: {
