@@ -16,45 +16,89 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 //seguridad
 const rateLimit = new Map();
+const actividadUsuarios = new Map(); // telegramId => [timestamps]
+const USUARIO_SPAM_LIMITE = 10; // máximo 10 mensajes por minuto
+const BLOQUEO_TIEMPO = 60 * 1000; // 1 minuto
+const bloqueados = new Map(); // telegramId => timestamp hasta el que está bloqueado
+
 
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
+  console.log("🧑‍💼 Nuevo mensaje de:", msg.from.first_name, "chatId:", chatId);
+  const ahora = Date.now();
+
+// Si está bloqueado
+if (bloqueados.has(chatId) && bloqueados.get(chatId) > ahora) {
+  return bot.sendMessage(chatId, "🚫 Estás temporalmente bloqueado por actividad sospechosa.");
+}
+
+// Registrar actividad
+const actividad = actividadUsuarios.get(chatId) || [];
+const actividadFiltrada = actividad.filter(t => ahora - t < 60 * 1000);
+actividadFiltrada.push(ahora);
+actividadUsuarios.set(chatId, actividadFiltrada);
+
+// Si superó el límite, bloquear
+if (actividadFiltrada.length > USUARIO_SPAM_LIMITE) {
+  bloqueados.set(chatId, ahora + BLOQUEO_TIEMPO);
+  return bot.sendMessage(chatId, "🚨 Has sido bloqueado temporalmente por enviar demasiados mensajes.");
+}
+
+
   const texto = msg.text?.trim();
   const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const telefono = msg.contact?.phone_number || null;
+  const telefono = (msg.contact && msg.contact.user_id === msg.from.id)
+  ? msg.contact.phone_number
+  : null;
+
 
   //seguridad
+  
+
   const now = Date.now();
   if (rateLimit.has(chatId) && now - rateLimit.get(chatId) < 2000) {
   return bot.sendMessage(chatId, "⚠️ Esperá un momento antes de enviar otra consulta.");
   }
   rateLimit.set(chatId, now);
 
-  if (texto.length > 1000) return bot.sendMessage(chatId, "⚠️ El mensaje es demasiado largo.");
-  if (/https?:\/\//i.test(texto)) return bot.sendMessage(chatId, "🚫 No se permiten enlaces.");
+
+ 
+  
 
 //fin seguridad
 
 
   if (!texto) return;
+  if (texto.length > 1000) return bot.sendMessage(chatId, "⚠️ El mensaje es demasiado largo.");
+  if (/https?:\/\//i.test(texto)) return bot.sendMessage(chatId, "🚫 No se permiten enlaces.");
 
   try {
-    let user = await User.findOne({ telegramId: chatId });
-    if (!user) {
-      user = await User.create({
-        name: msg.from.first_name || 'Invitado',
-        email: `tg+${Date.now()}@dictum.com`,
-        telegramId: chatId,
-        telefono:telefono,
-        password: 'temporal123',
-        esPremium: false,
-        consultasRestantes: 5,
-        contratosRestantes: 2
-        
-      });
+    
+  let user = await User.findOne({ telegramId: chatId });
 
-      await bot.sendMessage(chatId, `👋 ¡Bienvenido a *Dictum IA*! Soy tu asistente legal. Podés escribirme cualquier duda o usar comandos como:\n\n/contrato\n/historial\n/miscontratos\n/premium\n/plan`);
-    }
+if (!user) {
+  user = await User.create({
+    name: msg.from.first_name || 'Invitado',
+    email: `tg+${Date.now()}@dictum.com`,
+    telegramId: chatId,
+    telefono: telefono,
+    password: require('crypto').randomBytes(16).toString('hex'),
+    esPremium: false,
+    consultasRestantes: 5,
+    contratosRestantes: 2,
+    bienvenidaEnviada: false
+  });
+}
+
+// ✅ Enviar bienvenida solo si no fue enviada antes
+if (!user.bienvenidaEnviada) {
+  await bot.sendMessage(chatId, `👋 ¡Bienvenido a *Dictum IA*! Soy tu asistente legal. Podés escribirme cualquier duda o usar comandos como:\n\n/contrato\n/historial\n/miscontratos\n/premium\n/plan`);
+  user.bienvenidaEnviada = true;
+  await user.save();
+}
+  
+  
+  
 
     const textoLower = texto.toLowerCase();
     let respuesta = "";
