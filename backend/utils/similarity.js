@@ -1,8 +1,10 @@
+// utils/similarity.js
+
 function cosineSimilarity(vecA, vecB) {
-  const dot = vecA.reduce((sum, val, i) => sum + val * vecB[i], 0);
-  const normA = Math.sqrt(vecA.reduce((sum, val) => sum + val * val, 0));
-  const normB = Math.sqrt(vecB.reduce((sum, val) => sum + val * val, 0));
-  return dot / (normA * normB);
+  const dotProduct = vecA.reduce((acc, val, i) => acc + val * vecB[i], 0);
+  const normA = Math.sqrt(vecA.reduce((acc, val) => acc + val * val, 0));
+  const normB = Math.sqrt(vecB.reduce((acc, val) => acc + val * val, 0));
+  return dotProduct / (normA * normB);
 }
 
 module.exports = { cosineSimilarity };

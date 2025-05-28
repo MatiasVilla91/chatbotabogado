@@ -38,9 +38,6 @@ auditor_filtro.py
 dividir.py
 consolidar.py
 
-# 🧪 Archivos de debug
-#backend/utils/debugTokens.js
-
 # 🖥️ Archivos del editor
 .vscode/*
 !.vscode/extensions.json
@@ -53,3 +50,6 @@ consolidar.py
 
 # 🧱 Panel local
 admin-panel.html
+
+#scripts
+./backend/scripts

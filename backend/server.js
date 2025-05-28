@@ -1,5 +1,7 @@
 require('dotenv').config();
 require('./config/passport');
+require('./routes/telegram'); // Esto inicia el bot
+
 
 const express = require('express');
 const cors = require('cors');

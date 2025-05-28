@@ -25,6 +25,7 @@
     "mercadopago": "^1.5.17",
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.1",
+    "node-telegram-bot-api": "^0.66.0",
     "openai": "^4.86.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",

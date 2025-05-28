@@ -1,31 +1,36 @@
-require("dotenv").config();
+// testRetriever.js
+
+const readline = require("readline");
+const { OpenAI } = require("openai");
 const fs = require("fs");
 const path = require("path");
-const { OpenAI } = require("openai");
-const { cosineSimilarity } = require("../utils/similarity");
 
+// PONÉ TU CLAVE ACÁ DIRECTAMENTE
+const openai = new OpenAI({
+  apiKey: "ACA VA LA API", // ← tu API key
+});
 
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const cosineSimilarity = (vecA, vecB) => {
+  const dotProduct = vecA.reduce((acc, val, i) => acc + val * vecB[i], 0);
+  const normA = Math.sqrt(vecA.reduce((acc, val) => acc + val * val, 0));
+  const normB = Math.sqrt(vecB.reduce((acc, val) => acc + val * val, 0));
+  return dotProduct / (normA * normB);
+};
 
 const embeddingsDir = path.join(__dirname, "..", "data", "embeddings_final");
-const SIMILARITY_THRESHOLD = 0.78; // configurable
+const SIMILARITY_THRESHOLD = 0.78;
 const MAX_TEXTO = 1000;
 
 async function buscarFragmentosRelevantes(pregunta, topN = 5) {
-  // 1. Generar embedding para la pregunta
   const resultado = await openai.embeddings.create({
     model: "text-embedding-ada-002",
-    input: pregunta
+    input: pregunta,
   });
 
   const preguntaEmbed = resultado.data[0].embedding;
-  console.log("\n🧪 Embedding generado para la pregunta:", preguntaEmbed.length, "dimensiones");
-
   const archivos = fs.readdirSync(embeddingsDir).filter(f => f.endsWith(".jsonl"));
   const similitudes = [];
 
-  // 2. Recorrer cada archivo de embeddings
   for (const archivo of archivos) {
     const ruta = path.join(embeddingsDir, archivo);
     const lineas = fs.readFileSync(ruta, "utf-8").split("\n");
@@ -45,7 +50,7 @@ async function buscarFragmentosRelevantes(pregunta, topN = 5) {
             similitudes.push({
               texto: texto.trim().slice(0, MAX_TEXTO),
               score,
-              origen: archivo
+              origen: archivo,
             });
           }
         }
@@ -55,7 +60,6 @@ async function buscarFragmentosRelevantes(pregunta, topN = 5) {
     }
   }
 
-  // 3. Ordenar por score y eliminar duplicados
   const únicos = new Set();
   const relevantes = similitudes
     .sort((a, b) => b.score - a.score)
@@ -67,17 +71,32 @@ async function buscarFragmentosRelevantes(pregunta, topN = 5) {
     })
     .slice(0, topN);
 
-  // Mostrar para depuración
-  console.log(`\n🧠 Pregunta: "${pregunta}"`);
-  console.log("🔍 Fragmentos más relevantes:");
-  relevantes.forEach((frag, i) => {
-    console.log(`#${i + 1} 📁 ${frag.origen} — Score: ${frag.score.toFixed(4)}`);
-    console.log(frag.texto.slice(0, 300) + "...\n");
-  });
-
-  return relevantes.map(r => r.texto);
+  return relevantes;
 }
 
-module.exports = {
-  buscarFragmentosRelevantes
-};
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+console.log("🧠 Dictum IA - Prueba de búsqueda legal por embeddings\n");
+
+function preguntar() {
+  rl.question("🔎 Ingresá tu pregunta legal: ", async (pregunta) => {
+    try {
+      const fragmentos = await buscarFragmentosRelevantes(pregunta, 5);
+      console.log("\n📚 Fragmentos devueltos por la IA:\n");
+      fragmentos.forEach((frag, i) => {
+        console.log(`#${i + 1} 📁 ${frag.origen} — Score: ${frag.score.toFixed(4)}`);
+        console.log(frag.texto);
+        console.log("\n");
+      });
+    } catch (err) {
+      console.error("❌ Error durante la búsqueda:", err.message);
+    }
+
+    preguntar();
+  });
+}
+
+preguntar();
