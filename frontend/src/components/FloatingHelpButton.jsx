@@ -1,6 +1,6 @@
 // components/FloatingHelpButton.jsx
 import { Fab, Tooltip } from '@mui/material';
-import WhatsAppIcon from '@mui/icons-material/telegram';
+import WhatsAppIcon from '@mui/icons-material/Telegram';
 
 function FloatingHelpButton() {
   return (

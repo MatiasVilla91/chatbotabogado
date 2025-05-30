@@ -57,32 +57,43 @@ const planes = [
 function Precios() {
   const navigate = useNavigate();
 
-  const handlePago = async (plan) => {
-    try {
-      const res = await fetch("https://chatbotabogado.onrender.com/api/payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          description: `Plan ${plan.nombre}`,
+ const handlePago = async (plan) => {
+  try {
+    const res = await fetch("https://chatbotabogado.onrender.com/pago", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        description: `Plan ${plan.nombre}`,
         price: plan.nombre === "Premium" ? 35000 : 200000,
         quantity: 1,
-        }),
-      });
+      }),
+    });
 
-      const data = await res.json();
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      } else {
-        alert("⚠️ No se pudo generar el enlace de pago.");
-      }
-    } catch (error) {
-      console.error("❌ Error al iniciar el pago:", error);
-      alert("Error al conectar con MercadoPago.");
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("❌ Error en la respuesta:", text);
+      alert("Error inesperado al generar el enlace de pago.");
+      return;
     }
-  };
+
+    const data = await res.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert("⚠️ No se pudo generar el enlace de pago.");
+    }
+
+  } catch (error) {
+    console.error("❌ Error al iniciar el pago:", error);
+    alert("Error al conectar con MercadoPago.");
+  }
+};
+
+
+
 
   return (
     <ContentCard>

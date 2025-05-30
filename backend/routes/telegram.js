@@ -13,7 +13,17 @@ const RegistroConsulta = require('../models/RegistroConsulta');
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
+let bot;
+
+if (process.env.NODE_ENV === 'production') {
+  bot = new TelegramBot(TELEGRAM_TOKEN);
+  bot.setWebHook(`${process.env.BASE_URL}/bot${TELEGRAM_TOKEN}`);
+  logger.info("📡 Bot de Telegram usando Webhook");
+} else {
+  bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
+  logger.info("🤖 Bot de Telegram usando Polling (modo desarrollo)");
+}
+
 //seguridad
 const rateLimit = new Map();
 const actividadUsuarios = new Map(); // telegramId => [timestamps]

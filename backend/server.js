@@ -1,21 +1,14 @@
 require('dotenv').config();
-require('./config/passport');
-require('./routes/telegram'); // Esto inicia el bot
-
 
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const mongoSanitize = require('express-mongo-sanitize');
-
-
-
-// Google Auth
-const passport = require('passport');
-require('./config/passport');
 const session = require('express-session');
+const passport = require('passport');
+const logger = require('./utils/logger');
+const mercadopago = require("mercadopago");
 
 const authRoutes = require('./routes/auth');
 const legalRoutes = require('./routes/legal');
@@ -24,39 +17,38 @@ const upgradeRoutes = require('./routes/upgrade');
 const usuarioRoutes = require('./routes/usuario');
 const whatsappRoutes = require('./routes/whatsapp');
 const adminRoutes = require('./routes/admin');
-const { checkAuth } = require('./middleware/auth');
-const logger = require('./utils/logger');
 const verificarPlan = require('./middleware/verificarPlan');
+const { checkAuth } = require('./middleware/auth');
+
+require('./config/passport');
 
 const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
+// ✅ Webhook Telegram (después de definir `app`)
+const bot = require('./routes/telegram');
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.json()); // necesario para procesar el body del webhook
+  app.post(`/bot${process.env.TELEGRAM_BOT_TOKEN}`, (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+  });
+}
 
-
-
-
-
-
-
-// ✅ Configuración de sesiones y Passport (ANTES DE LAS RUTAS)
+// ✅ Configuración de sesión y Passport
 app.use(session({
   secret: process.env.SESSION_SECRET || 'mi_secreto_super_seguro',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // Solo seguro en producción
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 1 día
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
-
 
 // ✅ CORS
 app.use(cors({
@@ -69,23 +61,10 @@ app.use(cors({
   credentials: true,
 }));
 
-
-
 // ✅ Middleware global
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.json());
 app.use(mongoSanitize());
-app.use('/api/auth', require('./routes/auth'));
-
-
-
-
-// ✅ MercadoPago
-const mercadopago = require("mercadopago");
-mercadopago.configure({
-  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN,
-});
 
 // ✅ MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -94,9 +73,40 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('✅ Conectado a MongoDB'))
   .catch(err => console.log('❌ Error en MongoDB:', err));
 
+// ✅ Configuración MercadoPago
+mercadopago.configure({
+  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN,
+});
+
+// ✅ Ruta de pago
+app.post('/pago', async (req, res) => {
+  try {
+    const { description, price, quantity } = req.body;
+    if (!description || !price || !quantity) {
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
+    }
+
+    const preference = {
+      items: [{ title: description, unit_price: parseFloat(price), quantity: parseInt(quantity) }],
+      back_urls: {
+        success: "https://drleyes.netlify.app/success",
+        failure: "https://drleyes.netlify.app/failure",
+        pending: "https://drleyes.netlify.app/pending",
+      },
+      auto_return: "approved",
+    };
+
+    const response = await mercadopago.preferences.create(preference);
+    res.status(200).json({ init_point: response.body.init_point });
+
+  } catch (error) {
+    console.error("❌ Error creando preferencia:", error.response?.data || error.message);
+    res.status(500).json({ error: error.message || "Error interno del servidor" });
+  }
+});
 
 
-// ✅ Rutas
+// ✅ Rutas API
 app.use('/api/auth', authRoutes);
 app.use('/api/legal', checkAuth, legalRoutes);
 app.use('/api/contratos', checkAuth, contratosRoutes);
@@ -106,56 +116,16 @@ app.use('/api/whatsapp', whatsappRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api', checkAuth, verificarPlan);
 
-app.post('/api/payment', async (req, res) => {
-  try {
-    const { description, price, quantity } = req.body;
 
-    if (!description || !price || !quantity) {
-      return res.status(400).json({ error: "Faltan campos obligatorios" });
-    }
-
-    const preference = {
-      items: [{
-        title: description,
-        unit_price: parseFloat(price),
-        quantity: parseInt(quantity),
-      }],
-      back_urls: {
-        success: "https://drleyes.netlify.app/success",
-        failure: "https://drleyes.netlify.app/failure",
-        pending: "https://drleyes.netlify.app/pending",
-      },
-      auto_return: "approved",
-    };
-
-    console.log("🟢 Preferencia a enviar:", preference); // DEBUG
-
-    const response = await mercadopago.preferences.create(preference);
-
-    res.status(200).json({
-      init_point: response.body.init_point,
-    });
-  } catch (error) {
-    console.error("❌ Error creando preferencia:", error.response?.data || error.message);
-    res.status(500).json({
-      error: error.message || "Error interno del servidor",
-    });
-  }
-});
-
-
-// ✅ Health Check
+// ✅ Ruta de prueba
 app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
 
-// ✅ Start server
+// ✅ Iniciar servidor
 app.listen(PORT, () => {
   logger.info(`🚀 Servidor corriendo en el puerto ${PORT}`);
 });
 
-
-
-
+// Opcional: si usás JWT en algún lado
 const jwt = require("jsonwebtoken");
-
