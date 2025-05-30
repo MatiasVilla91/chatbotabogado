@@ -1,4 +1,4 @@
-// GoogleSuccess.jsx
+// src/pages/GoogleSuccess.jsx
 import { useEffect, useContext, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -10,38 +10,34 @@ function GoogleSuccess() {
   const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false); // 🔥 Nuevo control para evitar bucles
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const processLogin = async () => {
-      if (isProcessing) return; // 🔥 Evitar bucle
-      
-      setIsProcessing(true); // 🔥 Activar control
-      console.log("🌐 Iniciando proceso de login con Google...");
+      if (isProcessing) return;
+      setIsProcessing(true);
 
       try {
         const params = new URLSearchParams(location.search);
         const token = params.get("token");
-        console.log("🌐 Token recibido:", token);
+        const userParam = params.get("user");
 
-        if (!token) {
-          setError("No se encontró el token. Redirigiendo al login...");
+        if (!token || !userParam) {
+          setError("Faltan datos. Redirigiendo al login...");
           setTimeout(() => navigate("/login"), 2000);
           return;
         }
 
-        // Verificar que el token sea válido (opcional pero recomendado)
         if (token.length < 50) {
           setError("Token inválido. Redirigiendo al login...");
           setTimeout(() => navigate("/login"), 2000);
           return;
         }
 
-        // Guardamos el token y el usuario en el contexto
-        login(token, { email: "Usuario de Google" });
-        console.log("✅ Usuario autenticado con Google.");
+        const userData = JSON.parse(decodeURIComponent(userParam));
+        console.log("✅ Usuario recibido:", userData);
+        login(token, userData);
 
-        // ✅ Redirigir de inmediato (sin bucle)
         setTimeout(() => navigate("/consultas", { replace: true }), 500);
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);
@@ -53,7 +49,7 @@ function GoogleSuccess() {
     };
 
     processLogin();
-  }, [location, login, navigate, isProcessing]); // 🔥 isProcessing agregado
+  }, [location, login, navigate, isProcessing]);
 
   return (
     <Box

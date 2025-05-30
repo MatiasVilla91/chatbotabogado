@@ -11,11 +11,11 @@ const { body, validationResult } = require('express-validator');
 // ❗ Limitador de intentos de login
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 10, // máximo 10 intentos por IP
+  max: 10,
   message: "Demasiados intentos. Esperá un rato e intentá de nuevo.",
 });
 
-// ❗ Validador para registro (email válido y contraseña de mínimo 6 caracteres)
+// ❗ Validador para registro
 const validateRegister = [
   body('email').isEmail().withMessage('Email inválido'),
   body('password').isLength({ min: 6 }).withMessage('Contraseña demasiado corta'),
@@ -60,10 +60,15 @@ router.post('/login', loginLimiter, async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
     logger.info(`🔓 Inicio de sesión: ${email}`);
-    // ✅ MOSTRAR EL TOKEN EN CONSOLA
-    console.log(`✅ Login exitoso para ${email}`);
-    //console.log(`🔐 TOKEN JWT: ${token}`);
-    res.json({ token, user: { name: user.name, email: user.email }, message: "Inicio de sesión exitoso" });
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email
+      },
+      message: "Inicio de sesión exitoso"
+    });
   } catch (error) {
     logger.error(`❌ Error al iniciar sesión: ${error.message}`);
     res.status(500).json({ message: "Error en el servidor" });
@@ -75,50 +80,43 @@ router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
 }));
 
-/// 🔁 CALLBACK de Google (Mejorado y Seguro)
+// 🔁 CALLBACK de Google (corregido y completo)
 router.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/login',
-  session: true, // ✅ Habilitamos sesión
+  session: true,
 }), async (req, res) => {
   try {
-    console.log("✅ Callback de Google - Usuario recibido:", req.user);
-    
     const user = req.user;
     if (!user) {
-      console.error("❌ Error: Usuario de Google no encontrado.");
       return res.status(500).send("Error al autenticar con Google");
     }
 
-    // Generar el token JWT solo si el usuario existe
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-    
-    console.log("✅ Token generado:", token);
 
-    // Verificar URL del frontend
     const frontendUrl = process.env.FRONTEND_URL;
-    console.log("✅ URL de redirección:", frontendUrl);
-
     if (!frontendUrl) {
-      console.error("❌ Error: FRONTEND_URL no está configurada.");
       return res.status(500).json({ message: "Error en la configuración del frontend" });
     }
 
-    // ✅ Guardamos la sesión correctamente
+    const userSerialized = encodeURIComponent(JSON.stringify({
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+    }));
+
     req.login(user, (err) => {
       if (err) {
-        console.error("❌ Error al iniciar sesión en la sesión:", err);
-        return res.status(500).send("Error al iniciar sesión en la sesión");
+        return res.status(500).send("Error al iniciar sesión");
       }
 
-      console.log("✅ Sesión de usuario guardada:", req.session);
-      res.redirect(`${frontendUrl}/google-success?token=${token}`);
+      const redireccion = `${frontendUrl}/google-success?token=${token}&user=${userSerialized}`;
+      console.log("🔁 Redireccionando a:", redireccion);
+      res.redirect(redireccion);
     });
-
   } catch (error) {
-    console.error("❌ Error en el callback de Google:", error);
+    console.error("❌ Error en callback Google:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
-
 
 module.exports = router;

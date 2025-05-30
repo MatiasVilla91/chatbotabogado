@@ -66,11 +66,20 @@ function Consultas() {
 
   const handlePayment = async () => {
     try {
-      const response = await axios.post(`${backendUrl}/api/payment`, {
-        description: "Asesoría Legal IA",
-        price: 1000,
-        quantity: 1,
-      });
+      const user = JSON.parse(localStorage.getItem("user"));
+      const response = await axios.post(
+        `${backendUrl}/pago`,
+        {
+          description: "Asesoría Legal IA",
+          price: 35000,
+          quantity: 1,
+          userEmail: user?.email,
+          userId: user?._id,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const initPoint = response.data.init_point;
 

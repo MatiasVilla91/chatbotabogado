@@ -121,9 +121,10 @@ mercadopago.configure({
 app.post('/pago', async (req, res) => {
   try {
     const { description, price, quantity, userEmail, userId } = req.body;
-    if (!description || !price || !quantity || !userEmail || !userId) {
+if (!description || !price || !quantity || !userEmail || !userId) {
   return res.status(400).json({ error: "Faltan campos obligatorios" });
 }
+
 
 
     const preference = {

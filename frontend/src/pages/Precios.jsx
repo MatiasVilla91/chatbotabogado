@@ -60,6 +60,10 @@ function Precios() {
 
   const handlePago = async (plan, user) => {
     try {
+      if (!user?.email || !user?._id) {
+  alert("Tu cuenta no tiene datos completos. Cerrá sesión y volvé a iniciar.");
+  return;
+}
       const res = await fetch("https://chatbotabogado.onrender.com/pago", {
         method: "POST",
         headers: {
