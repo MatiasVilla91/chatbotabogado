@@ -82,7 +82,7 @@ function Precios() {
       if (!res.ok) {
         const text = await res.text();
         console.error("❌ Error en la respuesta:", text);
-        alert("Error inesperado al generar el enlace de pago.");
+        alert("Para realizar un pago Inicia Sesión");
         return;
       }
 

@@ -20,6 +20,7 @@ const adminRoutes = require('./routes/admin');
 const verificarPlan = require('./middleware/verificarPlan');
 const { checkAuth } = require('./middleware/auth');
 
+
 require('./config/passport');
 
 const app = express();

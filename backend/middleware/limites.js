@@ -1,27 +1,34 @@
 const User = require('../models/User');
 
 const verificarLimite = (tipo) => {
-    return async (req, res, next) => {
-        const user = await User.findById(req.user.id);
-        if (user.email === "mati") return next(); // 👑 Vos pasás siempre
+  return async (req, res, next) => {
+    const user = await User.findById(req.user.id);
 
+    // 👑 Cuenta maestra: acceso total
+    if (user.rol === "maestro") return next();
 
-        if (user.esPremium) return next();
+    // ✅ Premium: acceso libre
+    if (user.esPremium) return next();
 
-        if (tipo === 'consulta' && user.consultasRestantes <= 0) {
-            return res.status(403).json({ message: "Tu límite de consultas gratuitas ha terminado. Actualizá a Premium." });
-        }
+    // 🚫 Chequeo de límites para plan gratuito
+    if (tipo === 'consulta' && user.consultasRestantes <= 0) {
+      return res.status(403).json({
+        message: "Tu límite de consultas gratuitas ha terminado. Actualizá a Premium.",
+      });
+    }
 
-        if (tipo === 'contrato' && user.contratosRestantes <= 0) {
-            return res.status(403).json({ message: "Tu límite de contratos gratuitos ha terminado. Actualizá a Premium." });
-        }
+    if (tipo === 'contrato' && user.contratosRestantes <= 0) {
+      return res.status(403).json({
+        message: "Tu límite de contratos gratuitos ha terminado. Actualizá a Premium.",
+      });
+    }
 
-        // Restamos 1 al contador
-        const campo = tipo === 'consulta' ? 'consultasRestantes' : 'contratosRestantes';
-        await User.findByIdAndUpdate(req.user.id, { $inc: { [campo]: -1 } });
+    // ✅ Resta un uso y permite continuar
+    const campo = tipo === 'consulta' ? 'consultasRestantes' : 'contratosRestantes';
+    await User.findByIdAndUpdate(req.user.id, { $inc: { [campo]: -1 } });
 
-        next();
-    };
+    next();
+  };
 };
 
 module.exports = { verificarLimite };

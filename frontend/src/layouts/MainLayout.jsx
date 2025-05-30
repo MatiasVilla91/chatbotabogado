@@ -1,34 +1,42 @@
+// src/layouts/MainLayout.jsx
 import { Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Sidebar from "../components/Sidebar";
 import UserMenu from "../components/UserMenu";
-
-
+import PremiumBanner from "../components/PremiumBanner";
 
 const MainLayout = ({ children }) => {
   const { token } = useContext(AuthContext);
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh",height:"100vh",alignItems: "stretch" ,backgroundColor: "#111" }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        height: "100vh",
+        alignItems: "stretch",
+        backgroundColor: "#111",
+        flexDirection: { xs: "column", md: "row" },
+      }}
+    >
       <Sidebar />
 
       <Box
-  component="main"
-  sx={{
-    flex: 1,
-    pt: 4,
-    px: { xs: 2, md: 6 },
-    pb: 0,
-    width: "100%",
-    maxWidth: "100%",
-    //centrado
-    //maxWidth: "1200px",
-    mx: "auto", // centra horizontalmente
-  }}
->
-
+        component="main"
+        sx={{
+          flex: 1,
+          pt: 4,
+          px: { xs: 2, md: 6 },
+          pb: 0,
+          width: "100%",
+          maxWidth: "100%",
+          mx: "auto",
+        }}
+      >
+        {/* ✅ Banner premium */}
+        <PremiumBanner />
 
         {/* TOP RIGHT ACTIONS */}
         <Box
@@ -76,7 +84,7 @@ const MainLayout = ({ children }) => {
               </Button>
             </>
           ) : (
-            <UserMenu /> // ✅ Solo se muestra si hay sesión iniciada
+            <UserMenu />
           )}
         </Box>
 
