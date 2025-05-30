@@ -2,98 +2,98 @@
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
 import ContentCard from "../components/ContentCard";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const planes = [
   {
-  nombre: "Plan Gratis",
-  precio: "$0",
-  descripcion: "Empezá a usar Dictum IA hoy, sin riesgos ni compromiso",
-  beneficios: [
-    "✅ 5 consultas legales mensuales con IA experta en derecho argentino",
-    "⚡ Acceso inmediato sin tarjeta: registrate y usalo al instante",
-    "🚀 Revolucioná tu práctica legal con tecnología de punta",
-    "⏱️ Respuestas claras en segundos, sin esperas ni turnos",
-    "🔒 Máxima privacidad y seguridad en cada consulta",
-  ],
-  boton: "Acceder gratis ahora",
-  destacado: false,
-  
-  destacadoTexto: "¡Empieza sin pagar!",
-},
+    nombre: "Plan Gratis",
+    precio: "$0",
+    descripcion: "Empezá a usar Dictum IA hoy, sin riesgos ni compromiso",
+    beneficios: [
+      "✅ 5 consultas legales mensuales con IA experta en derecho argentino",
+      "⚡ Acceso inmediato sin tarjeta: registrate y usalo al instante",
+      "🚀 Revolucioná tu práctica legal con tecnología de punta",
+      "⏱️ Respuestas claras en segundos, sin esperas ni turnos",
+      "🔒 Máxima privacidad y seguridad en cada consulta",
+    ],
+    boton: "Acceder gratis ahora",
+    destacado: false,
+    destacadoTexto: "¡Empieza sin pagar!",
+  },
   {
     nombre: "Premium",
     precio: "$35.000 Arg/mes",
     descripcion: "La elección perfecta para abogados que buscan destacarse",
     beneficios: [
-    "✅ Consultas ilimitadas con IA legal entrenada en normativa argentina",
-    "🚀 Resolvé casos en menos tiempo y con mayor precisión",
-    "📞 Soporte prioritario para que nunca pierdas tiempo valioso",
-    "🔔 Alertas legales y actualizaciones automáticas que te mantienen un paso adelante",
-    "🧠 Optimizado para profesionales en ejercicio",
-    "⌛Ahorra tiempo y descubre solciones en segundos"
+      "✅ Consultas ilimitadas con IA legal entrenada en normativa argentina",
+      "🚀 Resolvé casos en menos tiempo y con mayor precisión",
+      "📞 Soporte prioritario para que nunca pierdas tiempo valioso",
+      "🔔 Alertas legales y actualizaciones automáticas que te mantienen un paso adelante",
+      "🧠 Optimizado para profesionales en ejercicio",
+      "⌛ Ahorra tiempo y descubrí soluciones en segundos",
     ],
     boton: "Quiero ser Premium",
     destacado: true,
     destacadoTexto: "Ideal para Profesionales",
-    
   },
   {
-  nombre: "Estudio Pro",
-  precio: "$200.000 Arg/mes",
-  descripcion: "La solución definitiva para estudios jurídicos con alta demanda",
-  beneficios: [
-    "👥 Hasta 10 cuentas activas con acceso completo a Dictum IA",
-    "🔍 Consultas ilimitadas con IA especializada en derecho argentino",
-    "🎯 Soporte premium personalizado con seguimiento estratégico",
-    "⚙️ Atención dedicada y herramientas diseñadas para equipos legales de alto rendimiento",
-    "📈 Más velocidad, más organización, más resultados",
-  ],
-  boton: "Solicitar acceso al Plan Pro",
-  destacado: false,
-  destacadoTexto: "Ideal para estudios jurídicos",
-},
+    nombre: "Estudio Pro",
+    precio: "$200.000 Arg/mes",
+    descripcion: "La solución definitiva para estudios jurídicos con alta demanda",
+    beneficios: [
+      "👥 Hasta 10 cuentas activas con acceso completo a Dictum IA",
+      "🔍 Consultas ilimitadas con IA especializada en derecho argentino",
+      "🎯 Soporte premium personalizado con seguimiento estratégico",
+      "⚙️ Atención dedicada y herramientas diseñadas para equipos legales de alto rendimiento",
+      "📈 Más velocidad, más organización, más resultados",
+    ],
+    boton: "Solicitar acceso al Plan Pro",
+    destacado: false,
+    destacadoTexto: "Ideal para estudios jurídicos",
+  },
 ];
 
 function Precios() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
- const handlePago = async (plan) => {
-  try {
-    const res = await fetch("https://chatbotabogado.onrender.com/pago", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        description: `Plan ${plan.nombre}`,
-        price: plan.nombre === "Premium" ? 35000 : 200000,
-        quantity: 1,
-      }),
-    });
+  const handlePago = async (plan, user) => {
+    try {
+      const res = await fetch("https://chatbotabogado.onrender.com/pago", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          description: `Plan ${plan.nombre}`,
+          price: plan.nombre === "Premium" ? 35000 : 200000,
+          quantity: 1,
+          userEmail: user.email,
+          userId: user._id,
+        }),
+      });
 
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("❌ Error en la respuesta:", text);
-      alert("Error inesperado al generar el enlace de pago.");
-      return;
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("❌ Error en la respuesta:", text);
+        alert("Error inesperado al generar el enlace de pago.");
+        return;
+      }
+
+      const data = await res.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert("⚠️ No se pudo generar el enlace de pago.");
+      }
+
+    } catch (error) {
+      console.error("❌ Error al iniciar el pago:", error);
+      alert("Error al conectar con MercadoPago.");
     }
-
-    const data = await res.json();
-    if (data.init_point) {
-      window.location.href = data.init_point;
-    } else {
-      alert("⚠️ No se pudo generar el enlace de pago.");
-    }
-
-  } catch (error) {
-    console.error("❌ Error al iniciar el pago:", error);
-    alert("Error al conectar con MercadoPago.");
-  }
-};
-
-
-
+  };
 
   return (
     <ContentCard>
@@ -115,7 +115,6 @@ function Precios() {
           mx: "auto",
         }}
       >
-        
       </Typography>
 
       <Box
@@ -147,27 +146,26 @@ function Precios() {
               border: plan.nombre === "Premium" ? "2px solid #0a84ff" : "1px solid #333",
             }}
           >
-            <CardContent sx={{flexGrow:1}}>
-             {plan.destacadoTexto && (
-  <Box
-    sx={{
-      backgroundColor: "#0a84ff",
-      color: "#fff",
-      px: 0.5,
-      py: 0.5,
-      fontSize: "0.60rem",
-      fontWeight: "bold",
-      textAlign: "center",
-      borderRadius: "8px",
-      mb: 2,
-      textTransform: "uppercase",
-    }}
-  >
-    {plan.destacadoTexto}
-  </Box>
-)}
+            <CardContent sx={{ flexGrow: 1 }}>
+              {plan.destacadoTexto && (
+                <Box
+                  sx={{
+                    backgroundColor: "#0a84ff",
+                    color: "#fff",
+                    px: 0.5,
+                    py: 0.5,
+                    fontSize: "0.60rem",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    borderRadius: "8px",
+                    mb: 2,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {plan.destacadoTexto}
+                </Box>
+              )}
 
-              
               <Typography
                 variant="h4"
                 sx={{ fontWeight: "bold", mb: 1, textAlign: "center" }}
@@ -187,10 +185,7 @@ function Precios() {
               >
                 {plan.precio}
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{ mb: 2, textAlign: "center" }}
-              >
+              <Typography variant="body2" sx={{ mb: 2, textAlign: "center" }}>
                 {plan.descripcion}
               </Typography>
               <ul style={{ paddingLeft: "1.2rem", fontSize: "0.9rem" }}>
@@ -198,37 +193,35 @@ function Precios() {
                   <li key={i} style={{ marginBottom: "8px" }}>{item}</li>
                 ))}
               </ul>
-             
-              
             </CardContent>
 
-             <Button
-                variant="contained"
-                fullWidth
-                onClick={() => {
-                  if (plan.nombre === "Gratis") navigate("/register");
-                  else if (plan.nombre === "Premium" || plan.nombre === "Estudio Pro") handlePago(plan);
-                }}
-                sx={{
-                  mt: 2,
-                  backgroundColor: "#0a84ff",
-                  ":hover": { backgroundColor: "#0069d9" },
-                  borderRadius: "12px",
-                  fontWeight: "bold",
-                }}
-              >
-                {plan.boton}
-              </Button>
-
-
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => {
+                if (plan.nombre === "Gratis") {
+                  navigate("/register");
+                } else if (!user) {
+                  alert("Necesitás iniciar sesión para comprar un plan.");
+                  navigate("/register");
+                } else {
+                  handlePago(plan, user);
+                }
+              }}
+              sx={{
+                mt: 2,
+                backgroundColor: "#0a84ff",
+                ":hover": { backgroundColor: "#0069d9" },
+                borderRadius: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              {plan.boton}
+            </Button>
           </Card>
-          
         ))}
-        
       </Box>
-      
     </ContentCard>
-    
   );
 }
 

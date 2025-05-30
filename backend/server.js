@@ -36,6 +36,45 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+//webhook MercadoPago
+
+app.post('/webhook', express.json(), async (req, res) => {
+  try {
+    const payment = req.body;
+
+    console.log("💰 Webhook recibido:", payment);
+
+    // Si el pago fue aprobado
+    if (payment?.data?.id && payment.type === 'payment') {
+      const mpPayment = await mercadopago.payment.findById(payment.data.id);
+      const estado = mpPayment.body.status;
+const userId = mpPayment.body.metadata?.userId;
+
+if (estado === 'approved' && userId) {
+  await User.findByIdAndUpdate(
+    userId,
+
+          {
+            esPremium: true,
+            consultasRestantes: 9999,
+            contratosRestantes: 9999,
+            fechaInicioPremium: new Date(),
+            fechaFinPremium: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+          }
+        );
+        console.log("🎉 Usuario actualizado a premium:", userId);
+
+      }
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("❌ Error en webhook:", error);
+    res.sendStatus(500);
+  }
+});
+
+
 // ✅ Configuración de sesión y Passport
 app.use(session({
   secret: process.env.SESSION_SECRET || 'mi_secreto_super_seguro',
@@ -81,20 +120,31 @@ mercadopago.configure({
 // ✅ Ruta de pago
 app.post('/pago', async (req, res) => {
   try {
-    const { description, price, quantity } = req.body;
-    if (!description || !price || !quantity) {
-      return res.status(400).json({ error: "Faltan campos obligatorios" });
-    }
+    const { description, price, quantity, userEmail, userId } = req.body;
+    if (!description || !price || !quantity || !userEmail || !userId) {
+  return res.status(400).json({ error: "Faltan campos obligatorios" });
+}
+
 
     const preference = {
-      items: [{ title: description, unit_price: parseFloat(price), quantity: parseInt(quantity) }],
-      back_urls: {
-        success: "https://drleyes.netlify.app/success",
-        failure: "https://drleyes.netlify.app/failure",
-        pending: "https://drleyes.netlify.app/pending",
-      },
-      auto_return: "approved",
-    };
+  items: [{ title: description, unit_price: parseFloat(price), quantity: parseInt(quantity) }],
+  back_urls: {
+    success: "https://drleyes.netlify.app/success",
+    failure: "https://drleyes.netlify.app/failure",
+    pending: "https://drleyes.netlify.app/pending",
+  },
+  auto_return: "approved",
+  notification_url: "https://chatbotabogado.onrender.com/webhook",
+
+  payer: {
+    email: userEmail,
+  },
+  metadata: {
+    userId: userId,
+    userEmail: userEmail,
+  }
+};
+
 
     const response = await mercadopago.preferences.create(preference);
     res.status(200).json({ init_point: response.body.init_point });

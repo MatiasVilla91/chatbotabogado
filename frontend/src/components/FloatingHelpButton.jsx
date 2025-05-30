@@ -1,6 +1,7 @@
 // components/FloatingHelpButton.jsx
 import { Fab, Tooltip } from '@mui/material';
-import WhatsAppIcon from '@mui/icons-material/Telegram';
+import TelegramIcon from '@mui/icons-material/Telegram';
+
 
 function FloatingHelpButton() {
   return (
@@ -21,7 +22,7 @@ function FloatingHelpButton() {
           window.open("https://t.me/dictum_ia_bot", "_blank");
         }}
       >
-        <WhatsAppIcon />
+        <TelegramIcon />
       </Fab>
     </Tooltip>
   );
