@@ -131,7 +131,7 @@ function App() {
       
       </Routes>
 
-      <FloatingHelpButton />
+      {/*<FloatingHelpButton />*/}
     </>
   );
 }

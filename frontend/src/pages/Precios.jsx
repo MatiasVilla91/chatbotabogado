@@ -198,16 +198,20 @@ function Precios() {
             <Button
               variant="contained"
               fullWidth
-              onClick={() => {
-                if (plan.nombre === "Gratis") {
-                  navigate("/register");
-                } else if (!user) {
-                  alert("Necesitás iniciar sesión para comprar un plan.");
-                  navigate("/register");
-                } else {
-                  handlePago(plan, user);
-                }
-              }}
+             onClick={() => {
+  if (plan.nombre === "Plan Gratis") {
+    navigate("/register");
+    return; // Detener ejecución
+  }
+
+  if (!user) {
+    alert("Necesitás iniciar sesión para comprar un plan.");
+    navigate("/register");
+  } else {
+    handlePago(plan, user);
+  }
+}}
+
               sx={{
                 mt: 2,
                 backgroundColor: "#0a84ff",
