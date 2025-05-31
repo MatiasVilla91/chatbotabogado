@@ -22,13 +22,26 @@ import ChatIcon from "@mui/icons-material/Chat";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { motion } from "framer-motion";
 import Hero from "../components/Hero";
+import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import SavingsIcon from "@mui/icons-material/Savings";
+
 
 
 const features = [
   { title: "Respuestas instantáneas", icon: <RocketLaunchIcon fontSize="large" />, description: "Consultas legales resueltas en segundos. Sin esperas." },
   { title: "Disponible 24/7", icon: <AccessTimeIcon fontSize="large" />, description: "Usalo cuando quieras, incluso feriados y fines de semana." },
   { title: "Privacidad asegurada", icon: <ShieldIcon fontSize="large" />, description: "Tus datos están protegidos. Nadie accede a tus consultas." },
-  { title: "Normativa argentina vigente", icon: <CheckCircleIcon fontSize="large" />, description: "Basado en leyes reales y jurisprudencia actualizada." }
+  { title: "Normativa argentina vigente", icon: <CheckCircleIcon fontSize="large" />, description: "Basado en leyes reales y jurisprudencia actualizada." },
+  {
+  title: "Optimizado para profesionales",
+  icon: <WorkOutlineIcon fontSize="large" />,
+  description: "Ideal para abogados, estudios jurídicos y estudiantes avanzados."
+},
+{
+  title: "Ahorro de tiempo y dinero",
+  icon: <SavingsIcon fontSize="large" />,
+  description: "Resolvés casos, contratos o dudas sin gastar horas ni pagar consultas."
+}
 ];
 
 const testimonios = [
@@ -58,30 +71,16 @@ export default function LandingDark() {
     overflow: "hidden", // necesario para que no se desborde
   }}
 >
-  {/* Círculo decorativo azul detrás */}
-  <Box
-    sx={{
-      position: "absolute",
-      width: 300,
-      height: 300,
-      background: "#0a84ff",
-      borderRadius: "500%",
-      top: "-100px",
-      left: "-100px",
-      filter: "blur(150px)",
-      opacity: 0.2,
-      zIndex: 0,
-    }}
-  />
+
 
        <Hero />
       
-    {/*  <Divider sx={{ backgroundColor: "#1f2937", my: 2.5 }} /> */}
+      <Divider sx={{ backgroundColor: "#1f2937", my: 6 }} /> 
 
 
-      <Grid container spacing={6} justifyContent="center">
+      <Grid container spacing={10} justifyContent="center">
         {features.map((item, index) => (
-          <Grid item xs={12} sm={6} md={5} key={index}>
+          <Grid item xs={12} sm={6} md={4.5} key={index}>
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <Box textAlign="center" px={2}>
                 <Box sx={{ color: "#3b82f6", mb: 1 }}>{item.icon}</Box>
@@ -93,23 +92,48 @@ export default function LandingDark() {
         ))}
       </Grid>
 
-      <Box mt={10}>
-        <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>Lo que dicen nuestros usuarios</Typography>
-        <Grid container spacing={4} justifyContent="center">
-          {testimonios.map((t, i) => (
-            <Grid item xs={12} md={4} key={i}>
-              <Box sx={{ backgroundColor: "#1f1f1f", p: 3, borderRadius: 3, textAlign: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.4)" }}>
-                <Avatar src={t.avatar} alt={t.nombre} sx={{ width: 64, height: 64, mx: "auto", mb: 2 }} />
-                <Typography variant="body2" fontStyle="italic" color="#d1d5db">“{t.frase}”</Typography>
-                <Typography variant="subtitle2" mt={1} color="#0a84ff">— {t.nombre}, {t.rol}</Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+   <Box mt={10}>
+  <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>
+    Lo que dicen nuestros usuarios
+  </Typography>
+
+  <Grid container spacing={4} justifyContent="center">
+    {testimonios.map((t, i) => (
+      <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+        <Box
+          sx={{
+            backgroundColor: "#1f1f1f",
+            p: 4,
+            borderRadius: 3,
+            textAlign: "center",
+            height: "100%",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <Avatar
+            src={t.avatar}
+            alt={t.nombre}
+            sx={{ width: 56, height: 56, mx: "auto", mb: 2 }}
+          />
+          <Typography
+            variant="body2"
+            fontStyle="italic"
+            color="#d1d5db"
+            sx={{ mb: 1 }}
+          >
+            “{t.frase}”
+          </Typography>
+          <Typography variant="subtitle2" color="#FFFFFF">
+            — {t.nombre}, {t.rol}
+          </Typography>
+        </Box>
+      </Grid>
+    ))}
+  </Grid>
+</Box>
 
       <Box mt={10}>
-        <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>Preguntas frecuentes</Typography>
+        <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4.5}>Preguntas Frecuentes</Typography>
         <Box maxWidth={800} mx="auto">
           {faqs.map((faq, i) => (
             <Accordion key={i} sx={{ backgroundColor: "#1f1f1f", color: "#f4f4f5" }}>
