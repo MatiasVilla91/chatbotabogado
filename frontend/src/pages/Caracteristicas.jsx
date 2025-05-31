@@ -142,7 +142,7 @@ export default function LandingDark() {
           © {new Date().getFullYear()} Dictum IA — Asistencia legal con inteligencia artificial.
         </Typography>
         <Typography variant="body2" color="#4b5563" mt={1}>
-          Hecho con 🔵⚪🔵 en Argentina. Todos los derechos reservados.
+          Hecho en Argentina 🔵⚪🔵 Todos los derechos reservados.
         </Typography>
       </Box>
     </Box>
