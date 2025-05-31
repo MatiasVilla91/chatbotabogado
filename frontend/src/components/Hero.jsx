@@ -66,7 +66,7 @@ const Hero = () => {
               }}
             >
               <img
-                src="/23_02_41.png"
+                src="/23_02_32.png"
                 alt="Ilustración legal tech"
                 style={{
                   width: "100%",

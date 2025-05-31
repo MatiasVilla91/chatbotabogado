@@ -49,7 +49,18 @@ function TerminosCondiciones() {
           </Typography>
           Para consultas, escribinos a <a href="mailto:contacto@dictumia.com" style={{ color: "#0a84ff" }}>contacto@dictumia.com</a>
         </Box>
+        
       </Container>
+      
+      <Box mt={12} py={6} textAlign="center" borderTop="1px solid #1f2937">
+        <Typography variant="body2" color="#6b7280">
+          © {new Date().getFullYear()} Dictum IA — Asistencia legal con inteligencia artificial
+        </Typography>
+        <Typography variant="body2" color="#4b5563" mt={1}>
+          Hecho en Argentina 🔵⚪🔵  Todos los derechos reservados
+        </Typography>
+      </Box>
+
     </Box>
   );
 }

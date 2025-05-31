@@ -104,7 +104,7 @@ function Precios() {
       <Typography
         variant="h4"
         align="center"
-        sx={{ color: "#fff", fontWeight: "bold", mb: 1 }}
+        sx={{ color: "#fff", fontWeight: "bold", mb:3 }}
       >
         Planes y Precios
       </Typography>
@@ -132,7 +132,6 @@ function Precios() {
           maxWidth: "1550px",
           mx: "auto",
         }}
-        
       >
         {planes.map((plan, index) => (
           <Card

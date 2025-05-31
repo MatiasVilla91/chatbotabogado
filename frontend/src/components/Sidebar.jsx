@@ -178,14 +178,15 @@ const deleteConversation = async (id) => {
   const sidebarContent = (
    <Box
     sx={{
-      width: 290,
+      width: 255,
       backgroundColor: "#1a1a1a",
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
       
-      minHeight: "111vh",     // 🔧 que al menos se estire como el contenedor padre
-      height: "auto",        // 🔧 que crezca con el contenido
+      height: "100vh",        // 🔧 que crezca con el contenido
+      //minHeight: "115vh",     // 🔧 que al menos se estire como el contenedor padre
+
       position: "relative",   // Para evitar errores de overlay
     }}
   >

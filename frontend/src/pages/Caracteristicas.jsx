@@ -32,7 +32,7 @@ const features = [
 ];
 
 const testimonios = [
-  { nombre: "Juan M.", rol: "abogado", frase: "Me resolvió en 2 minutos lo que me hubiera llevado 2 horas de lectura.", avatar: "https://i.pravatar.cc/100?img=1" },
+  { nombre: "Juan M.", rol: "abogado", frase: "Me resolvió en 2 minutos lo que me hubiera llevado 2 horas de lectura.", avatar: "https://i.pravatar.cc/100?img=18" },
   { nombre: "Carolina D.", rol: "estudiante de abogacía", frase: "Lo uso para estudiar. Es como tener un profesor particular de Derecho.", avatar: "https://i.pravatar.cc/100?img=5" },
   { nombre: "Estudio Jurídico Zeta", rol: "firma legal", frase: "Reducimos un 80% el tiempo de redacción de contratos.", avatar: "https://i.pravatar.cc/100?img=8" }
 ];
@@ -48,10 +48,35 @@ export default function LandingDark() {
 
   return (
     
-    <Box sx={{ background: "#1111",px: 0, fontFamily: "'Inter', sans-serif" }}>
+<Box
+  sx={{
+    position: "relative",
+    background: "radial-gradient(circle at top left, #0a0a0a, #111 70%)",
+    px: 2,
+    fontFamily: "'Inter', sans-serif",
+    minHeight: "100vh",
+    overflow: "hidden", // necesario para que no se desborde
+  }}
+>
+  {/* Círculo decorativo azul detrás */}
+  <Box
+    sx={{
+      position: "absolute",
+      width: 300,
+      height: 300,
+      background: "#0a84ff",
+      borderRadius: "500%",
+      top: "-100px",
+      left: "-100px",
+      filter: "blur(150px)",
+      opacity: 0.2,
+      zIndex: 0,
+    }}
+  />
+
        <Hero />
       
-     <Divider sx={{ backgroundColor: "#1f2937", my: 10 }} />
+     <Divider sx={{ backgroundColor: "#1f2937", my: 2.5 }} />
 
 
       <Grid container spacing={6} justifyContent="center">
@@ -73,7 +98,7 @@ export default function LandingDark() {
         <Grid container spacing={4} justifyContent="center">
           {testimonios.map((t, i) => (
             <Grid item xs={12} md={4} key={i}>
-              <Box sx={{ backgroundColor: "#1f2937", p: 3, borderRadius: 3, textAlign: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.4)" }}>
+              <Box sx={{ backgroundColor: "#1f1f1f", p: 3, borderRadius: 3, textAlign: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.4)" }}>
                 <Avatar src={t.avatar} alt={t.nombre} sx={{ width: 64, height: 64, mx: "auto", mb: 2 }} />
                 <Typography variant="body2" fontStyle="italic" color="#d1d5db">“{t.frase}”</Typography>
                 <Typography variant="subtitle2" mt={1} color="#0a84ff">— {t.nombre}, {t.rol}</Typography>
@@ -87,7 +112,7 @@ export default function LandingDark() {
         <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>Preguntas frecuentes</Typography>
         <Box maxWidth={800} mx="auto">
           {faqs.map((faq, i) => (
-            <Accordion key={i} sx={{ backgroundColor: "#1f2937", color: "#f4f4f5" }}>
+            <Accordion key={i} sx={{ backgroundColor: "#1f1f1f", color: "#f4f4f5" }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#0a84ff" }} />}>
                 <Typography>{faq.pregunta}</Typography>
               </AccordionSummary>

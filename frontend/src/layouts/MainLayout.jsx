@@ -19,6 +19,7 @@ const MainLayout = ({ children }) => {
         alignItems: "stretch",
         backgroundColor: "#111",
         flexDirection: { xs: "column", md: "row" },
+        
       }}
     >
       <Sidebar />
@@ -30,8 +31,13 @@ const MainLayout = ({ children }) => {
           pt: 3,
           px: { xs: 2, md: 0.5},
           pb: 0,
-          width: "100%",
-          maxWidth: "100%",
+          height: "100vh",             // ✅ asegura que tenga la misma altura que el Sidebar
+          //display: "flex",
+          overflowY: "auto",           // ✅ permite scroll si el contenido es más largo
+          flexDirection: "column",
+
+//          width: "100%",
+//          maxWidth: "100%",
          // mx: "auto",
         }}
       >
