@@ -4,7 +4,7 @@ import Consultas from "./pages/Consultas";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Caracteristicas from "./pages/Caracteristicas";
-import FloatingHelpButton from "./components/FloatingHelpButton";
+//import FloatingHelpButton from "./components/FloatingHelpButton";
 import MainLayout from "./layouts/MainLayout";
 import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 import TerminosCondiciones from "./pages/TerminosCondiciones";

@@ -1,3 +1,5 @@
+// Versión mejorada y final para landing oscura Dictum IA
+
 import {
   Box,
   Typography,
@@ -5,195 +7,119 @@ import {
   Button,
   useMediaQuery,
   Divider,
-  Fab
+  Fab,
+  Avatar,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Container
 } from "@mui/material";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ShieldIcon from "@mui/icons-material/Shield";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ChatIcon from "@mui/icons-material/Chat";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { motion } from "framer-motion";
+import Hero from "../components/Hero";
+
 
 const features = [
-  {
-    title: "Asistencia legal al instante",
-    icon: <RocketLaunchIcon fontSize="large" />,
-    description: "Obtené respuestas claras y precisas en segundos. Sin esperas. Sin burocracia.",
-  },
-  {
-    title: "Disponible 24/7",
-    icon: <AccessTimeIcon fontSize="large" />,
-    description: "Consultá cualquier día y a cualquier hora. Incluso feriados.",
-  },
-  {
-    title: "Información actualizada",
-    icon: <CheckCircleIcon fontSize="large" />,
-    description: "Basado en normativa argentina vigente y jurisprudencia real.",
-  },
-  {
-    title: "Privacidad garantizada",
-    icon: <ShieldIcon fontSize="large" />,
-    description: "Tus consultas están protegidas. Nadie accede a tu información.",
-  },
+  { title: "Respuestas instantáneas", icon: <RocketLaunchIcon fontSize="large" />, description: "Consultas legales resueltas en segundos. Sin esperas." },
+  { title: "Disponible 24/7", icon: <AccessTimeIcon fontSize="large" />, description: "Usalo cuando quieras, incluso feriados y fines de semana." },
+  { title: "Privacidad asegurada", icon: <ShieldIcon fontSize="large" />, description: "Tus datos están protegidos. Nadie accede a tus consultas." },
+  { title: "Normativa argentina vigente", icon: <CheckCircleIcon fontSize="large" />, description: "Basado en leyes reales y jurisprudencia actualizada." }
 ];
 
-export default function Caracteristicas() {
+const testimonios = [
+  { nombre: "Juan M.", rol: "abogado", frase: "Me resolvió en 2 minutos lo que me hubiera llevado 2 horas de lectura.", avatar: "https://i.pravatar.cc/100?img=1" },
+  { nombre: "Carolina D.", rol: "estudiante de abogacía", frase: "Lo uso para estudiar. Es como tener un profesor particular de Derecho.", avatar: "https://i.pravatar.cc/100?img=5" },
+  { nombre: "Estudio Jurídico Zeta", rol: "firma legal", frase: "Reducimos un 80% el tiempo de redacción de contratos.", avatar: "https://i.pravatar.cc/100?img=8" }
+];
+
+const faqs = [
+  { pregunta: "¿Dictum IA reemplaza a un abogado?", respuesta: "No. Es una herramienta de asistencia legal basada en IA. Complementa tu trabajo profesional." },
+  { pregunta: "¿Qué pasa con mi privacidad?", respuesta: "Las consultas están protegidas y encriptadas. Nadie más accede a ellas." },
+  { pregunta: "¿El plan gratis tiene límites?", respuesta: "Sí, incluye 5 consultas. Luego podés pasarte al plan premium o profesional." }
+];
+
+export default function LandingDark() {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   return (
-    <Box sx={{ background: "#111", color: "#fff", px: 2, position: "relative" }}>
-
-      {/* STICKY CTA */}
-      <Fab 
-        variant="extended"
-        color="primary"
-        href="/register"
-        sx={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-          zIndex: 9999,
-          backgroundColor: "#0a84ff",
-          fontWeight: "bold",
-          "&:hover": { backgroundColor: "#006ee6" }
-        }}
-      >
-        <ChatIcon sx={{ mr: 1 }} /> Probá gratis Dictum IA
-      </Fab>
-
-      {/* HERO */}
-      <Box textAlign="center" pt={10} pb={5}>
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#0a84ff", mb: 2 }}>
-          ¿Tenés dudas legales y poco tiempo?
-        </Typography>
-        <Typography variant="h6" sx={{ color: "#ccc", maxWidth: 720, mx: "auto", fontWeight: 300 }}>
-          Cientos de abogados y estudiantes ya usan Dictum IA para resolver problemas jurídicos, estudiar y redactar contratos sin errores.
-        </Typography>
-        <Button
-          variant="contained"
-          size="large"
-          href="/precios"
-          sx={{ mt: 4, px: 6, py: 1.5, fontWeight: "bold", backgroundColor: "#0a84ff", "&:hover": { backgroundColor: "#006ee6" } }}
-        >
-          Ver planes disponibles
-        </Button>
-        <Typography variant="body2" sx={{ color: "#aaa", mt: 2 }}>
-          ✅ Consultas ilimitadas en el plan Pro <br />
-          ✅ Información 100% argentina y actualizada <br />
-          ✅ Ahorra tiempo <br />
-        </Typography>
-        {/*<Typography variant="subtitle2" sx={{ color: "#ff9800", mt: 2, fontWeight: "bold" }}>
-          ⚠️ Solo por esta semana: acceso Premium gratis limitado. ¡Probalo ahora!
-        </Typography>*/}
-      </Box>
-
-      <Divider sx={{ backgroundColor: "#333", mb: 6 }} />
-
-      {/* FEATURES */}
-      <Box textAlign="center">
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-          ¿Por qué elegir Dictum IA?
-        </Typography>
-        <Typography variant="body1" sx={{ color: "#aaa", maxWidth: 800, mx: "auto", mb: 4 }}>
-          La plataforma legal con inteligencia artificial más completa de Argentina. Ideal para resolver consultas, redactar contratos y preparar exámenes. Precisión y rapidez legal al alcance de todos.
-        </Typography>
-        <Grid container spacing={6} mt={2} justifyContent="center">
-          {features.slice(0, 2).map((item, index) => (
-            <Grid item xs={12} sm={6} md={5} key={index}>
-              <Box textAlign="center" px={2}>
-                <Box sx={{ color: "#0a84ff", mb: 1 }}>{item.icon}</Box>
-                <Typography variant="h6" sx={{ mb: 1 }}>{item.title}</Typography>
-                <Typography variant="body2" sx={{ color: "#aaa" }}>{item.description}</Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-        <Grid container spacing={6} mt={2} justifyContent="center">
-          {features.slice(2).map((item, index) => (
-            <Grid item xs={12} sm={6} md={5} key={index}>
-              <Box textAlign="center" px={2}>
-                <Box sx={{ color: "#0a84ff", mb: 1 }}>{item.icon}</Box>
-                <Typography variant="h6" sx={{ mb: 1 }}>{item.title}</Typography>
-                <Typography variant="body2" sx={{ color: "#aaa" }}>{item.description}</Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-
     
+    <Box sx={{ background: "#1111",px: 2, fontFamily: "'Inter', sans-serif" }}>
+       <Hero />
+      
+     <Divider sx={{ backgroundColor: "#1f2937", my: 10 }} />
 
 
-      {/* TESTIMONIOS */}
-      <Box textAlign="center" mt={10}>
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 4 }}>
-          Lo que dicen nuestros usuarios
-        </Typography>
+      <Grid container spacing={6} justifyContent="center">
+        {features.map((item, index) => (
+          <Grid item xs={12} sm={6} md={5} key={index}>
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <Box textAlign="center" px={2}>
+                <Box sx={{ color: "#3b82f6", mb: 1 }}>{item.icon}</Box>
+                <Typography variant="h6" mb={1} fontWeight={600}>{item.title}</Typography>
+                <Typography variant="body2" color="#9ca3af">{item.description}</Typography>
+              </Box>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Box mt={10}>
+        <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>Lo que dicen nuestros usuarios</Typography>
         <Grid container spacing={4} justifyContent="center">
-          <Grid item xs={12} md={4}>
-            <Box sx={{ backgroundColor: "#222", p: 3, borderRadius: 2 }}>
-              <Typography variant="body2" sx={{ fontStyle: "italic", color: "#ccc" }}>
-                “Me resolvió en 2 minutos lo que me hubiera llevado 2 horas de lectura.”
-              </Typography>
-              <Typography variant="subtitle2" sx={{ mt: 1, color: "#0a84ff" }}>
-                — Juan M., abogado laboralista
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box sx={{ backgroundColor: "#222", p: 3, borderRadius: 2 }}>
-              <Typography variant="body2" sx={{ fontStyle: "italic", color: "#ccc" }}>
-                “Lo uso para estudiar. Es como tener un profesor particular de Derecho.”
-              </Typography>
-              <Typography variant="subtitle2" sx={{ mt: 1, color: "#0a84ff" }}>
-                — Carolina D., estudiante de abogacía
-              </Typography>
-            </Box>
-          </Grid>
+          {testimonios.map((t, i) => (
+            <Grid item xs={12} md={4} key={i}>
+              <Box sx={{ backgroundColor: "#1f2937", p: 3, borderRadius: 3, textAlign: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.4)" }}>
+                <Avatar src={t.avatar} alt={t.nombre} sx={{ width: 64, height: 64, mx: "auto", mb: 2 }} />
+                <Typography variant="body2" fontStyle="italic" color="#d1d5db">“{t.frase}”</Typography>
+                <Typography variant="subtitle2" mt={1} color="#0a84ff">— {t.nombre}, {t.rol}</Typography>
+              </Box>
+            </Grid>
+          ))}
         </Grid>
       </Box>
 
-      {/* RESULTADOS REALES */}
-      <Box mt={10} textAlign="center">
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-          Casos reales. Resultados reales.
-        </Typography>
-        <Typography variant="body2" sx={{ color: "#aaa", maxWidth: 700, mx: "auto" }}>
-          ✅ Un abogado laboralista de Rosario resolvió 27 consultas en una semana con Dictum IA.<br />
-          ✅ Una estudiante aprobó Derecho Laboral utilizando la app como asistente de estudio.<br />
-          ✅ Un estudio jurídico automatizó contratos y redujo errores en un 80%.
-        </Typography>
+      <Box mt={10}>
+        <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>Preguntas frecuentes</Typography>
+        <Box maxWidth={800} mx="auto">
+          {faqs.map((faq, i) => (
+            <Accordion key={i} sx={{ backgroundColor: "#1f2937", color: "#f4f4f5" }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#0a84ff" }} />}>
+                <Typography>{faq.pregunta}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography variant="body2" color="#cbd5e1">{faq.respuesta}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
       </Box>
 
-      {/* CTA FINAL */}
-      <Box textAlign="center" mt={10} px={2}>
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-          +12.000 consultas legales resueltas por Dictum IA
-        </Typography>
-        <Typography variant="body1" sx={{ color: "#aaa", maxWidth: 600, mx: "auto", mb: 4 }}>
+      <Box textAlign="center" mt={12} px={2}>
+        <Typography variant="h5" fontWeight="bold" mb={2}>+12.000 consultas legales resueltas</Typography>
+        <Typography variant="body1" color="#9ca3af" maxWidth={600} mx="auto" mb={4}>
           Unite a la comunidad legal que ya usa inteligencia artificial para trabajar, estudiar y decidir mejor.
         </Typography>
-        <Button
-          variant="contained"
-          href="/register"
-          sx={{ px: 5, py: 1.5, fontWeight: "bold", fontSize: "1rem", backgroundColor: "#0a84ff", "&:hover": { backgroundColor: "#006ee6" } }}
-        >
+        <Button variant="contained" href="/register" sx={{ fontWeight: "bold", px: 4, py: 1.5 }}>
           Empezá gratis ahora
         </Button>
-        <Typography variant="caption" sx={{ color: "#aaa", mt: 1 }}>
+        <Typography variant="caption" color="#6b7280" mt={1} display="block">
           Sin tarjeta. Sin compromiso.
         </Typography>
       </Box>
 
-      {/* FOOTER */}
-      <Box mt={12} py={6} sx={{ backgroundColor: "#111", textAlign: "center", borderTop: "1px solid #222" }}>
-        <Typography variant="body2" sx={{ color: "#667" }}>
+      <Box mt={12} py={6} textAlign="center" borderTop="1px solid #1f2937">
+        <Typography variant="body2" color="#6b7280">
           © {new Date().getFullYear()} Dictum IA — Asistencia legal con inteligencia artificial.
         </Typography>
-        <Typography variant="body2" sx={{ color: "#555", mt: 1 }}>
+        <Typography variant="body2" color="#4b5563" mt={1}>
           Hecho con 🔵⚪🔵 en Argentina. Todos los derechos reservados.
         </Typography>
       </Box>
-
     </Box>
   );
 }
