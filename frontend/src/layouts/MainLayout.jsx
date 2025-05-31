@@ -41,7 +41,7 @@ const MainLayout = ({ children }) => {
         component="main"
         sx={{
           flex: 1,
-          px: esLanding ? 0 : { xs: 1, md: 5 },
+          px: esLanding ? 0 : { xs: 1, md:5 },
           pt: esLanding ? 0 : 3,
           pb: 0,
 

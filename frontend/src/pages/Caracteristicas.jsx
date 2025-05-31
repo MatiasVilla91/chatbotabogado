@@ -51,7 +51,7 @@ export default function LandingDark() {
 <Box
   sx={{
     position: "relative",
-    background: "radial-gradient(circle at top left, #0a0a0a, #111 70%)",
+    background: "radial-gradient(circle at top right, #0a0a0a, #111 70%)",
     px: 2,
     fontFamily: "'Inter', sans-serif",
     minHeight: "100vh",

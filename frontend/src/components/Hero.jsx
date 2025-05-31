@@ -6,9 +6,9 @@ const Hero = () => {
       sx={{
         position: "relative",
         background:  `radial-gradient(circle at top left, rgba(10,10,10,0.8), transparent 400px),
-                     linear-gradient(to bottom, #0a0a0a 0%, #111 200%)`,
+                     l  inear-gradient(to bottom, #0f0f0f  0%, #111 200%)`,
         overflow: "hidden",
-        py: { xs: 10, md: 18 },
+        py: { xs: 10, md: 5 },
         px: 2,
       }}
     >
@@ -17,7 +17,7 @@ const Hero = () => {
         sx={{
           position: "absolute",
           width: 300,
-          height: 300,
+          height: 500,
           background: "#0a84ff",
           borderRadius: "500%",
           top: "-100px",
@@ -31,9 +31,9 @@ const Hero = () => {
           {/* Texto */}
           <Grid item xs={12} md={6}>
             <Typography variant="h2" fontWeight={800} sx={{ color: "#e5e7eb", mb: 3 }}>
-              Asistencia legal instantánea.
+              Inteligencia Artificial Legal
               <br />
-              <Box component="span" sx={{ color: "#60a5fa" }}>Hecha en Argentina.</Box>
+              <Box component="span" sx={{ color: "#60a5fa" }}>Hecha en Argentina</Box>
             </Typography>
             <Typography variant="h6" sx={{ color: "#94a3b8", mb: 4 }}>
               Dictum IA responde consultas, redacta contratos y potencia tu práctica jurídica. Todo en segundos.
@@ -67,7 +67,7 @@ const Hero = () => {
               }}
             >
               <img
-                src="justice-bg.jpg"
+                src="20_22_29.png"
                 alt="Ilustración legal tech"
                 style={{
                   width: "100%",
