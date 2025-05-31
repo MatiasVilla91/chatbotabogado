@@ -76,7 +76,7 @@ export default function LandingDark() {
 
        <Hero />
       
-     <Divider sx={{ backgroundColor: "#1f2937", my: 2.5 }} />
+    {/*  <Divider sx={{ backgroundColor: "#1f2937", my: 2.5 }} /> */}
 
 
       <Grid container spacing={6} justifyContent="center">

@@ -5,7 +5,8 @@ const Hero = () => {
     <Box
       sx={{
         position: "relative",
-        background: "radial-gradient(circle at top left, #0a0a0a, #111 70%)",
+        background:  `radial-gradient(circle at top left, rgba(10,10,10,0.8), transparent 400px),
+                     linear-gradient(to bottom, #0a0a0a 0%, #111 200%)`,
         overflow: "hidden",
         py: { xs: 10, md: 18 },
         px: 2,
@@ -66,7 +67,7 @@ const Hero = () => {
               }}
             >
               <img
-                src="/23_02_32.png"
+                src="justice-bg.jpg"
                 alt="Ilustración legal tech"
                 style={{
                   width: "100%",
