@@ -58,7 +58,7 @@ const theme = createTheme({
         root: {
           padding: '3em',
           borderRadius: '50px',
-          backgroundColor: '#1f1f1f', //color del cuadradito exterior
+          backgroundColor: '#transparent', 
         },
       },
     },
@@ -105,19 +105,7 @@ const theme = createTheme({
         },
       },
     },
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          padding: '0.8em 1.2em',
-          borderRadius: '12px',
-          maxWidth: '%',
-          wordBreak: 'break-word',
-          whiteSpace: 'pre-wrap',
-          overflowWrap: 'break-word',
-        },
-        
-      },
-    },
+    
   },
 });
 

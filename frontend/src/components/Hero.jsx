@@ -62,12 +62,11 @@ const Hero = () => {
               sx={{
                 position: "relative",
                 borderRadius: 6,
-                overflow: "hidden",
-                boxShadow: "0 30px 60px rgba(0,0,0,0.6)",
+                overflow: "hidden",               
               }}
             >
               <img
-                src="/23_02_32.png"
+                src="/23_02_41.png"
                 alt="Ilustración legal tech"
                 style={{
                   width: "100%",

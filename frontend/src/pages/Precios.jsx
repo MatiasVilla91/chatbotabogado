@@ -104,7 +104,7 @@ function Precios() {
       <Typography
         variant="h4"
         align="center"
-        sx={{ color: "#fff", fontWeight: "bold", mb: -6 }}
+        sx={{ color: "#fff", fontWeight: "bold", mb: 1 }}
       >
         Planes y Precios
       </Typography>

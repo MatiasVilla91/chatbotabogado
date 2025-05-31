@@ -64,7 +64,7 @@ function Consultas() {
     fetchEstado();
   }, []);
 
-  const handlePayment = async () => {
+  const handlePago = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await axios.post(
@@ -258,7 +258,7 @@ function Consultas() {
         </form>
         <Button
           fullWidth
-          onClick={handlePayment}
+          onClick={handlePago}
           variant="contained"
           sx={{ mt: 2, backgroundColor: "#333", "&:hover": { backgroundColor: "#444" } }}
         >
@@ -286,7 +286,7 @@ function Consultas() {
           <Typography variant="body2" sx={{ mb: 3 }}>
             Para seguir usando la IA legal, actualizá a una cuenta Premium y obtené acceso ilimitado a consultas y contratos.
           </Typography>
-          <Button variant="contained" fullWidth onClick={handlePayment}>
+          <Button variant="contained" fullWidth onClick={handlePago}>
             Actualizar a Premium
           </Button>
           <Button variant="text" fullWidth onClick={() => setMostrarModal(false)} sx={{ mt: 1, color: "#ccc" }}>
