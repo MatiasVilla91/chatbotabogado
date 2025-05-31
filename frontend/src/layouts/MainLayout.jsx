@@ -29,7 +29,7 @@ const MainLayout = ({ children }) => {
         sx={{
           flex: 1,
           pt: 3,
-          px: { xs: 2, md: 0.5},
+          px: { xs: 2, md: 4},
           pb: 0,
           height: "100vh",             // ✅ asegura que tenga la misma altura que el Sidebar
           //display: "flex",
@@ -51,7 +51,7 @@ const MainLayout = ({ children }) => {
             justifyContent: "flex-end",
             alignItems: "center",
             gap: 2,
-            mb: 2,
+            mb: 1,
           }}
         >
           {!token ? (
@@ -67,7 +67,7 @@ const MainLayout = ({ children }) => {
                   "&:hover": {
                     backgroundColor: "#222",
                     borderColor: "#0a84ff",
-                    color: "#0a84ff",
+                    color: "#FFFFFF",
                   },
                 }}
               >

@@ -91,23 +91,28 @@ const theme = createTheme({
         },
       },
     },
+
+
     MuiButton: {
       styleOverrides: {
         root: {
           borderRadius: '12px',
           padding: '0.8em 1.5em',
-          background: 'linear-gradient(135deg, #0a84ff 0%, #1d4ed8 100%)',
+          backgroundColor: '#454646',
           color: '#fff',
-          boxShadow: '0 4px 12px rgba(10, 132, 255, 0.3)',
           transition: 'all 0.3s ease',
           '&:hover': {
-            background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
+            background: 'linear-gradient(135deg,rgb(0, 72, 255) 0%, #2563eb 100%)',
             transform: 'translateY(-2px) scale(1.02)',
             boxShadow: '0 6px 20px rgba(10, 132, 255, 0.5)',
           },
         },
       },
     },
+    
+  
+
+
     MuiTypography: {
       styleOverrides: {
         root: {
