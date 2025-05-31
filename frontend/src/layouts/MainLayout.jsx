@@ -27,12 +27,12 @@ const MainLayout = ({ children }) => {
         component="main"
         sx={{
           flex: 1,
-          pt: 4,
-          px: { xs: 2, md: 6 },
+          pt: 3,
+          px: { xs: 2, md: 0.5},
           pb: 0,
           width: "100%",
           maxWidth: "100%",
-          mx: "auto",
+         // mx: "auto",
         }}
       >
         {/* ✅ Banner premium */}
@@ -45,7 +45,7 @@ const MainLayout = ({ children }) => {
             justifyContent: "flex-end",
             alignItems: "center",
             gap: 2,
-            mb: 4,
+            mb: 2,
           }}
         >
           {!token ? (

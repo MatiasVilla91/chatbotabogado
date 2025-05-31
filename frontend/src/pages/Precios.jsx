@@ -132,6 +132,7 @@ function Precios() {
           maxWidth: "1550px",
           mx: "auto",
         }}
+        
       >
         {planes.map((plan, index) => (
           <Card

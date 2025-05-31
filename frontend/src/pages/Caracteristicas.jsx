@@ -48,7 +48,7 @@ export default function LandingDark() {
 
   return (
     
-    <Box sx={{ background: "#1111",px: 2, fontFamily: "'Inter', sans-serif" }}>
+    <Box sx={{ background: "#1111",px: 0, fontFamily: "'Inter', sans-serif" }}>
        <Hero />
       
      <Divider sx={{ backgroundColor: "#1f2937", my: 10 }} />
