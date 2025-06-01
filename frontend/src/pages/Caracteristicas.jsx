@@ -65,7 +65,7 @@ export default function LandingDark() {
   sx={{
     position: "relative",
     background: "radial-gradient(circle at top right, #0a0a0a, #111 70%)",
-    px: 2,
+    px: 0, //PADDING ANULADO
     fontFamily: "'Inter', sans-serif",
     minHeight: "100vh",
     overflow: "hidden", // necesario para que no se desborde
@@ -73,9 +73,9 @@ export default function LandingDark() {
 >
 
 
-       <Hero />
+<Hero />
       
-      <Divider sx={{ backgroundColor: "#1f2937", my: 6 }} /> 
+<Divider sx={{ backgroundColor: "#1f2937", my: 6 }} /> 
 
 
       <Grid container spacing={10} justifyContent="center">
