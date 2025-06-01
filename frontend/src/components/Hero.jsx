@@ -1,20 +1,24 @@
 import { Box, Typography, Button, Grid, Container } from "@mui/material";
+import { motion } from "framer-motion";
 
 const Hero = () => {
   return (
     <Box
       sx={{
         position: "relative",
-        background:  `radial-gradient(circle at top left, rgba(10,10,10,0.8), transparent 400px),
-                     l  inear-gradient(to bottom, #0f0f0f  0%, #111 200%)`,
+        background: `radial-gradient(circle at top left, rgba(10,10,10,0.8), transparent 400px),
+                     linear-gradient(to bottom, #0f0f0f 0%, #111 200%)`,
         overflow: "hidden",
-        py: { xs: 10, md: 5 },
+        py: { xs: 10, md: 12 },
         px: 2,
       }}
     >
-      {/* Círculo decorativo detrás */}
-      <Box
-        sx={{
+      {/* Círculo animado */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.2 }}
+        transition={{ duration: 1.2 }}
+        style={{
           position: "absolute",
           width: 300,
           height: 500,
@@ -23,59 +27,78 @@ const Hero = () => {
           top: "-100px",
           left: "-100px",
           filter: "blur(150px)",
-          opacity: 0.2,
         }}
       />
+
       <Container maxWidth="lg">
         <Grid container spacing={6} alignItems="center">
-          {/* Texto */}
+          {/* Texto animado */}
           <Grid item xs={12} md={6}>
-            <Typography variant="h2" fontWeight={800} sx={{ color: "#e5e7eb", mb: 3 }}>
-              Inteligencia Artificial Legal
-              <br />
-              <Box component="span" sx={{ color: "#60a5fa" }}>Hecha en Argentina</Box>
-            </Typography>
-            <Typography variant="h6" sx={{ color: "#94a3b8", mb: 4 }}>
-              Dictum IA responde consultas, redacta contratos y potencia tu práctica jurídica. Todo en segundos.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              href="/register"
-              sx={{
-                px: 5,
-                py: 2,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                backgroundColor: "#0a84ff",
-                "&:hover": {
-                  backgroundColor: "#1d4ed8",
-                },
-              }}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              Probalo gratis
-            </Button>
+              <Typography variant="h2" fontWeight={800} sx={{ color: "#e5e7eb", mb: 3 }}>
+                Inteligencia Artificial Legal
+                <br />
+                <Box component="span" sx={{ color: "#60a5fa" }}>Hecha en Argentina</Box>
+              </Typography>
+              <Typography variant="h6" sx={{ color: "#94a3b8", mb: 4 }}>
+                Dictum IA responde consultas, redacta contratos y potencia tu práctica jurídica. Todo en segundos.
+              </Typography>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.4 }}
+            >
+              <Button
+                variant="contained"
+                size="large"
+                href="/register"
+                sx={{
+                  px: 5,
+                  py: 2,
+                  fontWeight: "bold",
+                  fontSize: "1rem",
+                  backgroundColor: "#0a84ff",
+                  "&:hover": {
+                    backgroundColor: "#1d4ed8",
+                  },
+                }}
+              >
+                Probalo gratis
+              </Button>
+            </motion.div>
           </Grid>
 
-          {/* Imagen */}
+          {/* Imagen animada */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                position: "relative",
-                borderRadius: 6,
-                overflow: "hidden",               
-              }}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2 }}
             >
-              <img
-                src="20_22_29.png"
-                alt="Ilustración legal tech"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  display: "block",
+              <Box
+                sx={{
+                  position: "relative",
+                  borderRadius: 6,
+                  overflow: "hidden",
                 }}
-              />
-            </Box>
+              >
+                <img
+                  src="20_22_29.png"
+                  alt="Ilustración legal tech"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                  }}
+                />
+              </Box>
+            </motion.div>
           </Grid>
         </Grid>
       </Container>
