@@ -2,11 +2,12 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { TextField, Button, Typography, CircularProgress } from "@mui/material";
-import axios from "axios";
+import api from "../api";
 import AuthCard from "../components/AuthCard"; // ✅ Usamos el mismo layout
 import GoogleIcon from "@mui/icons-material/Google"; // ✅ Usamos el icono de Google directamente de Material UI
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -14,18 +15,20 @@ function Login() {
   const [loading, setLoading] = useState(false); // ✅ Loading state agregado
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // ✅ Activamos el loading
     try {
-      const response = await axios.post(`${backendUrl}/api/auth/login`, {
-        email,
-        password,
-      });
+      const response = await api.post("/auth/login", {
+  email,
+  password,
+});
       //console.log("🧠 Datos que llegan del backend:", response.data);
 
       login(response.data.token, response.data.user);
+      localStorage.setItem("token", response.data.token);
       navigate("/consultas");
     } catch (error) {
       console.error("❌ Error:", error.response?.data || error.message);
@@ -93,6 +96,23 @@ function Login() {
             Registrate
           </Link>
         </Typography>
+       <Typography align="center" variant="body2" sx={{ mt: 1.5, color: "#ccc" }}>
+  <Link
+    to="/olvide-contrasena"
+    sx={{
+      color: "#ccc",
+      textDecoration: "none",
+      transition: "color 0.2s",
+      "&:hover": {
+        color: "#0a84ff",
+      },
+    }}
+  >
+    ¿Olvidaste tu contraseña?
+  </Link>
+</Typography>
+
+
       </form>
     </AuthCard>
   );

@@ -1,18 +1,10 @@
 const mongoose = require('mongoose');
 
-
-
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  fechaInicioPremium: { type: Date },
-  fechaFinPremium: { type: Date },
 
-  
-
-  
-
-  // ✅ Password solo requerido si NO es login por Google
+  // Contraseña: solo si no es login con Google
   password: {
     type: String,
     required: function () {
@@ -22,22 +14,23 @@ const UserSchema = new mongoose.Schema({
 
   googleId: { type: String, unique: true, sparse: true }, // Google login
 
-  
-
   // Planes y límites
   esPremium: { type: Boolean, default: false },
+  fechaInicioPremium: { type: Date },
+  fechaFinPremium: { type: Date },
   consultasRestantes: { type: Number, default: 5 },
   contratosRestantes: { type: Number, default: 3 },
 
   // Mensajes
-bienvenidaEnviada: { type: Boolean, default: false }
+  bienvenidaEnviada: { type: Boolean, default: false },
+
+  // Recuperación de contraseña
+  resetToken: { type: String },
+  resetTokenExpire: { type: Date }
 
 }, {
   timestamps: true,
   collection: 'usuarios'
-  
 });
-
-
 
 module.exports = mongoose.model('User', UserSchema, 'usuarios');

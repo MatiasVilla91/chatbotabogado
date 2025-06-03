@@ -64,7 +64,7 @@ export default function LandingDark() {
 <Box
   sx={{
     position: "relative",
-    background: "radial-gradient(circle at top right, #0a0a0a, #111 70%)",
+    background: "radial-gradient(circle at top right, #0a0a0a, #111 50%)",
     px: 0, //PADDING ANULADO
     fontFamily: "'Inter', sans-serif",
     minHeight: "100vh",
@@ -75,13 +75,18 @@ export default function LandingDark() {
 
 <Hero />
       
-<Divider sx={{ backgroundColor: "#1f2937", my: 6 }} /> 
+<Divider sx={{ backgroundColor: "#1f2937", my: 1 }} /> 
 
 
-      <Grid container spacing={10} justifyContent="center">
+      <Grid container spacing={14} justifyContent="center">
         {features.map((item, index) => (
           <Grid item xs={12} sm={6} md={4.5} key={index}>
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+<motion.div
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 5 }}
+  whileHover={{ scale: 1.2 }}
+  transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
+>
               <Box textAlign="center" px={2}>
                 <Box sx={{ color: "#3b82f6", mb: 1 }}>{item.icon}</Box>
                 <Typography variant="h6" mb={1} fontWeight={600}>{item.title}</Typography>
@@ -101,14 +106,19 @@ export default function LandingDark() {
     {testimonios.map((t, i) => (
       <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
         <Box
-          sx={{
-            backgroundColor: "#1f1f1f",
-            p: 4,
-            borderRadius: 3,
-            textAlign: "center",
-            height: "100%",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-          }}
+      sx={{
+  textAlign: "center",
+  px: 2,
+  py: 3,
+  borderRadius: 3,
+  transition: "all 0.3s ease",
+  backgroundColor: "#1f1f1f",
+  boxShadow: "0 0 0 rgba(0,0,0,0)",
+  "&:hover": {
+    backgroundColor: "#252525",
+    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.5)",
+  },
+}}
         >
           <Avatar
             src={t.avatar}

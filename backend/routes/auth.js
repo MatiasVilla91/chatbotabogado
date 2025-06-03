@@ -7,18 +7,19 @@ const logger = require('../utils/logger');
 const passport = require('passport');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
+const { forgotPassword, resetPassword } = require("../controllers/authController");
 
-// ❗ Limitador de intentos de login
+// 🔒 Limitador de intentos de login
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
+  windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Demasiados intentos. Esperá un rato e intentá de nuevo.",
 });
 
-// ❗ Validador para registro
+// ✅ Validación de registro
 const validateRegister = [
   body('email').isEmail().withMessage('Email inválido'),
-  body('password').isLength({ min: 6 }).withMessage('Contraseña demasiado corta'),
+  body('password').isLength({ min: 6 }).withMessage('Contraseña muy corta'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -28,7 +29,7 @@ const validateRegister = [
   }
 ];
 
-// 🔐 Registro con email
+// 📝 Registro
 router.post('/register', validateRegister, async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -46,11 +47,11 @@ router.post('/register', validateRegister, async (req, res) => {
   }
 });
 
-// 🔐 Login con email
+// 🔐 Login
 router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ message: "Email y contraseña requeridos" });
+    if (!email || !password) return res.status(400).json({ message: "Faltan datos" });
 
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Usuario no encontrado" });
@@ -59,43 +60,57 @@ router.post('/login', loginLimiter, async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: "Contraseña incorrecta" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-    logger.info(`🔓 Inicio de sesión: ${email}`);
+    logger.info(`🔓 Login: ${email}`);
     res.json({
       token,
       user: {
-        _id: user._id,
+        id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        esPremium: user.esPremium,
+        consultasRestantes: user.consultasRestantes,
+        contratosRestantes: user.contratosRestantes
       },
       message: "Inicio de sesión exitoso"
     });
   } catch (error) {
-    logger.error(`❌ Error al iniciar sesión: ${error.message}`);
+    logger.error(`❌ Error en login: ${error.message}`);
     res.status(500).json({ message: "Error en el servidor" });
   }
 });
 
-// 🌐 INICIAR login con Google
+// 🔑 Recuperar contraseña
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
+router.get("/reset-token/:token", async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpire: { $gt: Date.now() },
+  });
+  if (!user) return res.status(400).json({ error: "Token inválido o expirado" });
+  res.json({ email: user.email });
+});
+
+// 🌐 Login con Google
 router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
 }));
 
-// 🔁 CALLBACK de Google (corregido y completo)
+// 🔁 Callback de Google
 router.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/login',
-  session: true,
+  session: false, // usamos solo JWT
 }), async (req, res) => {
   try {
     const user = req.user;
-    if (!user) {
-      return res.status(500).send("Error al autenticar con Google");
-    }
+    if (!user) return res.status(500).send("Error al autenticar con Google");
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-
     const frontendUrl = process.env.FRONTEND_URL;
+
     if (!frontendUrl) {
-      return res.status(500).json({ message: "Error en la configuración del frontend" });
+      return res.status(500).json({ message: "Falta FRONTEND_URL en .env" });
     }
 
     const userSerialized = encodeURIComponent(JSON.stringify({
@@ -105,13 +120,10 @@ router.get('/google/callback', passport.authenticate('google', {
     }));
 
     req.login(user, (err) => {
-      if (err) {
-        return res.status(500).send("Error al iniciar sesión");
-      }
-
-      const redireccion = `${frontendUrl}/google-success?token=${token}&user=${userSerialized}`;
-      console.log("🔁 Redireccionando a:", redireccion);
-      res.redirect(redireccion);
+      if (err) return res.status(500).send("Error al iniciar sesión");
+      const redirect = `${frontendUrl}/google-success?token=${token}&user=${userSerialized}`;
+      console.log("🔁 Redireccionando a:", redirect);
+      res.redirect(redirect);
     });
   } catch (error) {
     console.error("❌ Error en callback Google:", error);

@@ -89,16 +89,18 @@ const deleteConversation = async (id) => {
 };
 
 
-  // ✅ Navegación
-  const navItems = [
-    { text: "Inicio", icon: <HomeIcon />, to: "/" },
-    { text: "Características", icon: <InfoIcon />, to: "/caracteristicas" },
-    { text: "Precios", icon: <MonetizationOnIcon />, to: "/precios" },
-  ];
+const navItems = [
+  { text: "Inicio", icon: <HomeIcon />, to: "/" },
+  { text: "Características", icon: <InfoIcon />, to: "/caracteristicas" },
+  ...(token ? [{ text: "Precios", icon: <MonetizationOnIcon />, to: "/precios" }] : []),
+];
+;
 
   const navLegalItems = [
     { text: "Términos", icon: <GavelIcon />, to: "/terminos" },
     { text: "Privacidad", icon: <LockIcon />, to: "/privacidad" },
+    { text: "Nosotros", icon: <InfoIcon />, to: "/sobre-nosotros" },
+
   ];
 
   // ✅ Renderizar historial
@@ -217,30 +219,31 @@ const deleteConversation = async (id) => {
           </Link>
         ))}
 
-<Box sx={{ mt: 3 }}>
-        <Link to="/precios" style={{ textDecoration: "none" }}>
-          <Box
-            sx={{
-              textAlign: "center",
-              py: 1,
-              backgroundColor: "#0a84ff",
-              borderRadius: 2,
-              color: "#fff",
-              fontWeight: "bold",
-              fontSize: "0.875rem",
-              "&:hover": {
-                backgroundColor: "#0077e6",
-              },
-            }}
-          >
-            🌟 Mejorar plan
-          </Box>
-        </Link>
+{token && (
+  <Box sx={{ mt: 3 }}>
+    <Link to="/precios" style={{ textDecoration: "none" }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          py: 1,
+          backgroundColor: "#0a84ff",
+          borderRadius: 2,
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: "0.875rem",
+          "&:hover": {
+            backgroundColor: "#0077e6",
+          },
+        }}
+      >
+        🌟 Mejorar plan
       </Box>
-      </Box>
-      
-    </Box>
-    
+    </Link>
+  </Box>
+)}
+
+  </Box>
+  </Box>   
     
     
   );

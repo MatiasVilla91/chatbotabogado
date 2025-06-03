@@ -37,8 +37,14 @@ function GoogleSuccess() {
         const userData = JSON.parse(decodeURIComponent(userParam));
         console.log("✅ Usuario recibido:", userData);
         login(token, userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", token);
 
-        setTimeout(() => navigate("/consultas", { replace: true }), 500);
+
+       setTimeout(() => {
+  window.location.href = "/consultas";
+}, 300);
+
       } catch (err) {
         console.error("❌ Error al procesar el login:", err);
         setError("Ocurrió un error al iniciar sesión. Redirigiendo al login...");

@@ -6,8 +6,8 @@ const Hero = () => {
     <Box
       sx={{
         position: "relative",
-        background: `radial-gradient(circle at top left, rgba(10,10,10,0.8), transparent 400px),
-                     linear-gradient(to bottom, #0f0f0f 0%, #111 200%)`,
+        background: `radial-gradient(circle at top left, rgba(10,10,10,0.5), transparent 400px),
+                     linear-gradient(to bottom, #0f0f0f 0%, #111 100%)`,
         overflow: "hidden",
         py: { xs: 10, md: 12 },
         px: 2,
@@ -59,7 +59,7 @@ const Hero = () => {
                 size="large"
                 href="/register"
                 sx={{
-                  px: 5,
+                  px: 20,
                   py: 2,
                   fontWeight: "bold",
                   fontSize: "1rem",

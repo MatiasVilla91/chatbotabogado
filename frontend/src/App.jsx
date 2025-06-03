@@ -14,6 +14,9 @@ import Historial from "./pages/Historial";
 import { RutaProtegida, RutaPublica } from "./components/RutasProtegidas";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import Perfil from "./pages/Perfil";
+import SobreNosotros from "./pages/SobreNosotros";
+import OlvideContrasena from "./pages/OlvideContrasena";
+import RestablecerContrasena from "./pages/RestablecerContrasena";
 
 
 
@@ -128,7 +131,10 @@ function App() {
 
         {/* Google OAuth */}
         <Route path="/google-success" element={<GoogleSuccess />} />
-      
+      <Route path="/sobre-nosotros" element={<SobreNosotros />} />
+      <Route path="/olvide-contrasena" element={<OlvideContrasena />} />
+     <Route path="/reset-password/:token" element={<RestablecerContrasena />} />
+
       </Routes>
 
       {/*<FloatingHelpButton />*/}

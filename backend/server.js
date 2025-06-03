@@ -21,6 +21,7 @@ const verificarPlan = require('./middleware/verificarPlan');
 const { checkAuth } = require('./middleware/auth');
 
 
+
 require('./config/passport');
 
 const app = express();
@@ -105,6 +106,8 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(mongoSanitize());
+app.use("/api/auth", authRoutes); // ✅ Así queda todo consistente
+
 
 // ✅ MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -159,7 +162,7 @@ if (!description || !price || !quantity || !userEmail || !userId) {
 
 
 // ✅ Rutas API
-app.use('/api/auth', authRoutes);
+
 app.use('/api/legal', checkAuth, legalRoutes);
 app.use('/api/contratos', checkAuth, contratosRoutes);
 app.use('/api/upgrade', upgradeRoutes);

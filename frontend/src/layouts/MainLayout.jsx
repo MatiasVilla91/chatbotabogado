@@ -17,7 +17,7 @@ const MainLayout = ({ children }) => {
   const { token } = useContext(AuthContext);
   const location = useLocation();
 
-  const esLanding = location.pathname === "/caracteristicas"; // ajustá si usás otra ruta
+  const esLanding = location.pathname === "/caracteristicas"; 
   
 
 
