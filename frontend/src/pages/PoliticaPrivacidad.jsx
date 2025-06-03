@@ -68,26 +68,38 @@ function PoliticaPrivacidad() {
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" gutterBottom>6. Derechos del usuario</Typography>
         <Typography variant="body1">
-          El usuario podrá ejercer los derechos de acceso, rectificación, actualización, supresión, oposición y limitación del tratamiento de sus datos personales, conforme a la normativa vigente. Para ello, podrá contactarnos mediante correo electrónico a: <strong>contacto@tudominio.com</strong>
+          El usuario podrá ejercer los derechos de acceso, rectificación, actualización, supresión, oposición y limitación del tratamiento de sus datos personales, conforme a la normativa vigente. Para ello, podrá contactarnos mediante correo electrónico a: <strong>dictum.ia.arg@gmail.com</strong>
         </Typography>
       </Box>
 
-      {/* 7. Modificaciones */}
+      {/* 7. Uso de datos para mejora del sistema */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" gutterBottom>7. Modificaciones a esta política</Typography>
+        <Typography variant="h5" gutterBottom>7. Uso de datos para mejora del sistema</Typography>
+        <Typography variant="body1">
+          El usuario acepta que las consultas realizadas a través de la Plataforma podrán ser utilizadas para mejorar y entrenar el sistema de inteligencia artificial que respalda los servicios ofrecidos por Dictum IA.
+        </Typography>
+        <Typography variant="body1" sx={{ mt: 2 }}>
+          Dicho tratamiento se realizará aplicando técnicas de anonimización y segmentación que impidan la identificación directa del usuario, y respetando principios de confidencialidad y seguridad de la información. La utilización de estos datos tiene como finalidad exclusiva el perfeccionamiento de la experiencia del usuario y la calidad del servicio.
+        </Typography>
+      </Box>
+
+      {/* 8. Modificaciones */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h5" gutterBottom>8. Modificaciones a esta política</Typography>
         <Typography variant="body1">
           Nos reservamos el derecho a modificar la presente Política de Privacidad en cualquier momento. Los cambios serán publicados en esta misma sección, y se entenderá que el usuario acepta la nueva versión si continúa utilizando la Plataforma.
         </Typography>
       </Box>
 
-      {/* 8. Contacto */}
+      {/* 9. Contacto */}
       <Box>
-        <Typography variant="h5" gutterBottom>8. Contacto</Typography>
+        <Typography variant="h5" gutterBottom>9. Contacto</Typography>
         <Typography variant="body1">
-          Si tenés consultas o requerís más información sobre el tratamiento de tus datos, podés comunicarte con nosotros escribiendo a <strong>contacto@tudominio.com</strong>.
+          Si tenés consultas o requerís más información sobre el tratamiento de tus datos, podés comunicarte con nosotros escribiendo a <strong>dictum.ia.arg@gmail.com</strong>
         </Typography>
       </Box>
-         <Box mt={12} py={6} textAlign="center" borderTop="1px solid #1f2937">
+
+      <Box mt={12} py={6} textAlign="center" borderTop="1px solid #1f2937">
         <Typography variant="body2" color="#6b7280">
           © {new Date().getFullYear()} Dictum IA — Asistencia legal con inteligencia artificial
         </Typography>
@@ -95,8 +107,6 @@ function PoliticaPrivacidad() {
           Hecho en Argentina 🔵⚪🔵  Todos los derechos reservados
         </Typography>
       </Box>
-
-    
     </Container>
   );
 }

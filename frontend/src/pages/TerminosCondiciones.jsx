@@ -47,7 +47,7 @@ function TerminosCondiciones() {
           <Typography variant="h6" sx={{ mt: 3, mb: 1, color: "#fff" }}>
             7. Contacto
           </Typography>
-          Para consultas, escribinos a <a href="mailto:contacto@dictumia.com" style={{ color: "#0a84ff" }}>contacto@dictumia.com</a>
+          Para consultas, escribinos a <a href="mailto:dictum.ia.arg@gmail.com" style={{ color: "#0a84ff" }}>dictum.ia.arg@gmail.com</a>
         </Box>
         
       </Container>
