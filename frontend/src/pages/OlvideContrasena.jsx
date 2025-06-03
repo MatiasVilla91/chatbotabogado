@@ -1,7 +1,8 @@
 // src/pages/OlvideContrasena.jsx
 import { useState } from "react";
 import { Box, Typography, TextField, Button, Snackbar, Alert } from "@mui/material";
-import axios from "axios";
+//import axios from "axios";
+import api from "../api";
 import MainLayout from "../layouts/MainLayout";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -13,7 +14,8 @@ const OlvideContrasena = () => {
 
   const handleEnviar = async () => {
     try {
-      const res = await axios.post(`${backendUrl}/auth/forgot-password`, { email });
+      const res = await api.post(`${backendUrl}/api/auth/forgot-password`, { email });
+
       setMensaje(res.data.message);
       setError("");
     } catch (err) {
