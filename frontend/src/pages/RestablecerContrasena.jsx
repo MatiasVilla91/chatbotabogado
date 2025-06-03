@@ -1,10 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Snackbar, Alert } from "@mui/material";
-import axios from "axios";
+import api from "../api"; // ✅ CORRECTO
 import MainLayout from "../layouts/MainLayout";
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const RestablecerContrasena = () => {
   const { token } = useParams();
@@ -18,7 +16,7 @@ const RestablecerContrasena = () => {
   useEffect(() => {
     const fetchEmail = async () => {
       try {
-        const res = await axios.get(`${backendUrl}/auth/reset-token/${token}`);
+        const res = await api.get(`/api/auth/reset-token/${token}`); // ✅ usa "/api/auth"
         setEmail(res.data.email);
       } catch (err) {
         setError("Token inválido o expirado");
@@ -28,10 +26,13 @@ const RestablecerContrasena = () => {
   }, [token]);
 
   const handleRestablecer = async () => {
-    if (nueva !== confirmar) return setError("Las contraseñas no coinciden");
+    if (nueva !== confirmar) {
+      return setError("Las contraseñas no coinciden");
+    }
+
     try {
-      const res = await axios.post(`${backendUrl}/auth/reset-password/${token}`, { nueva });
-      setMensaje(res.data.message);
+      const res = await api.post(`/api/auth/reset-password/${token}`, { nueva }); // ✅ usa "/api/auth"
+      setMensaje(res.data.message || "Contraseña actualizada con éxito");
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       setError(err.response?.data?.error || "Error al actualizar contraseña");

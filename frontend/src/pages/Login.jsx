@@ -8,7 +8,6 @@ import GoogleIcon from "@mui/icons-material/Google"; // ✅ Usamos el icono de G
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
