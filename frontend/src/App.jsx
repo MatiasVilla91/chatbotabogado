@@ -17,7 +17,7 @@ import Perfil from "./pages/Perfil";
 import SobreNosotros from "./pages/SobreNosotros";
 import OlvideContrasena from "./pages/OlvideContrasena";
 import RestablecerContrasena from "./pages/RestablecerContrasena";
-import VerificarCuenta from "./pages/VerificarCuenta";
+import VerificarCuenta from "./pages/verificarCuenta";
 
 function App() {
   return (
