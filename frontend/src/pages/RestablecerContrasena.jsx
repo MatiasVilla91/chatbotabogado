@@ -31,7 +31,7 @@ const RestablecerContrasena = () => {
     }
 
     try {
-      const res = await api.post(`/api/auth/reset-password/${token}`, { nueva }); // ✅ usa "/api/auth"
+      const res = await api.post(`/api/auth/reset-password/${token}`, { password: nueva });// ✅ usa "/api/auth"
       setMensaje(res.data.message || "Contraseña actualizada con éxito");
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {

@@ -26,7 +26,12 @@ const UserSchema = new mongoose.Schema({
 
   // Recuperación de contraseña
   resetToken: { type: String },
-  resetTokenExpire: { type: Date }
+  resetTokenExpire: { type: Date },
+
+  // ✅ Verificación de cuenta por email
+  isVerified: { type: Boolean, default: false },
+  verifyToken: { type: String },
+  verifyTokenExpire: { type: Date }
 
 }, {
   timestamps: true,

@@ -21,6 +21,7 @@
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "gpt-3-encoder": "^1.1.4",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^1.5.17",
     "mongoose": "^8.12.1",

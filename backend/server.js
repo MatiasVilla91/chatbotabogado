@@ -9,6 +9,7 @@ const session = require('express-session');
 const passport = require('passport');
 const logger = require('./utils/logger');
 const mercadopago = require("mercadopago");
+const helmet = require("helmet");
 
 const authRoutes = require('./routes/auth');
 const legalRoutes = require('./routes/legal');
@@ -101,12 +102,14 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
-
-// ✅ Middleware global
+// ✅ Middleware global (debe ir ANTES de las rutas)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(mongoSanitize());
-app.use("/api/auth", authRoutes); // ✅ Así queda todo consistente
+
+// ✅ Rutas de autenticación
+app.use("/api/auth", authRoutes);
+
 
 
 // ✅ MongoDB
@@ -170,6 +173,7 @@ app.use('/api/usuario', usuarioRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api', checkAuth, verificarPlan);
+app.use(helmet());
 
 
 // ✅ Ruta de prueba

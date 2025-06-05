@@ -4,7 +4,7 @@ import Consultas from "./pages/Consultas";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Caracteristicas from "./pages/Caracteristicas";
-//import FloatingHelpButton from "./components/FloatingHelpButton";
+// import FloatingHelpButton from "./components/FloatingHelpButton";
 import MainLayout from "./layouts/MainLayout";
 import PoliticaPrivacidad from "./pages/PoliticaPrivacidad";
 import TerminosCondiciones from "./pages/TerminosCondiciones";
@@ -17,8 +17,7 @@ import Perfil from "./pages/Perfil";
 import SobreNosotros from "./pages/SobreNosotros";
 import OlvideContrasena from "./pages/OlvideContrasena";
 import RestablecerContrasena from "./pages/RestablecerContrasena";
-
-
+import VerificarCuenta from "./pages/VerificarCuenta";
 
 function App() {
   return (
@@ -51,6 +50,16 @@ function App() {
             <RutaProtegida>
               <MainLayout>
                 <Historial />
+              </MainLayout>
+            </RutaProtegida>
+          }
+        />
+        <Route
+          path="/perfil"
+          element={
+            <RutaProtegida>
+              <MainLayout>
+                <Perfil />
               </MainLayout>
             </RutaProtegida>
           }
@@ -92,6 +101,14 @@ function App() {
           }
         />
         <Route
+          path="/precios"
+          element={
+            <MainLayout>
+              <Precios />
+            </MainLayout>
+          }
+        />
+        <Route
           path="/terminos"
           element={
             <MainLayout>
@@ -107,37 +124,16 @@ function App() {
             </MainLayout>
           }
         />
-
-<Route
-  path="/precios"
-  element={
-    <MainLayout>
-      <Precios />
-    </MainLayout>
-  }
-/>
-
-<Route
-  path="/perfil"
-  element={
-    <RutaProtegida>
-      <MainLayout>
-        <Perfil />
-      </MainLayout>
-    </RutaProtegida>
-  }
-/>
-
-
-        {/* Google OAuth */}
         <Route path="/google-success" element={<GoogleSuccess />} />
-      <Route path="/sobre-nosotros" element={<SobreNosotros />} />
-      <Route path="/olvide-contrasena" element={<OlvideContrasena />} />
-     <Route path="/reset-password/:token" element={<RestablecerContrasena />} />
+        <Route path="/sobre-nosotros" element={<SobreNosotros />} />
+        <Route path="/olvide-contrasena" element={<OlvideContrasena />} />
+        <Route path="/reset-password/:token" element={<RestablecerContrasena />} />
 
+        {/* ✅ Email verification dentro de Routes */}
+        <Route path="/verify-email/:token" element={<VerificarCuenta />} />
       </Routes>
 
-      {/*<FloatingHelpButton />*/}
+      {/* <FloatingHelpButton /> */}
     </>
   );
 }
